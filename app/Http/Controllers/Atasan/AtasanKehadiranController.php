@@ -1,0 +1,113 @@
+<?php
+
+namespace App\Http\Controllers\Atasan;
+
+use App\Http\Controllers\Controller;
+use App\Models\Kehadiran;
+use App\Models\Pegawai;
+use App\Models\PegawaiDetail;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+
+class AtasanKehadiranController extends Controller
+{
+    /**
+     * Tampilkan daftar kehadiran dengan filter opsional
+     */
+    public function index(Request $request)
+    {
+        $query = Kehadiran::with('pegawai.user');
+
+        // filter pegawai
+        if ($request->filled('pegawai_id')) {
+            $query->where('pegawai_id', $request->pegawai_id);
+        }
+
+        // filter tanggal dari - sampai
+        if ($request->filled('tanggal_dari')) {
+            $query->where('tanggal', '>=', Carbon::parse($request->tanggal_dari)->format('Y-m-d'));
+        }
+        if ($request->filled('tanggal_sampai')) {
+            $query->where('tanggal', '<=', Carbon::parse($request->tanggal_sampai)->format('Y-m-d'));
+        }
+
+        $data = $query->orderBy('tanggal', 'desc')->paginate(25)->withQueryString();
+
+        $pegawais = PegawaiDetail::select('pegawai_details.*')
+    ->join('users', 'users.id', '=', 'pegawai_details.user_id')
+    ->orderBy('users.name')
+    ->get();
+
+        return view('atasan.kehadiran.index', compact('data', 'pegawais'));
+    }
+
+    /**
+     * Tampilkan detail satu record kehadiran
+     */
+    public function show($id)
+    {
+        $row = Kehadiran::with('pegawai.user')->findOrFail($id);
+
+        return view('atasan.kehadiran.show', compact('row'));
+    }
+
+    /**
+     * Update (koreksi) check_in / check_out
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'check_in' => 'nullable|date_format:Y-m-d H:i:s',
+            'check_out' => 'nullable|date_format:Y-m-d H:i:s',
+            'keterangan' => 'nullable|string|max:1000',
+        ]);
+
+        $row = Kehadiran::findOrFail($id);
+
+        // Simpan perubahan
+        $row->check_in = $request->check_in ? Carbon::parse($request->check_in) : $row->check_in;
+        $row->check_out = $request->check_out ? Carbon::parse($request->check_out) : $row->check_out;
+
+        // jika model ada kolom 'keterangan' gunakan, jika tidak, harap tambahkan atau simpan ke kolom lain
+        if ($request->filled('keterangan') && array_key_exists('keterangan', $row->getAttributes())) {
+            $row->keterangan = $request->keterangan;
+        }
+
+        // optional: catat siapa yang mengoreksi; butuh kolom verified_by di table
+        if (array_key_exists('verified_by', $row->getAttributes())) {
+            $row->verified_by = Auth::id();
+        }
+
+        $row->save();
+
+        return redirect()->route('atasan.kehadiran.show', $row->id)
+            ->with('success', 'Data kehadiran berhasil diperbarui.');
+    }
+
+    /**
+     * Jika ingin menandai absen manual (opsional) – contoh endpoint untuk menambah record
+     */
+    public function storeManual(Request $request)
+    {
+        $request->validate([
+            'pegawai_id' => 'required|exists:pegawai,id',
+            'tanggal' => 'required|date',
+            'check_in' => 'nullable|date_format:Y-m-d H:i:s',
+            'check_out' => 'nullable|date_format:Y-m-d H:i:s',
+            'keterangan' => 'nullable|string|max:1000',
+        ]);
+
+        $data = Kehadiran::create([
+            'pegawai_id' => $request->pegawai_id,
+            'tanggal' => Carbon::parse($request->tanggal)->format('Y-m-d'),
+            'check_in' => $request->check_in ? Carbon::parse($request->check_in) : null,
+            'check_out' => $request->check_out ? Carbon::parse($request->check_out) : null,
+            'keterangan' => $request->keterangan ?? null,
+            // 'verified_by' => auth()->id() // jika kolom ada
+        ]);
+
+        return redirect()->route('atasan.kehadiran.index')
+            ->with('success', 'Data kehadiran manual berhasil ditambahkan.');
+    }
+}
