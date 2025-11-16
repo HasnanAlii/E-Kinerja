@@ -17,7 +17,7 @@ class VerifikasiAktivitasController extends Controller
         $data = Aktivitas::whereHas('pegawai', function ($q) use ($atasan) {
                 $q->where('atasan_id', $atasan->id);
             })
-            ->where('status', 'menunggu')
+            // ->where('status', 'menunggu')
             ->with('pegawai.user')
             ->latest()
             ->paginate(15);
@@ -42,7 +42,9 @@ class VerifikasiAktivitasController extends Controller
             'komentar_atasan' => 'Aktivitas disetujui'
         ]);
 
-        return back()->with('success', 'Aktivitas berhasil disetujui.');
+        return redirect()
+            ->route('atasan.verifikasi.index')
+            ->with('success', 'Aktivitas berhasil disetujui.');
     }
 
     public function reject(Request $request, $id)
@@ -58,7 +60,9 @@ class VerifikasiAktivitasController extends Controller
             'komentar_atasan' => $request->komentar_atasan
         ]);
 
-        return back()->with('success', 'Aktivitas ditolak.');
+        return redirect()
+            ->route('atasan.verifikasi.index')
+            ->with('success', 'Aktivitas ditolak.');
     }
 
     public function revisi(Request $request, $id)
@@ -74,6 +78,9 @@ class VerifikasiAktivitasController extends Controller
             'komentar_atasan' => $request->komentar_atasan
         ]);
 
-        return back()->with('success', 'Permintaan revisi dikirim ke pegawai.');
+        return redirect()
+            ->route('atasan.verifikasi.index')
+            ->with('success', 'Permintaan revisi dikirim ke pegawai.');
     }
+
 }

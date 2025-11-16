@@ -5,145 +5,229 @@
         </h2>
     </x-slot>
 
-    <div class="py-8">
+    <div class="py-1">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="p-6 sm:px-8 bg-white">
 
-            {{-- CARD UTAMA --}}
-            <div class="bg-white shadow-xl sm:rounded-xl border border-gray-200 overflow-hidden">
-
-                {{-- HEADER CARD --}}
-                <div class="px-6 py-5 flex items-center gap-3 border-b bg-gray-50">
-                    <div class="p-3 bg-indigo-100 text-indigo-600 rounded-lg">
-                        <i data-feather="clipboard" class="w-6 h-6"></i>
-                    </div>
+                    {{-- HEADER --}}
                     <div>
-                        <h3 class="text-lg font-bold text-gray-800">
-                            Detail Aktivitas — {{ $data->pegawai->user->name }}
+                        <h3 class="text-2xl font-semibold text-gray-900">
+                            {{ $data->pegawai->user->name }}
                         </h3>
-                        <p class="text-sm text-gray-500">Informasi lengkap laporan aktivitas harian.</p>
+                        <p class="mt-1 text-base text-gray-500">Detail laporan aktivitas harian.</p>
                     </div>
-                </div>
+                    {{-- DETAIL --}}
+                    <div class="mt-6 border-t border-gray-200">
+                        <dl class="divide-y divide-gray-200">
 
-                <div class="px-6 py-6 space-y-10">
+                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                                <dt class="text-sm font-medium text-gray-500">Tanggal</dt>
+                                <dd class="text-sm text-gray-900 sm:col-span-2">
+                                    {{ \Carbon\Carbon::parse($data->tanggal)->isoFormat('D MMMM YYYY') }}
+                                </dd>
+                            </div>
 
-                    {{-- ================================= --}}
-                    {{-- SECTION : DATA PEGAWAI --}}
-                    {{-- ================================= --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                                <dt class="text-sm font-medium text-gray-500">Waktu Pelaksanaan</dt>
+                                <dd class="text-sm text-gray-900 sm:col-span-2">
+                                    {{ $data->waktu_pelaksanaan }}
+                                </dd>
+                            </div>
 
-                        {{-- FOTO --}}
-                        <div class="flex items-center gap-4">
-                            <img src="{{ asset('storage/' . ($data->pegawai->foto ?? 'default.png')) }}"
-                                 class="h-20 w-20 rounded-full object-cover border shadow">
+<div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+    <dt class="text-sm font-medium text-gray-500">Uraian Tugas</dt>
+    <dd class="text-sm text-gray-900 sm:col-span-2 whitespace-pre-wrap text-left">
+        {{ $data->uraian_tugas }}
+    </dd>
+</div>
 
-                            <div>
-                                <div class="font-semibold text-gray-900 text-lg">
-                                    {{ $data->pegawai->user->name }}
+<div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+    <dt class="text-sm font-medium text-gray-500">Hasil Pekerjaan</dt>
+    <dd class="text-sm text-gray-900 sm:col-span-2 whitespace-pre-wrap text-left">
+        {{ $data->hasil_pekerjaan ?? '-' }}
+    </dd>
+</div>
+
+
+
+                            @if ($data->bukti_file)
+                                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                                    <dt class="text-sm font-medium text-gray-500">Bukti File</dt>
+                                    <dd class="text-sm sm:col-span-2">
+                                        <a href="{{ Storage::url($data->bukti_file) }}" target="_blank"
+                                           class="inline-flex items-center text-indigo-600 hover:text-indigo-700 font-medium">
+                                            <i data-feather="external-link" class="w-4 h-4 mr-2"></i>
+                                            Lihat Bukti
+                                        </a>
+                                    </dd>
                                 </div>
-                                <div class="text-sm text-gray-600">
-                                    {{ $data->pegawai->jabatan ?? '-' }}
-                                </div>
-                                <div class="text-sm text-gray-500 mt-1">
-                                    {{ $data->pegawai->bidang->nama_bidang ?? '-' }}
+                            @endif
+
+                        </dl>
+                    </div>
+
+
+                    @if ($data->status !== 'menunggu')
+                        <div class="mt-8 p-5 bg-gray-50 border rounded-xl shadow-sm">
+
+                            <h3 class="text-lg font-semibold text-gray-900 mb-3">Hasil Verifikasi Atasan</h3>
+
+                            {{-- STATUS BADGE --}}
+                            @php
+                                $badge = [
+                                    'disetujui' => 'bg-green-100 text-green-700',
+                                    'ditolak' => 'bg-red-100 text-red-700',
+                                    'revisi' => 'bg-yellow-100 text-yellow-700',
+                                    'menunggu' => 'bg-gray-100 text-gray-700'
+                                ];
+                            @endphp
+
+                            <div class="mb-4">
+                                <p class="text-sm font-medium text-gray-500 mb-1">Status</p>
+                                <span class="px-3 py-1 text-xs font-semibold rounded-full {{ $badge[$data->status] ?? 'bg-gray-100 text-gray-700' }}">
+                                    {{ ucfirst($data->status) }}
+                                </span>
+                            </div>
+
+                            {{-- KOMENTAR ATASAN --}}
+                            <div class="mb-4">
+                                <p class="text-sm font-medium text-gray-500 mb-1">Catatan Atasan</p>
+                                <div class="p-3 bg-white border rounded-lg text-gray-800 whitespace-pre-wrap">
+                                    {{ $data->komentar_atasan ?? '-' }}
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-
-                    {{-- ================================= --}}
-                    {{-- SECTION : DETAIL AKTIVITAS --}}
-                    {{-- ================================= --}}
-                    <div class="border rounded-lg p-5 bg-gray-50 space-y-6">
-
-                        <div>
-                            <p class="text-xs font-medium text-gray-500 uppercase">Tanggal</p>
-                            <p class="text-gray-900 text-base font-semibold">
-                                {{ \Carbon\Carbon::parse($data->tanggal)->isoFormat('D MMMM YYYY') }}
-                            </p>
-                        </div>
-
-                        <div>
-                            <p class="text-xs font-medium text-gray-500 uppercase">Waktu Pelaksanaan</p>
-                            <p class="text-gray-900 text-base font-semibold">
-                                {{ $data->waktu_pelaksanaan }}
-                            </p>
-                        </div>
-
-                        <div>
-                            <p class="text-xs font-medium text-gray-500 uppercase">Uraian Tugas</p>
-                            <p class="text-gray-800 whitespace-pre-wrap leading-relaxed">
-                                {{ $data->uraian_tugas }}
-                            </p>
-                        </div>
-
-                        <div>
-                            <p class="text-xs font-medium text-gray-500 uppercase">Hasil Pekerjaan</p>
-                            <p class="text-gray-800 whitespace-pre-wrap">
-                                {{ $data->hasil_pekerjaan ?? '-' }}
-                            </p>
-                        </div>
-
-                        {{-- BUKTI FILE --}}
-                        @if ($data->bukti_file)
+                            {{-- TANGGAL VERIFIKASI OPTIONAL (kalau ingin) --}}
                             <div>
-                                <p class="text-xs font-medium text-gray-500 uppercase">Lampiran / Bukti Aktivitas</p>
-                                <a href="{{ Storage::url($data->bukti_file) }}" target="_blank"
-                                   class="inline-flex items-center mt-2 px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700">
-                                    <i data-feather="paperclip" class="w-4 h-4 mr-2"></i>
-                                    Lihat Lampiran
-                                </a>
+                                <p class="text-sm font-medium text-gray-500 mb-1">Tanggal Verifikasi</p>
+                                <p class="text-gray-800">
+                                    {{ $data->updated_at->isoFormat('D MMMM YYYY HH:mm') }}
+                                </p>
                             </div>
-                        @endif
 
-                    </div>
+                        </div>
+                    @endif
 
+                    <div class="mt-8 pt-6 border-t border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Tindakan Verifikasi</h3>
+                        <p class="mt-1 text-sm text-gray-500">Pilih tindakan yang ingin dilakukan.</p>
 
+                        <div class="flex flex-col sm:flex-row gap-3 mt-6">
 
-                    {{-- ================================= --}}
-                    {{-- SECTION : TINDAKAN VERIFIKASI --}}
-                    {{-- ================================= --}}
-                    <div class="border-t pt-6">
-                        <h3 class="text-lg font-bold text-gray-900 mb-2">
-                            Tindakan Verifikasi
-                        </h3>
-                        <p class="text-sm text-gray-600">
-                            Pilih salah satu tindakan berikut untuk memproses aktivitas pegawai ini.
-                        </p>
-
-                        <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-
-                            {{-- BUTTON APPROVE --}}
-                            <button onclick="openModal('approve', '{{ route('atasan.verifikasi.approve', $data->id) }}')"
-                                class="inline-flex items-center justify-center px-4 py-2 w-full text-white bg-green-600 hover:bg-green-700 rounded-lg shadow">
+                            {{-- SETUJUI --}}
+                            <button onclick="approveAction()"
+                                class="flex-1 inline-flex items-center justify-center px-4 py-2 rounded-xl text-white bg-green-600 hover:bg-green-700 shadow-lg transform hover:scale-[1.02] transition-all">
                                 <i data-feather="check" class="w-5 h-5 mr-2"></i>
                                 Setujui
                             </button>
 
-                            {{-- BUTTON TOLAK --}}
-                            <button onclick="openModal('reject', '{{ route('atasan.verifikasi.reject', $data->id) }}')"
-                                class="inline-flex items-center justify-center px-4 py-2 w-full text-white bg-red-600 hover:bg-red-700 rounded-lg shadow">
+                            {{-- TOLAK --}}
+                            <button onclick="rejectAction()"
+                                class="flex-1 inline-flex items-center justify-center px-4 py-2 rounded-xl text-white bg-red-600 hover:bg-red-700 shadow-lg transform hover:scale-[1.02] transition-all">
                                 <i data-feather="x" class="w-5 h-5 mr-2"></i>
                                 Tolak
                             </button>
 
-                            {{-- BUTTON REVISI --}}
-                            <button onclick="openModal('revisi', '{{ route('atasan.verifikasi.revisi', $data->id) }}')"
-                                class="inline-flex items-center justify-center px-4 py-2 w-full text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow">
+                            {{-- REVISI --}}
+                            <button onclick="revisiAction()"
+                                class="flex-1 inline-flex items-center justify-center px-4 py-2 rounded-xl text-white bg-yellow-500 hover:bg-yellow-600 shadow-lg transform hover:scale-[1.02] transition-all">
                                 <i data-feather="edit" class="w-5 h-5 mr-2"></i>
-                                Minta Revisi
+                                Revisi
                             </button>
 
                         </div>
+
+                        {{-- Hidden form --}}
+                        <form id="verifikasiForm" action="" method="POST" class="hidden">
+                            @csrf
+                            <input type="hidden" name="komentar_atasan" id="komentarInput">
+                        </form>
+
                     </div>
 
                 </div>
             </div>
-
         </div>
     </div>
 
+    {{-- SWEETALERT2 CDN --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    @include('atasan.verifikasi.partials.modal')
+    <script>
+        function approveAction() {
+            Swal.fire({
+                title: "Setujui Aktivitas?",
+                text: "Anda yakin ingin menyetujui aktivitas ini?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: "Ya, Setujui",
+                cancelButtonText: "Batal",
+                confirmButtonColor: "#16a34a",
+                cancelButtonColor: "#6b7280",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.getElementById('verifikasiForm');
+                    form.action = "{{ route('atasan.verifikasi.approve', $data->id) }}";
+                    form.submit();
+                }
+            });
+        }
+
+        function rejectAction() {
+            Swal.fire({
+                title: "Tolak Aktivitas",
+                input: "textarea",
+                inputLabel: "Alasan Penolakan (Wajib diisi)",
+                inputPlaceholder: "Contoh: Hasil tidak valid...",
+                inputAttributes: { "aria-label": "Alasan penolakan" },
+                showCancelButton: true,
+                confirmButtonText: "Tolak",
+                cancelButtonText: "Batal",
+                confirmButtonColor: "#dc2626",
+                cancelButtonColor: "#6b7280",
+                preConfirm: (value) => {
+                    if (!value) {
+                        Swal.showValidationMessage("Alasan wajib diisi!");
+                    }
+                    return value;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('komentarInput').value = result.value;
+                    const form = document.getElementById('verifikasiForm');
+                    form.action = "{{ route('atasan.verifikasi.reject', $data->id) }}";
+                    form.submit();
+                }
+            });
+        }
+
+        function revisiAction() {
+            Swal.fire({
+                title: "Minta Revisi",
+                input: "textarea",
+                inputLabel: "Catatan Revisi (Wajib diisi)",
+                inputPlaceholder: "Contoh: Mohon tambahkan bukti lampiran...",
+                showCancelButton: true,
+                confirmButtonText: "Kirim Revisi",
+                cancelButtonText: "Batal",
+                confirmButtonColor: "#f59e0b",
+                cancelButtonColor: "#6b7280",
+                preConfirm: (value) => {
+                    if (!value) {
+                        Swal.showValidationMessage("Catatan revisi wajib diisi!");
+                    }
+                    return value;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('komentarInput').value = result.value;
+                    const form = document.getElementById('verifikasiForm');
+                    form.action = "{{ route('atasan.verifikasi.revisi', $data->id) }}";
+                    form.submit();
+                }
+            });
+        }
+    </script>
 
 </x-app-layout>

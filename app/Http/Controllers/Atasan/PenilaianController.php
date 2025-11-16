@@ -15,17 +15,25 @@ class PenilaianController extends Controller
     // {
     //     $this->middleware('role:atasan');
     // }
-
     public function index()
     {
-        $periodeAktif = PeriodePenilaian::where('status_aktif', true)->first();
+        // Data atasan yang login
+        $atasan = Auth::user()->atasan;
 
-        $bawahan = PegawaiDetail::where('atasan_id', Auth::id())
+        // Periode penilaian yang aktif
+        $periodeAktif = PeriodePenilaian::where('status_aktif', 1)
+            ->orderBy('id', 'DESC')
+            ->first();
+
+        // Bawahan dengan pagination
+        $bawahan = PegawaiDetail::where('atasan_id', $atasan->id)
             ->with('user')
-            ->get();
+            ->orderBy('id', 'DESC')
+            ->paginate(10); // <--- PAGINATION DI SINI
 
-        return view('atasan.penilaian.index', compact('bawahan', 'periodeAktif'));
+        return view('atasan.penilaian.index', compact('periodeAktif', 'bawahan'));
     }
+
 
     public function create($pegawai_id)
     {

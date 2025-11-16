@@ -7,14 +7,7 @@
 
     <div class="py-12">
         <div class=" mx-auto sm:px-6 lg:px-8">
-            
-            <div class="flex gap-4 mb-4 justify-end">
-                <a href="{{ route('pegawai.aktivitas.create') }}" 
-                   class="inline-flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-indigo-700 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                    <i data-feather="plus" class="w-5 h-5 mr-2 -ml-1"></i>
-                    Tambah Aktivitas
-                </a>
-            </div>
+   
 
             @if (session('success'))
                 <div class="mb-4 p-4 flex items-center bg-green-100 text-green-700 border border-green-300 rounded-lg">
@@ -22,9 +15,34 @@
                     {{ session('success') }}
                 </div>
             @endif
+            
 
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="px-6 py-5 border-b bg-gray-50 flex items-center justify-between mb-4 rounded-t-lg">
+                <div class="flex items-center gap-3">
+                    <span class="p-3 bg-indigo-100 text-indigo-600 rounded-xl">
+                        <i data-feather="list" class="w-6 h-6"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">
+                            Riwayat Aktivitas Harian
+                        </h3>
+                        <p class="text-base text-gray-500">
+                            Lihat, kelola, dan pantau aktivitas harian yang telah Anda laporkan.
+                        </p>
+                    </div>
+                </div>
+                    <div class="flex gap-4  justify-end">
+                        <a href="{{ route('pegawai.aktivitas.create') }}" 
+                        class="inline-flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-indigo-700 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                            <i data-feather="plus" class="w-5 h-5 mr-2 -ml-1"></i>
+                            Tambah Aktivitas
+                        </a>
+                    </div>
+            </div>
+
                 <div class="p-6 sm:px-8 bg-white border-b border-gray-200">
+                    
                     
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">

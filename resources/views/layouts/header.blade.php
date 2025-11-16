@@ -114,7 +114,7 @@
                        <a href="{{ route('profile.edit') }}"
                        class="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 text-sm">
                         <i data-feather="key" class="w-4 h-4"></i>
-                        Ubah Password
+                        Ubah Kata Sandi
                     </a>
 
                     <div class="border-t my-1"></div>

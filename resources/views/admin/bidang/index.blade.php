@@ -6,15 +6,8 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
 
-            <div class="flex justify-end mb-4">
-                <a href="{{ route('admin.bidang.create') }}"
-                   class="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-blue-700 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-base">
-                    <i data-feather="plus" class="w-5 h-5 mr-2 -ml-1"></i>
-                    Tambah Bidang
-                </a>
-            </div>
 
             @if (session('success'))
                 <div class="mb-4 p-4 flex items-center bg-green-100 text-green-700 border border-green-300 rounded-lg text-base">
@@ -24,6 +17,34 @@
             @endif
 
             <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                    {{-- HEADER --}}
+                <div class="px-6 py-5 border-b bg-gray-50 flex items-center justify-between">
+                    
+                    {{-- LEFT --}}
+                    <div class="flex items-center gap-3">
+                        <span class="p-3 bg-indigo-100 text-indigo-600 rounded-xl">
+                            <i data-feather="folder" class="w-6 h-6"></i>
+                        </span>
+
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800">
+                                Manajemen Bidang
+                            </h3>
+                            <p class="text-base text-gray-500">
+                                Kelola data bidang dalam struktur organisasi Dinas Arsip & Perpustakaan.
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- RIGHT BUTTON --}}
+                    <a href="{{ route('admin.bidang.create') }}"
+                    class="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-blue-700 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-base">
+                        <i data-feather="plus" class="w-5 h-5 mr-2 -ml-1"></i>
+                        Tambah Bidang
+                    </a>
+
+                </div>
+
                 <div class="p-6 sm:px-8 bg-white">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">

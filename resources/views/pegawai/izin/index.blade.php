@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
+    <div class="">
        <div class=" mx-auto sm:px-6 lg:px-8">
 
             <div class="mb-6">
@@ -32,15 +32,31 @@
                 </div>
             @endif
 
-            <div class="flex gap-4 mb-4 justify-end">
-                <a href="{{ route('pegawai.izin.create') }}" 
-                   class="inline-flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-indigo-700 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-base">
-                    <i data-feather="plus" class="w-5 h-5 mr-2 -ml-1"></i>
-                    Buat Pengajuan
-                </a>
-            </div>
-
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+              <div class="px-6 py-5 border-b bg-gray-50 flex items-center justify-between mb-4 rounded-t-lg">
+                <div class="flex items-center gap-3">
+                    <span class="p-3 bg-indigo-100 text-indigo-600 rounded-xl">
+                        <i data-feather="file-text" class="w-6 h-6"></i>
+                    </span>
+
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">
+                            Riwayat Izin / Sakit
+                        </h3>
+                        <p class="text-base text-gray-500">
+                            Lihat dan pantau seluruh pengajuan izin atau sakit yang Anda ajukan.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4  justify-end">
+                    <a href="{{ route('pegawai.izin.create') }}" 
+                    class="inline-flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-indigo-700 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-base">
+                        <i data-feather="plus" class="w-5 h-5 mr-2 -ml-1"></i>
+                        Buat Pengajuan
+                    </a>
+                </div>
+            </div>
                 <div class="p-6 sm:px-8 bg-white border-b border-gray-200">
                     
                     <div class="overflow-x-auto">

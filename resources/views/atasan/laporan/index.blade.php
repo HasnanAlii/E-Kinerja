@@ -7,34 +7,55 @@
 
     <div class="py-12">
         <div class=" mx-auto sm:px-6 lg:px-8">
+            
 
-            <div class="mb-4 bg-white shadow-sm sm:rounded-lg">
-                <div class="p-4">
-                    <form method="GET" action="{{ route('atasan.laporan.index') }}" class="flex items-center gap-4">
-                        <div>
-                            <label for="periode_id" class="block text-sm font-medium text-gray-700">Filter Periode</label>
-                            <select name="periode_id" id="periode_id" 
-                                    class="mt-1 block w-full sm:w-64 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-base">
-                                <option value="">Semua Periode</option>
-                                @foreach ($periode as $p)
-                                    <option value="{{ $p->id }}" 
-                                            {{ request('periode_id') == $p->id ? 'selected' : '' }}>
-                                        {{ $p->nama_periode }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        
-                        <button type="submit" 
-                                class="inline-flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-indigo-700 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-base self-end">
-                            <i data-feather="filter" class="w-5 h-5 mr-2 -ml-1"></i>
-                            Filter
-                        </button>
-                    </form>
+            <div class="px-6 py-5 border-b bg-gray-50 flex flex-col rounded-t-xl sm:flex-row sm:items-center sm:justify-between gap-4">
+                {{-- LEFT: HEADER --}}
+                <div class="flex items-center gap-3 ">
+                    <span class="p-3 bg-indigo-100 text-indigo-600 rounded-xl">
+                        <i data-feather="bar-chart-2" class="w-6 h-6"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">Laporan Penilaian Pegawai</h3>
+                        <p class="text-base text-gray-500">
+                            Pilih periode untuk melihat rekap penilaian.
+                        </p>
+                    </div>
                 </div>
+
+                {{-- RIGHT: FILTER --}}
+                <form method="GET" action="{{ route('atasan.laporan.index') }}" 
+                    class="flex items-end gap-4">
+
+                    <div>
+                        <label for="periode_id" class="block text-sm font-medium text-gray-700">Filter Periode</label>
+                        <select name="periode_id" id="periode_id"
+                                class="mt-1 block w-48 sm:w-60 rounded-md border-gray-300 shadow-sm 
+                                    focus:border-indigo-500 focus:ring-indigo-500 text-base">
+                            <option value="">Semua Periode</option>
+                            @foreach ($periode as $p)
+                                <option value="{{ $p->id }}" 
+                                    {{ request('periode_id') == $p->id ? 'selected' : '' }}>
+                                    {{ $p->nama_periode }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <button type="submit"
+                            class="inline-flex items-center bg-indigo-600 text-white px-4 py-2 
+                                rounded-lg shadow-sm hover:bg-indigo-700 transition 
+                                duration-150 ease-in-out focus:outline-none focus:ring-2 
+                                focus:ring-indigo-500 focus:ring-offset-2 text-base">
+                        <i data-feather="filter" class="w-5 h-5 mr-2 -ml-1"></i>
+                        Filter
+                    </button>
+
+                </form>
             </div>
 
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-b-xl">
                 <div class="p-6 sm:px-8 bg-white border-b border-gray-200">
                     
                     <div class="overflow-x-auto">

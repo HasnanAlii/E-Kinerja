@@ -16,6 +16,24 @@
             @endif
 
             <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                {{-- HEADER --}}
+                <div class="px-6 py-5 border-b bg-gray-50 flex items-center">
+                    <div class="flex items-center gap-3">
+                        <span class="p-3 bg-indigo-100 text-indigo-600 rounded-xl">
+                            <i data-feather="bar-chart-2" class="w-6 h-6"></i>
+                        </span>
+
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800">
+                                Laporan Penilaian Pegawai
+                            </h3>
+                            <p class="text-base text-gray-500">
+                                Rekap hasil penilaian kinerja pegawai berdasarkan periode yang telah ditentukan.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="p-6 sm:px-8 bg-white">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">

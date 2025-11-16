@@ -14,14 +14,22 @@
                 <form method="post" action="{{ route('profil.update') }}" enctype="multipart/form-data">
                     @csrf
                     @method('patch')
-                    <header class="p-6 border-b border-gray-200">
-                        <h2 class="text-lg font-bold text-green-900">
-                            Informasi Profil
-                        </h2>
-                        <p class="mt-1 text-sm text-gray-600">
-                            Perbarui data profil Anda dan foto akun di bawah ini.
-                        </p>
+                    
+                    <header class="p-6 border-b border-gray-200 flex items-start gap-3">
+                        <span class="p-3 bg-blue-100 text-blue-600 rounded-xl">
+                            <i data-feather="user" class="w-6 h-6"></i>
+                        </span>
+                        <div>
+                            <h2 class="text-lg font-bold text-blue-900">
+                                Informasi Profil
+                            </h2>
+
+                            <p class="mt-1 text-sm text-gray-600">
+                                Perbarui data profil Anda dan foto akun di bawah ini.
+                            </p>
+                        </div>
                     </header>
+
                     <div class="p-6 space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                             <div class="md:col-span-1">
@@ -33,17 +41,17 @@
                                     @if ($user->profile_photo)
                                         <img src="{{ asset('storage/' . $user->profile_photo) }}" 
                                              alt="Foto Profil"
-                                             class="w-24 h-24 object-cover rounded-full border-4 border-green-100 shadow-sm">
+                                             class="w-24 h-24 object-cover rounded-full border-4 border-blue-100 shadow-sm">
                                     @else
-                                        <div class="w-24 h-24 rounded-full bg-green-50 flex items-center justify-center border border-green-200">
-                                            <i data-feather="user" class="w-10 h-10 text-green-400"></i>
+                                        <div class="w-24 h-24 rounded-full bg-blue-50 flex items-center justify-center border border-blue-200">
+                                            <i data-feather="user" class="w-10 h-10 text-blue-400"></i>
                                         </div>
                                     @endif
                                     
                                     {{-- Tombol upload baru --}}
                                     <div>
                                         <label for="profile_photo" 
-                                               class="cursor-pointer rounded-md font-medium text-green-600 hover:text-green-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-green-500 focus-within:ring-offset-2">
+                                               class="cursor-pointer rounded-md font-medium text-blue-600 hover:text-blue-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-green-500 focus-within:ring-offset-2">
                                             <span>Ganti Foto</span>
                                             <input id="profile_photo" name="profile_photo" type="file" class="sr-only" accept="image/*">
                                         </label>
@@ -275,7 +283,7 @@
 
                 {{-- BUTTON --}}
                 <x-primary-button
-                    class="flex items-center gap-2 bg-green-600 hover:bg-green-700 focus:ring-green-500 text-base px-5 py-2.5">
+                    class="flex items-center gap-2 bg-blue-500 hover:bg-blue-700 focus:ring-blue-500 text-base px-5 py-2.5">
                     <i data-feather="save" class="w-5 h-5"></i>
                     Simpan Perubahan
                 </x-primary-button>

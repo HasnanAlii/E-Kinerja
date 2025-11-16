@@ -13,6 +13,12 @@
                 <div class="border-b border-gray-200 mb-4 sm:mb-0">
                     <nav class="-mb-px flex space-x-8" aria-label="Tabs">
 
+                        {{-- Pegawai - Aktif --}}
+                        <a href="{{ route('admin.pegawai.index') }}"
+                           class="border-indigo-500 text-indigo-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-base flex items-center">
+                            <i data-feather="users" class="w-5 h-5 mr-2"></i>
+                            Daftar Pegawai
+                        </a>
                         {{-- Atasan --}}
                         <a href="{{ route('admin.atasan.index') }}"
                            class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-base flex items-center">
@@ -20,24 +26,11 @@
                             Daftar Atasan
                         </a>
 
-                        {{-- Pegawai - Aktif --}}
-                        <a href="{{ route('admin.pegawai.index') }}"
-                           class="border-indigo-500 text-indigo-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-base flex items-center">
-                            <i data-feather="users" class="w-5 h-5 mr-2"></i>
-                            Daftar Pegawai
-                        </a>
 
                     </nav>
                 </div>
 
-                {{-- Button Tambah --}}
-                <div>
-                    <a href="{{ route('admin.pegawai.create') }}"
-                        class="inline-flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-indigo-700 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-base">
-                        <i data-feather="plus" class="w-5 h-5 mr-2 -ml-1"></i>
-                        Tambah Pegawai
-                    </a>
-                </div>
+         
             </div>
 
             {{-- Success Alert --}}
@@ -50,6 +43,35 @@
 
             {{-- Table Card --}}
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                    {{-- HEADER --}}
+                <div class="px-6 py-5 border-b bg-gray-50 flex items-center justify-between">
+                    
+                    {{-- LEFT --}}
+                    <div class="flex items-center gap-3">
+                        <span class="p-3 bg-indigo-100 text-indigo-600 rounded-xl">
+                            <i data-feather="users" class="w-6 h-6"></i>
+                        </span>
+
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800">
+                                Manajemen Pegawai
+                            </h3>
+                            <p class="text-base text-gray-500">
+                                Kelola data pegawai beserta informasi detail terkait kepegawaian.
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- BUTTON --}}
+                    <a href="{{ route('admin.pegawai.create') }}"
+                    class="inline-flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-indigo-700 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-base">
+                        <i data-feather="user-plus" class="w-5 h-5 mr-2 -ml-1"></i>
+                        Tambah Pegawai
+                    </a>
+
+                </div>
+
+                
                 <div class="p-6 sm:px-8 bg-white border-b border-gray-200">
                     <div class="overflow-x-auto">
                         

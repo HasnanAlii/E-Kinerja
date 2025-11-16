@@ -38,8 +38,26 @@
                 {{ session('error') }}
             </div>
         @endif
+        
 
         <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+            {{-- HEADER CARD --}}
+        <div class="px-6 py-5 mb-4 border bg-gray-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-t-lg shadow-sm">
+
+            {{-- LEFT: ICON + TITLE --}}
+            <div class="flex items-center gap-3">
+                <span class="p-3 bg-indigo-100 text-indigo-600 rounded-xl">
+                    <i data-feather="file-text" class="w-6 h-6"></i>
+                </span>
+                <div>
+                <h3 class="text-xl font-bold text-gray-800">Izin / Sakit Pegawai</h3>
+                <p class="text-base text-gray-500">Kelola dan verifikasi pengajuan izin atau sakit pegawai.</p>
+
+                </div>
+            </div>
+
+        </div>
+
             <div class="p-6 sm:px-8 bg-white border-b border-gray-200">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">

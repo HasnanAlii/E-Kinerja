@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'E-Kinerja' }}</title>
+
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -20,7 +20,7 @@
         {{-- MAIN CONTENT --}}
         <div class="flex-1 flex flex-col">
 
-            {{-- HEADER / NAVBAR --}}
+            {{-- HEADER --}}
             @include('layouts.header')
 
             {{-- PAGE HEADER SLOT --}}
@@ -43,9 +43,9 @@
         </div>
     </div>
 
-    <script>
-    feather.replace();
-</script>
+    <script> feather.replace();</script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 </body>
 </html>

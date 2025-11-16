@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
+    <div class="">
         <div class=" mx-auto sm:px-6 lg:px-8">
 
             <div class="mb-6">
@@ -26,7 +26,35 @@
                 </div>
             </div>
 
-            <div class="flex gap-4 mb-4 justify-end">
+
+
+            @if (session('success'))
+                <div class="mb-4 p-4 flex items-center bg-green-100 text-green-700 border border-green-300 rounded-lg text-base">
+                    <i data-feather="check-circle" class="w-5 h-5 mr-3 text-green-500"></i>
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="mb-4 p-4 flex items-center bg-red-100 text-red-700 border border-red-300 rounded-lg text-base">
+                    <i data-feather="alert-circle" class="w-5 h-5 mr-3 text-red-500"></i>
+                    {{ session('error') }}
+                </div>
+            @endif
+
+
+            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                <div class="px-6 py-5 border-b bg-gray-50 flex items-center justify-between mb-4 rounded-lg">
+            <div class="flex items-center gap-3">
+                <span class="p-3 bg-indigo-100 text-indigo-600 rounded-xl">
+                    <i data-feather="clock" class="w-6 h-6"></i>
+                </span>
+
+                <div>
+                  <h3 class="text-lg font-bold text-gray-800">Riwayat Kehadiran Pegawai</h3>
+                    <p class="text-base text-gray-500">Dokumentasi lengkap mengenai kehadiran harian Anda.</p>
+                </div>
+            </div>
+            <div class="flex gap-4  justify-end">
                 <form action="{{ route('pegawai.kehadiran.checkin') }}" method="POST">
                     @csrf
                     <button type="submit" 
@@ -45,22 +73,8 @@
                     </button>
                 </form>
             </div>
+        </div>
 
-            @if (session('success'))
-                <div class="mb-4 p-4 flex items-center bg-green-100 text-green-700 border border-green-300 rounded-lg text-base">
-                    <i data-feather="check-circle" class="w-5 h-5 mr-3 text-green-500"></i>
-                    {{ session('success') }}
-                </div>
-            @endif
-            @if (session('error'))
-                <div class="mb-4 p-4 flex items-center bg-red-100 text-red-700 border border-red-300 rounded-lg text-base">
-                    <i data-feather="alert-circle" class="w-5 h-5 mr-3 text-red-500"></i>
-                    {{ session('error') }}
-                </div>
-            @endif
-
-
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="p-6 sm:px-8 bg-white border-b border-gray-200">
                     
                     <div class="overflow-x-auto">

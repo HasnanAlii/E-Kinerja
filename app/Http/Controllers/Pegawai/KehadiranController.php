@@ -24,45 +24,46 @@ class KehadiranController extends Controller
     {
         $pegawai = Auth::user()->detail;
 
+        // Cek apakah sudah absen masuk hari ini
+        $cekHariIni = Kehadiran::where('pegawai_id', $pegawai->id)
+            ->where('tanggal', date('Y-m-d'))
+            ->first();
+
+        if ($cekHariIni) {
+            return back()->with('error', 'Anda sudah melakukan absen masuk hari ini.');
+        }
+
         Kehadiran::create([
             'pegawai_id' => $pegawai->id,
             'tanggal' => date('Y-m-d'),
             'check_in' => now(),
         ]);
 
-        return back()->with('success', 'Check-in berhasil.');
+        return back()->with('success', 'Absen masuk berhasil!');
     }
 
-public function checkOut()
-{
-    $pegawai = Auth::user()->detail;
+    public function checkOut()
+    {
+        $pegawai = Auth::user()->detail;
 
-    // Ambil data check-in terakhir
-    $data = Kehadiran::where('pegawai_id', $pegawai->id)
-        ->orderBy('check_in', 'desc')
-        ->first();
+        $data = Kehadiran::where('pegawai_id', $pegawai->id)
+            ->where('tanggal', date('Y-m-d'))
+            ->first();
 
-    // Tidak ada data sama sekali
-    if (!$data) {
-        return back()->with('error', 'Anda belum pernah check-in.');
+        if (!$data) {
+            return back()->with('error', 'Anda belum melakukan absen masuk hari ini.');
+        }
+
+        if ($data->check_out !== null) {
+            return back()->with('error', 'Anda sudah melakukan absen pulang hari ini.');
+        }
+
+        $data->update([
+            'check_out' => now()
+        ]);
+
+        return back()->with('success', 'Absen pulang berhasil!');
     }
 
-    // Pastikan masih hari ini
-    if ($data->tanggal !== date('Y-m-d')) {
-        return back()->with('error', 'Check-Out hanya untuk check-in hari ini.');
-    }
-
-    // Pastikan belum check-out
-    if ($data->check_out !== null) {
-        return back()->with('error', 'Anda sudah melakukan check-out.');
-    }
-
-    // Update check-out
-    $data->update([
-        'check_out' => now()
-    ]);
-
-    return back()->with('success', 'Check-out berhasil.');
-}
 
 }

@@ -16,6 +16,23 @@
             @endif
 
             <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                {{-- HEADER --}}
+                <div class="px-6 py-5 border-b bg-gray-50 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="p-3 bg-indigo-100 text-indigo-600 rounded-xl">
+                            <i data-feather="activity" class="w-6 h-6"></i>
+                        </span>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800">
+                                Daftar Aktivitas Pegawai
+                            </h3>
+                            <p class="text-base text-gray-500">
+                                Lihat semua aktivitas pegawai secara realtime dan lengkap.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="p-6 sm:px-8 bg-white">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
