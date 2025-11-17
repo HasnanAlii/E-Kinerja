@@ -19,12 +19,17 @@ class AtasanKehadiranController extends Controller
     {
         $query = Kehadiran::with('pegawai.user');
 
-        // filter pegawai
+        // Default: hanya hari ini jika filter tanggal tidak dipakai
+        if (!$request->filled('tanggal_dari') && !$request->filled('tanggal_sampai')) {
+            $query->whereDate('tanggal', Carbon::today());
+        }
+
+        // Filter pegawai
         if ($request->filled('pegawai_id')) {
             $query->where('pegawai_id', $request->pegawai_id);
         }
 
-        // filter tanggal dari - sampai
+        // Filter tanggal
         if ($request->filled('tanggal_dari')) {
             $query->where('tanggal', '>=', Carbon::parse($request->tanggal_dari)->format('Y-m-d'));
         }
@@ -35,12 +40,13 @@ class AtasanKehadiranController extends Controller
         $data = $query->orderBy('tanggal', 'desc')->paginate(25)->withQueryString();
 
         $pegawais = PegawaiDetail::select('pegawai_details.*')
-    ->join('users', 'users.id', '=', 'pegawai_details.user_id')
-    ->orderBy('users.name')
-    ->get();
+            ->join('users', 'users.id', '=', 'pegawai_details.user_id')
+            ->orderBy('users.name')
+            ->get();
 
         return view('atasan.kehadiran.index', compact('data', 'pegawais'));
     }
+
 
     /**
      * Tampilkan detail satu record kehadiran

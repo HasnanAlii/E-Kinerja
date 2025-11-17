@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pegawai;
 
 use App\Http\Controllers\Controller;
 use App\Models\Kehadiran;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,12 +14,16 @@ class KehadiranController extends Controller
     {
         $pegawai = Auth::user()->detail;
 
-        $data = Kehadiran::where('pegawai_id', $pegawai->id)
+        $data = Kehadiran::with('izin')
+            ->where('pegawai_id', $pegawai->id)
+            ->whereDate('tanggal', Carbon::today()) 
             ->orderBy('tanggal', 'desc')
             ->paginate(10);
 
         return view('pegawai.kehadiran.index', compact('data'));
     }
+
+
 
     public function checkIn()
     {

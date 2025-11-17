@@ -43,7 +43,10 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                                    Pegawai
+                                    Nama Pegawai
+                                </th>
+                                 <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                    Jabatan
                                 </th>
                                 <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Bidang
@@ -58,14 +61,28 @@
                             @forelse ($bawahan as $item)
                                 <tr class="hover:bg-gray-50 transition-colors">
 
-                                    {{-- NAMA PEGAWAI --}}
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                
+                                <td class="px-6 py-4 flex items-center gap-3 whitespace-nowrap">
+                                    <img src="{{ asset('storage/' . ($item->user->profile_photo ?? 'default.png')) }}"
+                                        class="h-10 w-10 rounded-full object-cover border shadow-sm">
+
+                                    <div>
                                         <div class="text-base font-medium text-gray-900">
                                             {{ $item->user->name }}
                                         </div>
+                                     
+                                    </div>
+                                </td>
+
+                                   
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                      {{-- BIDANG --}}
+                                       <div class="text-sm text-gray-500">
+                                            {{ $item->user->pegawaiDetail->jabatan ?? '-' }}
+                                        </div>
+
                                     </td>
 
-                                    {{-- BIDANG --}}
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-base text-gray-700">
                                             {{ $item->bidang->nama_bidang }}

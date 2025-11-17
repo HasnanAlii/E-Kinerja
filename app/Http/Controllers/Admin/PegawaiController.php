@@ -15,14 +15,9 @@ class PegawaiController extends Controller
 {
     public function index()
     {
-        $data = PegawaiDetail::with([
-            'user',
-            'bidang',
-            'atasan',
-            'atasan.user'
-        ])
-        ->latest()
-        ->paginate(20);
+        $data = PegawaiDetail::with(['user', 'bidang', 'atasan', 'atasan.user'])
+            ->latest()
+            ->paginate(20);
 
         return view('admin.pegawai.index', compact('data'));
     }
@@ -34,46 +29,78 @@ class PegawaiController extends Controller
 
         return view('admin.pegawai.create', compact('bidang', 'atasan'));
     }
+public function show($id)
+{
+    $data = PegawaiDetail::with([
+        'user',
+        'bidang',
+        'atasan',
+        'atasan.user'
+    ])->findOrFail($id);
 
+    return view('admin.pegawai.show', compact('data'));
+}
     public function store(Request $request)
     {
         $request->validate([
-            'nama'         => 'required',
-            'email'        => 'required|email|unique:users,email',
-            'password'     => 'required|min:5',
-            'bidang_id'    => 'required|exists:bidang,id',
-            'atasan_id'    => 'nullable|exists:atasan,id',
-            'jabatan'      => 'nullable|string',
-            'nip'          => 'nullable|string',
-            'masa_kontrak' => 'nullable|date',
-            'foto'         => 'nullable|image|mimes:jpg,jpeg,png|max:12048',
+            // USER
+            'nama'            => 'required',
+            'email'           => 'required|email|unique:users,email',
+            'password'        => 'required|min:5',
+            'nik'             => 'nullable|string|unique:users,nik',
+            'jenis_kelamin'   => 'nullable|string',
+            'tanggal_lahir'   => 'nullable|date',
+            'tempat_lahir'    => 'nullable|string',
+            'agama'           => 'nullable|string',
+            'alamat'          => 'nullable|string',
+            'telp'            => 'nullable|string',
+            'profile_photo'   => 'nullable|image|max:2048',
+
+            // PEGAWAI DETAIL
+            'bidang_id'       => 'required|exists:bidang,id',
+            'atasan_id'       => 'nullable|exists:atasan,id',
+            'jabatan'         => 'nullable|string',
+            'nip'             => 'nullable|string',
+            'masa_kontrak'    => 'nullable|date',
+            'status'          => 'nullable|string',
+            'tanggal_masuk'   => 'nullable|date',
         ]);
 
-        // Buat user akun pegawai
+        // === Create USER ===
         $user = User::create([
-            'name'     => $request->nama,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password)
+            'name'          => $request->nama,
+            'email'         => $request->email,
+            'password'      => Hash::make($request->password),
+            'nik'           => $request->nik,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'tempat_lahir'  => $request->tempat_lahir,
+            'agama'         => $request->agama,
+            'alamat'        => $request->alamat,
+            'telp'          => $request->telp,
         ]);
 
         $user->assignRole('pegawai');
 
-        // Upload foto (jika ada)
-        $foto = null;
-        if ($request->hasFile('foto')) {
-            $foto = $request->file('foto')->store('pegawai', 'public');
+        // Upload Profile Photo
+        if ($request->hasFile('profile_photo')) {
+            $path = $request->file('profile_photo')->store('profile-photo', 'public');
+            $user->update(['profile_photo' => $path]);
         }
 
-        // Simpan detail pegawai
+      
+
+        // === Create Pegawai Detail ===
         PegawaiDetail::create([
             'user_id'      => $user->id,
             'bidang_id'    => $request->bidang_id,
             'atasan_id'    => $request->atasan_id,
-            'name'     => $request->nama,
+            'name'         => $request->nama,
             'nip'          => $request->nip,
             'jabatan'      => $request->jabatan,
             'masa_kontrak' => $request->masa_kontrak,
-            'foto'         => $foto,
+            'status'       => $request->status,
+            'tanggal_masuk'=> $request->tanggal_masuk,
         ]);
 
         return redirect()->route('admin.pegawai.index')
@@ -82,7 +109,7 @@ class PegawaiController extends Controller
 
     public function edit($id)
     {
-        $data   = PegawaiDetail::with(['user', 'atasan', 'atasan.user'])->findOrFail($id);
+        $data   = PegawaiDetail::with(['user', 'atasan'])->findOrFail($id);
         $bidang = Bidang::all();
         $atasan = Atasan::with(['user', 'bidang'])->get();
 
@@ -95,40 +122,55 @@ class PegawaiController extends Controller
         $user    = $pegawai->user;
 
         $request->validate([
-            'nama'         => 'required',
-            'email'        => 'required|email|unique:users,email,' . $user->id,
-            'password'     => 'nullable|min:5',
-            'bidang_id'    => 'required|exists:bidang,id',
-            'atasan_id'    => 'nullable|exists:atasan,id',
-            'jabatan'      => 'nullable|string',
-            'nip'          => 'nullable|string',
-            'masa_kontrak' => 'nullable|date',
-            'foto'         => 'nullable|image|mimes:jpg,jpeg,png|max:12048',
+            // USER
+            'nama'            => 'required',
+            'email'           => 'required|email|unique:users,email,' . $user->id,
+            'password'        => 'nullable|min:5',
+            'nik'             => 'nullable|string|unique:users,nik,' . $user->id,
+            'jenis_kelamin'   => 'nullable|string',
+            'tanggal_lahir'   => 'nullable|date',
+            'tempat_lahir'    => 'nullable|string',
+            'agama'           => 'nullable|string',
+            'alamat'          => 'nullable|string',
+            'telp'            => 'nullable|string',
+            'profile_photo'   => 'nullable|image|max:2048',
+
+            // PEGAWAI DETAIL
+            'bidang_id'       => 'required|exists:bidang,id',
+            'atasan_id'       => 'nullable|exists:atasan,id',
+            'jabatan'         => 'nullable|string',
+            'nip'             => 'nullable|string',
+            'masa_kontrak'    => 'nullable|date',
+            'status'          => 'nullable|string',
+            'tanggal_masuk'   => 'nullable|date',
         ]);
 
-        // Update data user
+        // === Update USER ===
         $user->update([
-            'name'     => $request->nama,
-            'email'    => $request->email,
-            'password' => $request->password ? Hash::make($request->password) : $user->password
+            'name'          => $request->nama,
+            'email'         => $request->email,
+            'password'      => $request->password ? Hash::make($request->password) : $user->password,
+            'nik'           => $request->nik,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'tempat_lahir'  => $request->tempat_lahir,
+            'agama'         => $request->agama,
+            'alamat'        => $request->alamat,
+            'telp'          => $request->telp,
         ]);
 
-        // Foto lama
-        $foto = $pegawai->foto;
-
-        // Jika upload foto baru, hapus foto lama
-        if ($request->hasFile('foto')) {
-
-            // Hapus foto lama jika ada
-            if ($foto && Storage::disk('public')->exists($foto)) {
-                Storage::disk('public')->delete($foto);
+        // Update Profile Photo
+        if ($request->hasFile('profile_photo')) {
+            if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
+                Storage::disk('public')->delete($user->profile_photo);
             }
-
-            // Upload foto baru
-            $foto = $request->file('foto')->store('pegawai', 'public');
+            $profile = $request->file('profile_photo')->store('profile-photo', 'public');
+            $user->update(['profile_photo' => $profile]);
         }
 
-        // Update data pegawai
+ 
+
+        // === Update Pegawai Detail ===
         $pegawai->update([
             'bidang_id'    => $request->bidang_id,
             'atasan_id'    => $request->atasan_id,
@@ -136,7 +178,8 @@ class PegawaiController extends Controller
             'nip'          => $request->nip,
             'jabatan'      => $request->jabatan,
             'masa_kontrak' => $request->masa_kontrak,
-            'foto'         => $foto,
+            'status'       => $request->status,
+            'tanggal_masuk'=> $request->tanggal_masuk,
         ]);
 
         return redirect()->route('admin.pegawai.index')
@@ -147,17 +190,18 @@ class PegawaiController extends Controller
     {
         $data = PegawaiDetail::findOrFail($id);
 
-        // Hapus foto
         if ($data->foto && Storage::disk('public')->exists($data->foto)) {
             Storage::disk('public')->delete($data->foto);
         }
 
-        // Hapus user
-        $data->user->delete();
+        if ($data->user->profile_photo && Storage::disk('public')->exists($data->user->profile_photo)) {
+            Storage::disk('public')->delete($data->user->profile_photo);
+        }
 
-        // Hapus detail
+        $data->user->delete();
         $data->delete();
 
         return back()->with('success', 'Pegawai berhasil dihapus.');
     }
 }
+

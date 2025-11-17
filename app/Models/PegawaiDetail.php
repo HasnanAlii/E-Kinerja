@@ -9,10 +9,20 @@ class PegawaiDetail extends Model
 {
     use HasFactory;
     protected $table = 'pegawai_details';
+
     protected $fillable = [
-        'user_id','name', 'bidang_id', 'atasan_id', 'nip', 'jabatan',
-        'masa_kontrak', 'foto'
+        'user_id',
+        'bidang_id',
+        'atasan_id',
+        'name',
+        'nip',
+        'jabatan',
+        'masa_kontrak',
+        'foto',
+        'status',
+        'tanggal_masuk',
     ];
+
 
     public function user()
     {

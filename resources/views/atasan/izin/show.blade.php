@@ -27,7 +27,7 @@
 
                 {{-- Pegawai --}}
                 <div class="flex items-center gap-4">
-                    <img src="{{ asset('storage/' . ($izin->pegawai->foto ?? 'default.png')) }}"
+                    <img src="{{ asset('storage/' . ($izin->pegawai->user->profile_photo ?? 'default.png')) }}"
                          class="h-14 w-14 rounded-full object-cover border shadow-sm">
 
                     <div>
@@ -104,6 +104,13 @@
 
                 {{-- TOMBOL AKSI --}}
                 <div class="pt-4 flex gap-4 justify-end">
+                    <a href="{{ route('atasan.izin.index') }}"
+                    class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300
+                            text-gray-700 rounded-lg shadow text-base">
+                        <i data-feather="arrow-left" class="w-5 h-5 mr-2"></i>
+                        Kembali
+                    </a>
+                    @if ($izin->status == 'menunggu')  
                     <form action="{{ route('atasan.izin.reject', $izin->id) }}" method="POST">
                         @csrf
                         <button class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700
@@ -120,9 +127,11 @@
                             Setujui
                         </button>
                     </form>
+                    @endif
 
                 </div>
-
+                
+                
             </div>
         </div>
 

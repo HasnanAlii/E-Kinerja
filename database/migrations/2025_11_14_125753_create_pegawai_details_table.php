@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('jabatan')->nullable();
             $table->date('masa_kontrak')->nullable();
             $table->string('foto')->nullable();  
+            $table->string('status')->nullable();
+            $table->date('tanggal_masuk')->nullable();
             $table->timestamps();
         });
     }

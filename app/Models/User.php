@@ -21,8 +21,19 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'nik',
+        'jenis_kelamin',
+        'tanggal_lahir',
+        'tempat_lahir',
+        'agama',
+        'alamat',
+        'telp',
         'password',
+        'profile_photo',
     ];
+
+
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -44,6 +55,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'tanggal_lahir' => 'date',
         ];
     }
    public function detail()

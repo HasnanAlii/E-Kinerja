@@ -15,12 +15,10 @@ public function up()
         $table->id();
         $table->foreignId('pegawai_id')->constrained('pegawai_details')->onDelete('cascade');
         $table->date('tanggal');
+        $table->enum('jenis', ['izin', 'sakit']);
         $table->time('check_in')->nullable();
         $table->time('check_out')->nullable();
-        $table->string('lokasi_check_in')->nullable();
-        $table->string('lokasi_check_out')->nullable();
-        $table->text('keterangan')->nullable();
-        $table->foreignId('verified_by')->nullable()->constrained('users')->nullOnDelete();
+   
 
         $table->timestamps();
     });

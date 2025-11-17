@@ -45,7 +45,7 @@
 
                     {{-- FOTO + NAMA --}}
                     <td class="px-6 py-4 flex items-center gap-3 whitespace-nowrap">
-                        <img src="{{ asset('storage/' . ($row->pegawai->foto ?? 'default.png')) }}"
+                        <img src="{{ asset('storage/' . ($row->pegawai->user->profile_photo ?? 'default.png')) }}"
                              class="h-10 w-10 rounded-full object-cover border shadow-sm">
 
                         <div>

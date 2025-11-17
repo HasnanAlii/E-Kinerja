@@ -16,10 +16,7 @@ class Kehadiran extends Model
         'tanggal',
         'check_in',
         'check_out',
-        'lokasi_check_in',
-        'lokasi_check_out',
-        'keterangan',     
-        'verified_by',    
+          'jenis'
     ];
 
     /**
@@ -37,4 +34,12 @@ class Kehadiran extends Model
     {
         return $this->belongsTo(User::class, 'verified_by');
     }
+    public function izin()
+    {
+        return $this->hasMany(IzinSakit::class, 'pegawai_id', 'pegawai_id')
+            ->where('status', 'disetujui');
+    }
+
+
+
 }

@@ -100,8 +100,6 @@
                                 <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Pegawai</th>
                                 <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Masuk</th>
                                 <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Pulang</th>
-                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Keterangan</th>
-                                <th class="px-6 py-3"></th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -109,15 +107,42 @@
                                 <tr class="hover:bg-gray-50 transition-colors">
                                     <td class="px-6 py-4 whitespace-nowrap text-base text-gray-700">{{ \Carbon\Carbon::parse($row->tanggal)->isoFormat('D MMM YYYY') }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-base font-medium text-gray-900">{{ $row->pegawai->user->name }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-base text-gray-700">{{ $row->check_in ? \Carbon\Carbon::parse($row->check_in)->format('H:i:s') : '-' }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-base text-gray-700">{{ $row->check_out ? \Carbon\Carbon::parse($row->check_out)->format('H:i:s') : '-' }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-base text-gray-700">{{ $row->keterangan ?? '-' }}</td>
+                                   {{-- Absen Masuk --}}
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        @if ($row->jenis)
+                                            <span class="text-base text-blue-600 font-semibold">
+                                                {{ ucfirst($row->jenis) }}
+                                            </span>
+                                        @else
+                                            <div class="text-base text-gray-900">
+                                                {{ $row->check_in ? \Carbon\Carbon::parse($row->check_in)->format('H:i:s') : '-' }}
+                                            </div>
+                                        @endif
+                                    </td>
+
+                                    {{-- Absen Pulang --}}
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        @if ($row->jenis)
+                                            <span class="text-base text-blue-600 font-semibold">
+                                                {{ ucfirst($row->jenis) }}
+                                            </span>
+                                        @else
+                                            @if ($row->check_out)
+                                                <div class="text-base text-gray-900">
+                                                    {{ \Carbon\Carbon::parse($row->check_out)->format('H:i:s') }}
+                                                </div>
+                                            @else
+                                                <span class="text-base text-gray-400 italic">Belum Absen Pulang</span>
+                                            @endif
+                                        @endif
+                                    </td>
+                               {{-- <td class="px-6 py-4 whitespace-nowrap text-base text-gray-700">{{ $row->keterangan ?? '-' }}</td>
                                     <td class="px-6 py-4 text-right text-base">
                                         <a href="{{ route('atasan.kehadiran.show', $row->id) }}" class="inline-flex items-center text-indigo-600 hover:text-indigo-900 font-medium">
                                             <i data-feather="edit" class="w-4 h-4 mr-1"></i>
                                             Detail / Koreksi
                                         </a>
-                                    </td>
+                                    </td> --}}
                                 </tr>
                             @empty
                                 <tr>

@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
     {
         // Buat role jika belum ada
         $adminRole   = Role::firstOrCreate(['name' => 'admin']);
-        $atasanRole  = Role::firstOrCreate(['name' => 'atasan']);
+        // $atasanRole  = Role::firstOrCreate(['name' => 'atasan']);
         $pegawaiRole = Role::firstOrCreate(['name' => 'pegawai']);
 
         // ADMIN
@@ -34,18 +34,7 @@ class UserSeeder extends Seeder
         );
         $admin->assignRole($adminRole);
 
-        // // ATASAN
-        $atasan = User::firstOrCreate(
-            ['email' => 'atasan@gmail.com'],
-            [
-                'name' => 'Atasan Dinas',
-                'password' => Hash::make('password'),
-                'email_verified_at' => Carbon::now(),
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]
-        );
-        $atasan->assignRole($atasanRole);
+;
 
         // PEGAWAI NON-PNS
         $pegawai = User::firstOrCreate(

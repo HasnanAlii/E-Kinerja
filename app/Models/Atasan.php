@@ -13,13 +13,18 @@ class Atasan extends Model
 
     protected $fillable = [
         'user_id',
-        'name',
         'bidang_id',
         'nip',
+        'name',
         'jabatan',
+        'status',
+        'golongan',
+        'tmt_golongan',
+        'tanggal_masuk',
         'masa_kontrak',
         'foto',
     ];
+
 
     /**
      * Relasi ke user

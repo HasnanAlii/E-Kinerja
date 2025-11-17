@@ -63,7 +63,7 @@
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                                        Pegawai
+                                        Nama Pegawai
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                                         Periode
@@ -83,13 +83,19 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse ($data as $row)
                                     <tr class="hover:bg-gray-50 transition-colors">
-                                        
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-6 py-4 flex items-center gap-3 whitespace-nowrap">
+                                        <img src="{{ asset('storage/' . ($row->pegawai->user->profile_photo ?? 'default.png')) }}"
+                                            class="h-10 w-10 rounded-full object-cover border shadow-sm">
+
+                                        <div>
                                             <div class="text-base font-medium text-gray-900">
                                                 {{ $row->pegawai->user->name }}
                                             </div>
-                                        </td>
-                                        
+                                            <div class="text-sm text-gray-500">
+                                                {{ $row->pegawai->jabatan ?? '-' }}
+                                            </div>
+                                        </div>
+                                    </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-base text-gray-700">
                                                 {{ $row->periode->nama_periode }}

@@ -93,41 +93,57 @@
                                 </tr>
                             </thead>
                             
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse ($data as $row)
-                                    <tr class="hover:bg-gray-50 transition-colors">
-                                        
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-base text-gray-900">
-                                                {{ \Carbon\Carbon::parse($row->tanggal)->isoFormat('D MMMM YYYY') }}
-                                            </div>
-                                        </td>
-                                        
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-base text-gray-900">
-                                                {{ $row->check_in ? \Carbon\Carbon::parse($row->check_in)->format('H:i:s') : '-' }}
-                                            </div>
-                                        </td>
-                                        
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            @if ($row->check_out)
-                                                <div class="text-base text-gray-900">
-                                                    {{ \Carbon\Carbon::parse($row->check_out)->format('H:i:s') }}
-                                                </div>
-                                            @else
-                                                <span class="text-base text-gray-400 italic">Belum Absen Pulang</span>
-                                            @endif
-                                        </td>
-                                        
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="3" class="px-6 py-4 text-center text-base text-gray-500">
-                                            Belum ada data kehadiran.
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
+                     <tbody class="bg-white divide-y divide-gray-200">
+    @forelse ($data as $row)
+        <tr class="hover:bg-gray-50 transition-colors">
+
+            {{-- Tanggal --}}
+            <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-base text-gray-900">
+                    {{ \Carbon\Carbon::parse($row->tanggal)->isoFormat('D MMMM YYYY') }}
+                </div>
+            </td>
+
+            {{-- Absen Masuk --}}
+            <td class="px-6 py-4 whitespace-nowrap">
+                @if ($row->jenis)
+                    <span class="text-base text-blue-600 font-semibold">
+                        {{ ucfirst($row->jenis) }}
+                    </span>
+                @else
+                    <div class="text-base text-gray-900">
+                        {{ $row->check_in ? \Carbon\Carbon::parse($row->check_in)->format('H:i:s') : '-' }}
+                    </div>
+                @endif
+            </td>
+
+            {{-- Absen Pulang --}}
+            <td class="px-6 py-4 whitespace-nowrap">
+                @if ($row->jenis)
+                    <span class="text-base text-blue-600 font-semibold">
+                        {{ ucfirst($row->jenis) }}
+                    </span>
+                @else
+                    @if ($row->check_out)
+                        <div class="text-base text-gray-900">
+                            {{ \Carbon\Carbon::parse($row->check_out)->format('H:i:s') }}
+                        </div>
+                    @else
+                        <span class="text-base text-gray-400 italic">Belum Absen Pulang</span>
+                    @endif
+                @endif
+            </td>
+
+        </tr>
+    @empty
+        <tr>
+            <td colspan="3" class="px-6 py-4 text-center text-base text-gray-500">
+                Belum ada data kehadiran.
+            </td>
+        </tr>
+    @endforelse
+</tbody>
+
                         </table>
                     </div>
 
