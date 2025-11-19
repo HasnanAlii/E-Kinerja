@@ -13,14 +13,21 @@ use Illuminate\Support\Facades\Storage;
 
 class PegawaiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $data = PegawaiDetail::with(['user', 'bidang', 'atasan', 'atasan.user'])
-            ->latest()
-            ->paginate(20);
+        $query = PegawaiDetail::with(['user', 'bidang', 'atasan', 'atasan.user'])->latest();
 
-        return view('admin.pegawai.index', compact('data'));
+        if ($request->filled('bidang_id')) {
+            $query->where('bidang_id', $request->bidang_id);
+        }
+
+        $data = $query->paginate(20)->withQueryString();
+
+        $bidang = Bidang::orderBy('nama_bidang')->get();
+
+        return view('admin.pegawai.index', compact('data', 'bidang'));
     }
+
 
     public function create()
     {

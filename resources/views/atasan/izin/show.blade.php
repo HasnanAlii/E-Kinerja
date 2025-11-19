@@ -27,9 +27,15 @@
 
                 {{-- Pegawai --}}
                 <div class="flex items-center gap-4">
-                    <img src="{{ asset('storage/' . ($izin->pegawai->user->profile_photo ?? 'default.png')) }}"
+                     @if ($izin->pegawai->user->profile_photo)
+                           <img src="{{ asset('storage/' . ($izin->pegawai->user->profile_photo )) }}"
                          class="h-14 w-14 rounded-full object-cover border shadow-sm">
-
+                    @else
+                       <div class="p-3 bg-indigo-50 text-indigo-600 rounded-full">
+                            <i data-feather="user" class="w-6 h-6"></i>
+                        </div>
+                    @endif
+                
                     <div>
                         <p class="text-lg font-semibold text-gray-900">
                             {{ $izin->pegawai->user->name }}

@@ -42,6 +42,19 @@
 
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if(session('sweet_alert'))
+    <script>
+        Swal.fire({
+            icon: 'warning',
+            title: 'Informasi',
+            text: '{{ session("sweet_alert") }}',
+            confirmButtonColor: '#3b82f6',
+            confirmButtonText: 'OK'
+        });
+    </script>
+    @endif
 
     <script> feather.replace();</script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

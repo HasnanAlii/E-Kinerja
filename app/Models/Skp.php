@@ -12,7 +12,23 @@ class Skp extends Model
     protected $table = 'skp';
 
     protected $fillable = [
-        'bidang_id', 'nama_target', 'indikator', 'periode'
+        'pegawai_id',
+        'bidang_id',
+        'nama_target',
+        'indikator',
+        'periode',
+        'target_kuantitas',
+        'satuan_kuantitas',
+        'target_kualitas',
+        'target_waktu',
+        'target_biaya',
+        'realisasi_kuantitas',
+        'realisasi_kualitas',
+        'realisasi_waktu',
+        'realisasi_biaya',
+        'nilai_capaian',
+        'status',
+        'catatan',
     ];
 
     public function bidang()
@@ -20,8 +36,13 @@ class Skp extends Model
         return $this->belongsTo(Bidang::class);
     }
 
-    public function progress()
+    public function pegawai()
     {
-        return $this->hasMany(SkpProgress::class, 'skp_id');
+        return $this->belongsTo(PegawaiDetail::class, 'pegawai_id');
+    }
+
+    public function progres()
+    {
+        return $this->hasMany(SkpProgres::class, 'skp_id');
     }
 }

@@ -36,12 +36,12 @@
                         </div>
                     </div>
 
-                    {{-- RIGHT BUTTON --}}
                     <a href="{{ route('admin.bidang.create') }}"
-                    class="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-blue-700 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-base">
-                        <i data-feather="plus" class="w-5 h-5 mr-2 -ml-1"></i>
+                        class="inline-flex items-center justify-center bg-indigo-600 text-white px-5 py-2.5 rounded-xl shadow-md shadow-indigo-200 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-300 transition-all duration-200 transform hover:-translate-y-0.5 active:scale-95 text-sm font-medium">
+                        <i data-feather="plus" class="w-4 h-4 mr-2"></i>
                         Tambah Bidang
                     </a>
+
 
                 </div>
 

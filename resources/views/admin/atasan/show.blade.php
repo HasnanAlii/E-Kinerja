@@ -39,7 +39,7 @@
                         {{-- Gradient Background --}}
                         <div class="h-24 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
 
-                        <div class="px-6 pb-6 text-center relative">
+                        <div class="px-6 pb-9 text-center relative">
 
                             {{-- Foto Profil --}}
                             <div class="-mt-12 mb-4 flex justify-center">
@@ -48,9 +48,6 @@
                                     @if ($atasan->user->profile_photo)
                                         <img src="{{ asset('storage/' . $atasan->user->profile_photo) }}"
                                             class="w-32 h-32 rounded-xl object-cover border-4 border-white shadow-md">
-                                    @elseif ($atasan->foto)
-                                        <img src="{{ asset('storage/' . $atasan->foto) }}"
-                                            class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-md">
                                     @else
                                         <div class="w-32 h-32 rounded-full bg-white flex items-center justify-center border-4 border-white shadow-md">
                                             <div class="w-full h-full rounded-full bg-indigo-50 flex items-center justify-center text-indigo-300">
@@ -133,7 +130,7 @@
                     {{-- SECTION: INFORMASI PRIBADI --}}
                     <div class="bg-white shadow-lg rounded-2xl border border-gray-100 overflow-hidden">
 
-                        <div class="px-6 py-4 border-b bg-gray-50/50 flex items-center">
+                        <div class="px-6 py-4  border-b bg-gray-50/50 flex items-center">
                             <i data-feather="user" class="w-5 h-5 text-indigo-500 mr-3"></i>
                             <h3 class="font-bold text-gray-800">Informasi Pribadi</h3>
                         </div>
@@ -214,11 +211,21 @@
                         </div>
 
                             <div>
-                                <span class="label">Tanggal Masuk</span>
-                                <span class="value">
-                                    {{ $atasan->tanggal_masuk ? \Carbon\Carbon::parse($atasan->tanggal_masuk)->translatedFormat('d F Y') : '-' }}
+                                <span class="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Masa Kerja</span>
+                                <span class="block text-base font-semibold text-gray-800">
+                                    @if ($atasan->tanggal_masuk)
+                                        @php
+                                            $masuk = \Carbon\Carbon::parse($atasan->tanggal_masuk);
+                                            $now   = \Carbon\Carbon::now();
+                                            $selisih = $masuk->diff($now);
+                                        @endphp
+                                        {{ $selisih->y }} Tahun {{ $selisih->m }} Bulan {{ $selisih->d }} Hari
+                                    @else
+                                        -
+                                    @endif
                                 </span>
                             </div>
+
 {{-- 
                             <div>
                                 <span class="label">Akhir Kontrak</span>

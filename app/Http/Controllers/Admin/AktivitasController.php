@@ -4,21 +4,33 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Aktivitas;
-
+use App\Models\Bidang;
+use Illuminate\Http\Request;
 class AktivitasController extends Controller
 {
     // public function __construct()
     // {
     //     $this->middleware('role:admin');
     // }
-
-    public function index()
+    public function index(Request $request)
     {
-        $data = Aktivitas::with(['pegawai.user'])
-            ->latest()
-            ->paginate(30);
+        // Query awal
+        $query = Aktivitas::with(['pegawai.user'])->latest();
 
-        return view('admin.aktivitas.index', compact('data'));
+        // Filter berdasarkan bidang
+        if ($request->filled('bidang_id')) {
+            $query->whereHas('pegawai', function ($q) use ($request) {
+                $q->where('bidang_id', $request->bidang_id);
+            });
+        }
+
+        // Hasil akhir + pagination tetap ikut query string
+        $data = $query->paginate(30)->withQueryString();
+
+        // Untuk dropdown
+        $bidang = Bidang::all();
+
+        return view('admin.aktivitas.index', compact('data', 'bidang'));
     }
 
     public function show($id)

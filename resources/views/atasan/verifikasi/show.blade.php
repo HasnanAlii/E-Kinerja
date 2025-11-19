@@ -35,21 +35,19 @@
                                 </dd>
                             </div>
 
-<div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-    <dt class="text-sm font-medium text-gray-500">Uraian Tugas</dt>
-    <dd class="text-sm text-gray-900 sm:col-span-2 whitespace-pre-wrap text-left">
-        {{ $data->uraian_tugas }}
-    </dd>
-</div>
+                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                                <dt class="text-sm font-medium text-gray-500">Uraian Tugas</dt>
+                                <dd class="text-sm text-gray-900 sm:col-span-2 whitespace-pre-wrap text-left">
+                                    {{ $data->uraian_tugas }}
+                                </dd>
+                            </div>
 
-<div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-    <dt class="text-sm font-medium text-gray-500">Hasil Pekerjaan</dt>
-    <dd class="text-sm text-gray-900 sm:col-span-2 whitespace-pre-wrap text-left">
-        {{ $data->hasil_pekerjaan ?? '-' }}
-    </dd>
-</div>
-
-
+                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+                                <dt class="text-sm font-medium text-gray-500">Hasil Pekerjaan</dt>
+                                <dd class="text-sm text-gray-900 sm:col-span-2 whitespace-pre-wrap text-left">
+                                    {{ $data->hasil_pekerjaan ?? '-' }}
+                                </dd>
+                            </div>
 
                             @if ($data->bukti_file)
                                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
@@ -179,7 +177,7 @@
                 title: "Tolak Aktivitas",
                 input: "textarea",
                 inputLabel: "Alasan Penolakan (Wajib diisi)",
-                inputPlaceholder: "Contoh: Hasil tidak valid...",
+                inputPlaceholder: "Masukan alasan",
                 inputAttributes: { "aria-label": "Alasan penolakan" },
                 showCancelButton: true,
                 confirmButtonText: "Tolak",
@@ -207,7 +205,7 @@
                 title: "Minta Revisi",
                 input: "textarea",
                 inputLabel: "Catatan Revisi (Wajib diisi)",
-                inputPlaceholder: "Contoh: Mohon tambahkan bukti lampiran...",
+                inputPlaceholder: "Masukan Revisi",
                 showCancelButton: true,
                 confirmButtonText: "Kirim Revisi",
                 cancelButtonText: "Batal",

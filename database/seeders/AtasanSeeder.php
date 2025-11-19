@@ -7,72 +7,83 @@ use App\Models\Atasan;
 use App\Models\User;
 use App\Models\Bidang;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class AtasanSeeder extends Seeder
 {
     public function run(): void
     {
-        // Pastikan ada bidang
+        /**
+         * 1. Pastikan role 'atasan' ada
+         */
+        Role::firstOrCreate(['name' => 'atasan', 'guard_name' => 'web']);
+
+        /**
+         * 2. Pastikan bidang tersedia
+         */
         if (Bidang::count() == 0) {
             Bidang::create(['nama_bidang' => 'Umum']);
             Bidang::create(['nama_bidang' => 'Keuangan']);
             Bidang::create(['nama_bidang' => 'Perencanaan']);
         }
 
+        // Ambil ulang setelah dibuat
         $bidang = Bidang::all();
 
-        // Buat akun user atasan + entri tabel atasan
+
+        /**
+         * 3. Daftar atasan
+         */
         $atasanList = [
-            [
-                'name' => 'Budi Santoso',
-                'jabatan' => 'Kepala Bidang Umum',
-                'nip' => '19791231 200501 1 001',
-            ],
+
             [
                 'name' => 'Siti Rahmawati',
                 'jabatan' => 'Kepala Bidang Keuangan',
                 'nip' => '19820414 200601 2 002',
+                'bidang' => 'Keuangan',
             ],
-            [
-                'name' => 'Dedi Permana',
-                'jabatan' => 'Kepala Perencanaan',
-                'nip' => '19880521 201001 1 003',
-            ],
-            [
-                'name' => 'Nur Aisyah',
-                'jabatan' => 'Koordinator Internal',
-                'nip' => null,
-            ],
-            [
-                'name' => 'Rizky Maulana',
-                'jabatan' => 'Supervisor Operasional',
-                'nip' => null,
-            ],
+       
+          
         ];
 
-        foreach ($atasanList as $key => $a) {
 
-            // Buat user akun
+        /**
+         * 4. Proses pembuatan user + atasan
+         */
+        foreach ($atasanList as $a) {
+
+            // Generate email otomatis
+            $email = strtolower(str_replace(' ', '', $a['name'])) . '@example.com';
+
+            // Buat user
             $user = User::create([
                 'name' => $a['name'],
-                'email' => strtolower(str_replace(' ', '', $a['name'])) . '@example.com',
+                'email' => $email,
                 'password' => Hash::make('password'),
             ]);
 
-            // Assign role atasan (optional)
-            if (method_exists($user, 'assignRole')) {
-                $user->assignRole('atasan');
+            // Assign role
+            $user->assignRole('atasan');
+
+            // Dapatkan bidang sesuai nama (jika ada)
+            $bidang_id = 1;
+
+            if ($a['bidang']) {
+                $bid = Bidang::where('nama_bidang', $a['bidang'])->first();
+                if ($bid) {
+                    $bidang_id = $bid->id;
+                }
             }
 
-            // Buat entri atasan
+            // Simpan ke tabel atasan
             Atasan::create([
-                'user_id'   => $user->id,
-                'bidang_id' => $bidang->random()->id,
-                'nip'       => $a['nip'],
-                'name'      => $a['name'],
-                'jabatan'   => $a['jabatan'],
+                'user_id'      => $user->id,
+                'bidang_id'    => $bidang_id,     // bisa null
+                'nip'          => $a['nip'],
+                'name'         => $a['name'],
+                'jabatan'      => $a['jabatan'],
                 'masa_kontrak' => now()->addYear(),
-                'foto'      => null,
+                'foto'         => null,
             ]);
         }
     }

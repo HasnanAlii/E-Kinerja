@@ -15,7 +15,7 @@ class Penilaian extends Model
         'pegawai_id', 'atasan_id', 'periode_id',
         'skp', 'kedisiplinan', 'perilaku', 'komunikasi',
         'tanggung_jawab', 'kerja_sama', 'produktivitas',
-        'nilai_total', 'kategori'
+        'nilai_total', 'kategori','status'
     ];
 
     public function pegawai()

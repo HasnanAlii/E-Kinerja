@@ -34,8 +34,8 @@
                 </div>
             </div>
 
-            {{-- TABLE --}}
-            <div class="p-6 sm:px-8 bg-white border-gray-200">
+            
+            <div class=" bg-white border-gray-200">
 
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
@@ -60,19 +60,31 @@
                         <tbody class="bg-white divide-y divide-gray-200">
                             @forelse ($bawahan as $item)
                                 <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="px-6 py-4 flex items-center gap-3 whitespace-nowrap">
+                                        @if ($item->user->profile_photo)
+                                            <img 
+                                                src="{{ asset('storage/' . $item->user->profile_photo) }}"
+                                                class="h-10 w-10 rounded-full object-cover border shadow-sm"
+                                                alt="Foto Profil"
+                                            >
+                                        @else
+                                            <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center border shadow-sm">
+                                                <div class="w-full h-full rounded-full bg-indigo-50 flex items-center justify-center text-indigo-300">
+                                                    <i data-feather="user" class="w-5 h-5"></i>
+                                                </div>
+                                            </div>
+                                        @endif
 
-                                
-                                <td class="px-6 py-4 flex items-center gap-3 whitespace-nowrap">
-                                    <img src="{{ asset('storage/' . ($item->user->profile_photo ?? 'default.png')) }}"
-                                        class="h-10 w-10 rounded-full object-cover border shadow-sm">
-
-                                    <div>
-                                        <div class="text-base font-medium text-gray-900">
-                                            {{ $item->user->name }}
+                                        <div class="flex flex-col">
+                                            <span class="text-base font-semibold text-gray-900">
+                                                {{ $item->user->name }}
+                                            </span>
+                                            <span class="text-sm text-gray-500">
+                                                {{ $item->pegawai->jabatan ?? '-' }}
+                                            </span>
                                         </div>
-                                     
-                                    </div>
-                                </td>
+                                    </td>
+                            
 
                                    
                                     <td class="px-6 py-4 whitespace-nowrap">

@@ -11,15 +11,21 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class AdminAtasanController extends Controller
-{
-    public function index()
-    {
-        $atasan = Atasan::with(['user', 'bidang'])
-            ->latest()
-            ->paginate(20);
 
-        return view('admin.atasan.index', compact('atasan'));
-    }
+{public function index()
+{
+    $bidang = Bidang::all(); 
+
+    $atasan = Atasan::with(['user', 'bidang'])
+        ->when(request('bidang_id'), function ($query) {
+            $query->where('bidang_id', request('bidang_id'));
+        })
+        ->latest()
+        ->paginate(20)
+        ->withQueryString(); 
+
+    return view('admin.atasan.index', compact('atasan', 'bidang'));
+}
 
     public function create()
     {

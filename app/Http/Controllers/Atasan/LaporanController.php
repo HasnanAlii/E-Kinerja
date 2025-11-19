@@ -21,7 +21,7 @@ class LaporanController extends Controller
         $periode = PeriodePenilaian::all();
 
         $query = Penilaian::with(['pegawai.user', 'periode'])
-            ->where('atasan_id', Auth::id());
+            ->where('atasan_id', Auth::user()->atasan->id);
 
         if ($request->periode_id) {
             $query->where('periode_id', $request->periode_id);

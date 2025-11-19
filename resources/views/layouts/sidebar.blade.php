@@ -35,6 +35,11 @@ $user = Auth::user();
                 <i data-feather="grid" class="w-5 h-5 mr-3"></i>
                 Manajemen Bidang
             </a>
+              <a href="{{ route('admin.kehadiran.index') }}" 
+               class="flex items-center p-2 rounded-lg {{ request()->routeIs('admin.kehadiran.*')||request()->routeIs('atasan.izin.*') ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+                <i data-feather="map-pin" class="w-5 h-5 mr-3"></i>
+                Kehadiran Pegawai
+            </a>
             <a href="{{ route('admin.periode.index') }}" 
                class="flex items-center p-2 rounded-lg {{ request()->routeIs('admin.periode.*') ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
                 <i data-feather="calendar" class="w-5 h-5 mr-3"></i>
@@ -81,6 +86,11 @@ $user = Auth::user();
                 <i data-feather="file-text" class="w-5 h-5 mr-3"></i>
                 Laporan Penilaian
             </a>
+             <a href="{{ route('atasan.pegawai.index') }}" 
+               class="flex items-center p-2 rounded-lg {{ request()->routeIs('atasan.pegawai.*') ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+                <i data-feather="file-text" class="w-5 h-5 mr-3"></i>
+               Kelola Skp
+            </a> 
         </nav>
         @endrole
 

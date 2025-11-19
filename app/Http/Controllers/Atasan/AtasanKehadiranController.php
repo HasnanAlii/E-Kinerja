@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Atasan;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bidang;
 use App\Models\Kehadiran;
 use App\Models\Pegawai;
 use App\Models\PegawaiDetail;
@@ -46,6 +47,43 @@ class AtasanKehadiranController extends Controller
 
         return view('atasan.kehadiran.index', compact('data', 'pegawais'));
     }
+
+       public function indexx(Request $request)
+    {
+        $query = Kehadiran::with('pegawai.user', 'pegawai.bidang');
+
+        // Default: hanya hari ini jika filter tanggal tidak dipakai
+        if (!$request->filled('tanggal_dari') && !$request->filled('tanggal_sampai')) {
+            $query->whereDate('tanggal', Carbon::today());
+        }
+
+        // ======================
+        // 🔍 FILTER BIDANG
+        // ======================
+        if ($request->filled('bidang_id')) {
+            $query->whereHas('pegawai', function ($q) use ($request) {
+                $q->where('bidang_id', $request->bidang_id);
+            });
+        }
+
+        // Filter tanggal
+        if ($request->filled('tanggal_dari')) {
+            $query->where('tanggal', '>=', Carbon::parse($request->tanggal_dari)->format('Y-m-d'));
+        }
+        if ($request->filled('tanggal_sampai')) {
+            $query->where('tanggal', '<=', Carbon::parse($request->tanggal_sampai)->format('Y-m-d'));
+        }
+
+        $data = $query->orderBy('tanggal', 'desc')
+                    ->paginate(25)
+                    ->withQueryString();
+
+        // Untuk dropdown bidang
+        $bidangs = Bidang::orderBy('nama_bidang')->get();
+
+        return view('admin.kehadiran.index', compact('data', 'bidangs'));
+    }
+
 
 
     /**

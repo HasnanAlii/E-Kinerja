@@ -194,10 +194,15 @@
 
                             {{-- Status --}}
                             <div>
-                                <label class="font-medium text-gray-700">Status</label>
-                                <input type="text" name="status" value="{{ old('status') }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                                <label class="font-medium text-gray-700">Status Kepegawaian</label>
+                                <select name="status"
+                                        class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                                    <option value="">-- Pilih Status --</option>
+                                    <option value="Aktif" {{ old('status') == 'Aktif' ? 'selected' : '' }}>Aktif</option>
+                                    <option value="Tidak Aktif" {{ old('status') == 'Tidak Aktif' ? 'selected' : '' }}>Tidak Aktif</option>
+                                </select>
                             </div>
+
 
                             {{-- Tanggal Masuk --}}
                             <div>
@@ -205,6 +210,8 @@
                                 <input type="date" name="tanggal_masuk" value="{{ old('tanggal_masuk') }}"
                                        class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
                             </div>
+                            </div>
+
 
                             {{-- Masa Kontrak --}}
                             {{-- <div>
@@ -214,7 +221,7 @@
                             </div> --}}
 
 
-                        </div>
+                        
                     </div>
 
                     {{-- ================================================= --}}

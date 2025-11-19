@@ -17,7 +17,6 @@ class PegawaiDetailSeeder extends Seeder
 
         // Ambil user sesuai UserSeeder
         $admin   = User::where('email', 'admin@gmail.com')->first();
-        $atasan  = User::where('email', 'atasan@gmail.com')->first();
         $pegawai = User::where('email', 'pegawai@gmail.com')->first();
 
         $data = [];
@@ -25,11 +24,11 @@ class PegawaiDetailSeeder extends Seeder
         /**
          * 2) PEGAWAI — punya atasan_id
          */
-        if ($pegawai && $atasan) {
+        if ($pegawai) {
             $data[] = [
                 'user_id'      => $pegawai->id,
                 'bidang_id'    => $bidang->id,
-                'atasan_id'    => $atasan->id, // Relasi ke tabel atasan
+                'atasan_id'    => 1, // Relasi ke tabel atasan
                 'nip'          => '2001',
                 'jabatan'      => 'Staf Non-PNS',
                 'masa_kontrak' => Carbon::now()->addMonths(6),

@@ -31,67 +31,80 @@
                     {{ session('success') }}
                 </div>
             @endif
-           {{-- HEADER CARD --}}
-            <div class="px-6 py-5 border bg-gray-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-t-lg shadow-sm">
+         
+          <div class="bg-white shadow-xl sm:rounded-2xl overflow-hidden border border-gray-100">
 
-            {{-- LEFT: ICON + TITLE --}}
-            <div class="flex items-center gap-3">
-                <span class="p-3 bg-indigo-100 text-indigo-600 rounded-xl">
-                    <i data-feather="clock" class="w-6 h-6"></i>
-                </span>
-                <div>
-                    <h3 class="text-xl font-bold text-gray-800">Rekap Kehadiran Pegawai</h3>
-                    <p class="text-base text-gray-500">
-                        Lihat dan kelola data kehadiran berdasarkan pegawai & tanggal.
-                    </p>
+    {{-- HEADER CARD --}}
+    <div class="px-6 py-6 border-b border-gray-200 bg-gray-50 flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+
+        {{-- LEFT SECTION: ICON + TITLE --}}
+        <div class="flex items-center gap-4">
+            <div class="p-3 bg-indigo-50 text-indigo-600 rounded-2xl shadow-sm ring-1 ring-indigo-100">
+                <i data-feather="clock" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold text-gray-900 tracking-tight">Rekap Kehadiran Pegawai</h3>
+                <p class="text-sm text-gray-500 mt-0.5">
+                    Lihat dan kelola data kehadiran berdasarkan pegawai & periode tanggal.
+                </p>
+            </div>
+        </div>
+
+        {{-- RIGHT SECTION: FILTER FORM --}}
+        <form method="GET" class="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
+
+            {{-- Filter Pegawai --}}
+            <div class="relative w-full sm:w-56"> <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                    <i data-feather="user" class="w-4 h-4"></i>
+                </div>
+                <select name="pegawai_id"
+                    class="w-full pl-10 pr-8 py-2.5 bg-white border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 cursor-pointer appearance-none hover:bg-gray-100">
+                    <option value="">Semua Pegawai</option>
+                    @foreach($pegawais as $p)
+                        <option value="{{ $p->id }}" @selected(request('pegawai_id') == $p->id)>
+                            {{ $p->user->name }}
+                        </option>
+                    @endforeach
+                </select>
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
+                    <i data-feather="chevron-down" class="w-4 h-4"></i>
                 </div>
             </div>
 
-
-            <form method="GET" class="flex flex-wrap items-end gap-4">
-
-                {{-- Pegawai --}}
-                <div class="flex flex-col w-48">
-                    <label for="pegawai_id" class="text-sm font-medium text-gray-700">Pegawai</label>
-                    <select name="pegawai_id" id="pegawai_id"
-                        class="h-10 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-                        <option value="">-- Semua --</option>
-                        @foreach($pegawais as $p)
-                            <option value="{{ $p->id }}" @selected(request('pegawai_id') == $p->id)>
-                                {{ $p->user->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                {{-- Dari --}}
-                <div class="flex flex-col w-40">
-                    <label for="tanggal_dari" class="text-sm font-medium text-gray-700">Dari</label>
-                    <input type="date" name="tanggal_dari" id="tanggal_dari"
+            {{-- Filter Tanggal (Grouped Input) --}}
+            <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl p-1 shadow-sm">
+                
+                {{-- Tanggal Dari --}}
+                <div class="relative flex-1 sm:w-36">
+                    <input type="date" name="tanggal_dari" 
                         value="{{ request('tanggal_dari') }}"
-                        class="h-10 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                        class="w-full py-1.5 pl-2 pr-0 bg-transparent border-none text-gray-700 text-sm focus:ring-0 cursor-pointer"
+                        placeholder="Dari">
                 </div>
 
-                {{-- Sampai --}}
-                <div class="flex flex-col w-40">
-                    <label for="tanggal_sampai" class="text-sm font-medium text-gray-700">Sampai</label>
-                    <input type="date" name="tanggal_sampai" id="tanggal_sampai"
+                <span class="text-gray-400 text-xs font-medium px-1">s/d</span>
+
+                {{-- Tanggal Sampai --}}
+                <div class="relative flex-1 sm:w-36">
+                    <input type="date" name="tanggal_sampai" 
                         value="{{ request('tanggal_sampai') }}"
-                        class="h-10 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                        class="w-full py-1.5 pl-0 pr-2 bg-transparent border-none text-gray-700 text-sm focus:ring-0 cursor-pointer text-right"
+                        placeholder="Sampai">
                 </div>
+            </div>
 
-                {{-- Tombol Filter --}}
-                <div>
-                    <button type="submit"
-                        class="h-10  mt-6 inline-flex items-center px-4 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 text-sm">
-                        <i data-feather="filter" class="w-4 h-4 mr-2"></i>
-                        Filter
-                    </button>
-                </div>
-            </form>
-        </div>
+            {{-- Tombol Filter --}}
+            <button type="submit"
+                class="inline-flex items-center justify-center bg-indigo-600 text-white px-5 py-2.5 rounded-xl shadow-md shadow-indigo-200 hover:bg-indigo-700 transition-all duration-200 transform hover:-translate-y-0.5 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <i data-feather="filter" class="w-4 h-4 mr-2"></i>
+                <span class="font-medium text-sm">Filter</span>
+            </button>
+
+        </form>
+    </div>
+
         <div class="bg-white overflow-hidden shadow-xl sm:rounded-b-lg" >
-            <div class="p-6 sm:px-8 bg-white border-b border-gray-200">
+            <div class=" bg-white border-b border-gray-200">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">

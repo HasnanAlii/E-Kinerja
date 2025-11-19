@@ -191,19 +191,28 @@
                                     </span>
                                 </div>
 
-                                <div>
-                                    <span class="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Tanggal Bergabung</span>
+                              <div>
+                                    <span class="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Masa Kerja</span>
                                     <span class="block text-base font-semibold text-gray-800">
-                                        {{ $data->tanggal_masuk ? \Carbon\Carbon::parse($data->tanggal_masuk)->translatedFormat('d F Y') : '-' }}
+                                        @if ($data->tanggal_masuk)
+                                            @php
+                                                $masuk = \Carbon\Carbon::parse($data->tanggal_masuk);
+                                                $now   = \Carbon\Carbon::now();
+                                                $selisih = $masuk->diff($now);
+                                            @endphp
+                                            {{ $selisih->y }} Tahun {{ $selisih->m }} Bulan {{ $selisih->d }} Hari
+                                        @else
+                                            -
+                                        @endif
                                     </span>
                                 </div>
 
-                                <div>
+                                {{-- <div>
                                     <span class="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Akhir Kontrak</span>
                                     <span class="block text-base font-semibold text-gray-800">
                                         {{ $data->masa_kontrak ? \Carbon\Carbon::parse($data->masa_kontrak)->translatedFormat('d F Y') : '— (Permanen)' }}
                                     </span>
-                                </div>
+                                </div> --}}
 
                             </div>
                         </div>

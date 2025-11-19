@@ -12,7 +12,12 @@ class SkpProgress extends Model
     protected $table = 'skp_progres';
 
     protected $fillable = [
-        'pegawai_id', 'skp_id', 'persentase', 'bukti_file', 'tanggal_update'
+        'pegawai_id',
+        'skp_id',
+        'persentase',
+        'bukti_file',
+        'keterangan',
+        'tanggal_update',
     ];
 
     public function pegawai()
@@ -22,6 +27,6 @@ class SkpProgress extends Model
 
     public function skp()
     {
-        return $this->belongsTo(Skp::class);
+        return $this->belongsTo(Skp::class, 'skp_id');
     }
 }

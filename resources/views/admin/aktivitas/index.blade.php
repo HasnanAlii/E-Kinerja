@@ -31,6 +31,27 @@
                             </p>
                         </div>
                     </div>
+                            {{-- Filter Form --}}
+                    <form method="GET" class="flex items-center">
+                        <div class="relative w-full md:w-auto">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                <i data-feather="filter" class="w-4 h-4"></i>
+                            </div>
+                            <select name="bidang_id" onchange="this.form.submit()" 
+                                class="w-full md:w-64 pl-10 pr-8 py-2.5 bg-white border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 cursor-pointer appearance-none hover:bg-gray-100">
+                                <option value="">Semua Bidang</option>
+                                @foreach($bidang as $b)
+                                    <option value="{{ $b->id }}" {{ request('bidang_id') == $b->id ? 'selected' : '' }}>
+                                        {{ $b->nama_bidang }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            {{-- Custom Arrow Icon (Optional, Tailwind biasanya sudah handle, tapi ini untuk memastikan) --}}
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
+                                <i data-feather="chevron-down" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+                    </form>
                 </div>
 
                 <div class="p-6 sm:px-8 bg-white">

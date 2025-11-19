@@ -15,7 +15,7 @@ public function up()
         $table->id();
         $table->foreignId('pegawai_id')->constrained('pegawai_details')->onDelete('cascade');
         $table->date('tanggal');
-        $table->enum('jenis', ['izin', 'sakit']);
+        $table->string('jenis')->nullable();
         $table->time('check_in')->nullable();
         $table->time('check_out')->nullable();
    
