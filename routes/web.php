@@ -21,11 +21,21 @@ use App\Http\Controllers\Atasan\AtasanKehadiranController;
 use App\Http\Controllers\Admin\AdminAtasanController;
 use App\Http\Controllers\Atasan\SkpController as AtasanSkpController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\SkpHasilKerjaController;
+
+// Menampilkan form tambah RHK berdasarkan ID SKP
+Route::get('/skp/{skp}/hasil-kerja/create', [SkpHasilKerjaController::class, 'create'])->name('skp.hasil_kerja.create');
+
+// Menyimpan data RHK
+Route::post('/skp/{skp}/hasil-kerja', [SkpHasilKerjaController::class, 'store'])->name('skp.hasil_kerja.store');
+use App\Http\Controllers\SkpPerilakuController;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
@@ -108,6 +118,13 @@ Route::middleware(['auth', 'role:atasan'])->prefix('atasan')->name('atasan.')->g
 
     Route::post('/izin/{id}/reject', [AtasanIzinSakitController::class, 'reject'])
         ->name('izin.reject');
+
+    Route::get('/skp', [AtasanSkpController::class, 'index'])->name('skp.index');
+    Route::get('/skp/pegawai/{id}', [AtasanSkpController::class, 'showPegawai'])->name('pegawai.show');
+
+    Route::get('/skp/{id}', [AtasanSkpController::class, 'showSkp'])->name('skp.show');
+    Route::put('/skp/{id}/status', [AtasanSkpController::class, 'updateStatus'])->name('skp.updateStatus');
+    Route::post('/skp/{id}/nilai', [AtasanSkpController::class, 'nilai'])->name('skp.nilai');
     // Tambah SKP
     Route::get('/atasan/skp/create', [AtasanSKPController::class, 'create'])
         ->name('skp.create');
@@ -140,7 +157,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/admin/penilaian/validasi', [PenilaianAdmin::class, 'validasi'])->name('penilaian.validasi');   
 
-
     Route::resource('periode', PeriodeController::class);
     Route::post('periode/{id}/aktifkan', [PeriodeController::class, 'aktifkan'])->name('periode.aktifkan');
     Route::resource('pengguna', PenggunaController::class)->only(['index', 'edit', 'update']);
@@ -148,6 +164,36 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Monitoring Aktivitas
     Route::resource('aktivitas', AktivitasAdmin::class)->only(['index', 'show']);
 });
+
+Route::middleware('auth')->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'list']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'readAll']);
+});
+
+
+Route::middleware(['auth'])->group(function () {
+
+    // SKP Utama
+    Route::get('/skp', [SkpController::class, 'index'])->name('skp.index');
+    Route::get('/skp/create', [SkpController::class, 'create'])->name('skp.create');
+    Route::post('/skp', [SkpController::class, 'store'])->name('skp.store');
+    Route::get('/skp/{id}', [SkpController::class, 'show'])->name('skp.show');
+    Route::get('/skp/{id}/edit', [SkpController::class, 'edit'])->name('skp.edit');
+    Route::put('/skp/{id}', [SkpController::class, 'update'])->name('skp.update');
+    Route::delete('/skp/{id}', [SkpController::class, 'destroy'])->name('skp.destroy');
+    Route::post('/skp/{id}/ajukan', [SkpController::class, 'ajukan'])->name('skp.ajukan');
+
+
+    // Menampilkan Form Umpan Balik
+    Route::get('/skp/{id}/feedback', [AtasanSkpController::class, 'editFeedback'])->name('skp.feedback.edit');
+
+    // Menyimpan Umpan Balik
+    Route::put('/skp/{id}/feedback', [AtasanSkpController::class, 'updateFeedback'])->name('skp.feedback.update');
+
+        
+});
+
+
 
 require __DIR__.'/auth.php';
 

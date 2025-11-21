@@ -109,9 +109,10 @@
                             <div>
                                 <label class="font-medium text-gray-700">Tanggal Lahir</label>
                                 <input type="date" name="tanggal_lahir"
-                                       value="{{ old('tanggal_lahir', $data->user->tanggal_lahir) }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500">
+                                    value="{{ old('tanggal_lahir', $data->user->tanggal_lahir ? \Carbon\Carbon::parse($data->user->tanggal_lahir)->format('Y-m-d') : '') }}"
+                                    class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
                             </div>
+
 
                             {{-- Agama --}}
                             <div>

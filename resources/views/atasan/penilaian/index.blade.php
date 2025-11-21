@@ -51,7 +51,10 @@
                                 <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Bidang
                                 </th>
-                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                 <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                    Status
+                                </th>
+                                <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Aksi
                                 </th>
                             </tr>
@@ -79,9 +82,9 @@
                                             <span class="text-base font-semibold text-gray-900">
                                                 {{ $item->user->name }}
                                             </span>
-                                            <span class="text-sm text-gray-500">
-                                                {{ $item->pegawai->jabatan ?? '-' }}
-                                            </span>
+                                            {{-- <span class="text-sm text-gray-500">
+                                                {{ $item->jabatan }}
+                                            </span> --}}
                                         </div>
                                     </td>
                             
@@ -101,8 +104,25 @@
                                         </div>
                                     </td>
 
+                                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                                        <div class="text-base">
+
+                                            @if ($item->sudah_dinilai == 0)
+                                                <span class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded-full">
+                                                    Belum Dinilai
+                                                </span>
+                                            @else
+                                                <span class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded-full">
+                                                    Sudah Dinilai
+                                                </span>
+                                            @endif
+
+                                        </div>
+                                    </td>
+
+
                                     {{-- AKSI --}}
-                                    <td class="px-6 py-4 whitespace-nowrap text-base font-medium">
+                                    <td class="px-6 py-4 whitespace-nowrap text-center text-base font-medium">
                                         <a href="{{ route('atasan.penilaian.create', $item->id) }}" 
                                            class="inline-flex items-center text-indigo-600 hover:text-indigo-900">
                                            <i data-feather="edit-3" class="w-4 h-4 mr-1"></i>

@@ -14,7 +14,6 @@ class PegawaiDetail extends Model
         'user_id',
         'bidang_id',
         'atasan_id',
-        'name',
         'nip',
         'jabatan',
         'masa_kontrak',
@@ -23,6 +22,15 @@ class PegawaiDetail extends Model
         'tanggal_masuk',
     ];
 
+    public function skp()
+    {
+        return $this->hasMany(Skp::class, 'pegawai_id');
+    }
+
+    public function skpDinilai()
+    {
+        return $this->hasMany(Skp::class, 'atasan_id');
+    }
 
     public function user()
     {

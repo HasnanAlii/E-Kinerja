@@ -134,9 +134,8 @@
 
                                 <div>
                                     <span class="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">Jenis Kelamin</span>
-                                    <span class="block text-base font-semibold text-gray-800">
-                                        @if($data->user->jenis_kelamin == 'L') Laki-laki @elseif($data->user->jenis_kelamin == 'P') Perempuan @else - @endif
-                                    </span>
+                                     <span class="block text-base font-semibold text-gray-800">{{ $data->user->jenis_kelamin?? '-' }}</span>
+
                                 </div>
 
                                 <div>

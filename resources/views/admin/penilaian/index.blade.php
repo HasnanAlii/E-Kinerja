@@ -70,7 +70,7 @@
                 </div>
             </div>
 
-            <div class="p-6 sm:px-8 bg-white rounded-b-lg">
+            <div class=" bg-white rounded-b-lg">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -81,13 +81,13 @@
                                 <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Periode
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col" class="px-6 py-3 ttext-center text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Nilai Total
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                                    Kategori
+                                <th scope="col" class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                    Predikat
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-right text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col" class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Aksi
                                 </th>
                             </tr>
@@ -108,13 +108,13 @@
                                         </div>
                                     </td>
 
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-6 py-4 whitespace-nowrap text-center">
                                         <div class="text-base font-semibold text-gray-900">
                                             {{ number_format($row->nilai_total, 2) }}
                                         </div>
                                     </td>
 
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-6 py-4 whitespace-nowrap text-center">
                                         @if($row->kategori == 'Sangat Baik')
                                             <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                                 Sangat Baik
@@ -138,8 +138,8 @@
                                         @endif
                                     </td>
 
-                                    <td class="px-6 py-4 whitespace-nowrap text-base font-medium text-right">
-                                        <a href="{{ route('admin.penilaian.show', $row->id) }}" class="inline-flex items-center text-green-600 hover:text-green-900">
+                                    <td class="px-6 py-4 whitespace-nowrap text-base font-medium text-center">
+                                        <a href="{{ route('admin.penilaian.show', $row->id) }}" class="inline-flex items-center text-blue-600 hover:text-blue-900">
                                             <i data-feather="eye" class="w-4 h-4 mr-1"></i>
                                             Detail
                                         </a>
@@ -164,6 +164,7 @@
             </div>
         </div>
     </div>
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>

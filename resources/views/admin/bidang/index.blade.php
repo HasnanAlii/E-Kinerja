@@ -45,19 +45,19 @@
 
                 </div>
 
-                <div class="p-6 sm:px-8 bg-white">
+                <div class=" bg-white">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Nama Bidang</th>
+                                    <th scope="col" class="px-6 py-3 text-left pl-10 text-sm font-medium text-gray-500 uppercase tracking-wider">Nama Bidang</th>
                                     <th scope="col" class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse ($data as $row)
                                     <tr class="hover:bg-gray-50 transition-colors">
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-6 py-4 whitespace-nowrap pl-10 ">
                                             <div class="text-base font-medium text-gray-900">{{ $row->nama_bidang }}</div>
                                         </td>
                                         

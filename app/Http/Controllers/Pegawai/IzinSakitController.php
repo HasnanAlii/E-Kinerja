@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Pegawai;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use App\Models\IzinSakit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,6 +24,7 @@ class IzinSakitController extends Controller
         return view('pegawai.izin.create');
     }
 
+
     public function store(Request $request)
     {
         $request->validate([
@@ -37,8 +39,10 @@ class IzinSakitController extends Controller
             $file = $request->file('file_surat')->store('surat_izin', 'public');
         }
 
-        IzinSakit::create([
-            'pegawai_id' => Auth::user()->detail->id,
+        $pegawai = Auth::user()->detail;
+
+        $izin = IzinSakit::create([
+            'pegawai_id' => $pegawai->id,
             'jenis' => $request->jenis,
             'tanggal_mulai' => $request->tanggal_mulai,
             'tanggal_selesai' => $request->tanggal_selesai,
@@ -46,6 +50,25 @@ class IzinSakitController extends Controller
             'status' => 'menunggu'
         ]);
 
-        return redirect()->route('pegawai.izin.index')->with('success', 'Pengajuan izin/sakit berhasil.');
+   
+        $atasanModel = $pegawai->atasan;
+
+        if ($atasanModel) {
+
+            $userAtasan = \App\Models\User::whereHas('atasan', function ($q) use ($atasanModel) {
+                $q->where('id', $atasanModel->id);
+            })->first();
+
+            if ($userAtasan) {
+                \App\Models\Notification::create([
+                    'user_id'   => $userAtasan->id,
+                    'aktivitas' => "{$pegawai->user->name} mengajukan {$izin->jenis} dari {$izin->tanggal_mulai} sampai {$izin->tanggal_selesai}.",
+                    'waktu'     => now(),
+                ]);
+            }
+        }
+
+        return redirect()->route('pegawai.izin.index');
     }
+
 }

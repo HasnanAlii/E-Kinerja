@@ -81,12 +81,13 @@
             </div>
         </form>
 
-        {{-- TOMBOL TAMBAH --}}
-        <a href="{{ route('admin.atasan.create') }}"
-            class="inline-flex items-center justify-center bg-indigo-600 text-white px-5 py-2.5 rounded-xl shadow-md shadow-indigo-200 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-300 transition-all duration-200 transform hover:-translate-y-0.5 active:scale-95 text-sm font-medium">
-            <i data-feather="plus" class="w-4 h-4 mr-2"></i>
-            Tambah Atasan
-        </a>
+            <a href="{{ route('admin.atasan.create') }}"
+                class="inline-flex items-center justify-center bg-indigo-600 text-white px-5 py-2.5 rounded-xl shadow-md shadow-indigo-200 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-300 transition-all duration-200 transform hover:-translate-y-0.5 active:scale-95 font-medium text-sm">
+                <i data-feather="plus" class="w-4 h-4 mr-2"></i>
+                Tambah Atasan
+            </a>
+
+ 
 
     </div>
 </div>

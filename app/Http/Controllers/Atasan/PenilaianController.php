@@ -24,10 +24,17 @@ class PenilaianController extends Controller
 
         $bawahan = PegawaiDetail::where('atasan_id', $atasan->id)
             ->with('user')
+            ->withCount([
+                'penilaian as sudah_dinilai' => function ($q) use ($periodeAktif) {
+                    $q->where('periode_id', $periodeAktif->id);
+                }
+            ])
             ->orderBy('id', 'DESC')
-            ->paginate(10); 
+            ->paginate(10);
+
         return view('atasan.penilaian.index', compact('periodeAktif', 'bawahan'));
     }
+
     public function downloadAll()
     {
         $atasan = Auth::user()->atasan;
@@ -47,13 +54,13 @@ class PenilaianController extends Controller
 
         if (! $penilaianAda) {
             return redirect()->route('dashboard')
-                ->with('sweet_alert', 'Tidak ada penilaian pada periode aktif.');
+                 ->with('sweet_alert', 'Penilaian  belum tersedia.');
         }
 
         // Ambil pegawai bawahan
         $pegawaiAktif = PegawaiDetail::where('atasan_id', $atasan->id)->get();
 
-        $pdf = Pdf::loadView('pegawai.penilaian.pdf', [
+        $pdf = Pdf::loadView('atasan.penilaian.pdf', [
             'pegawaiAktif' => $pegawaiAktif,
             'atasan'       => $atasan,
             'periode'      => $periodeAktif
@@ -86,7 +93,7 @@ class PenilaianController extends Controller
 
         if (! $penilaian) {
             return redirect()->back()
-                ->with('sweet_alert', 'Penilaian Anda pada periode aktif belum tersedia.');
+                ->with('sweet_alert', 'Penilaian Anda belum tersedia.');
         }
 
         // Ambil atasan dari pegawai
@@ -107,11 +114,6 @@ class PenilaianController extends Controller
 
         return $pdf->download($fileName);
     }
-
-
-
-
-
 
     public function create($pegawai_id)
     {

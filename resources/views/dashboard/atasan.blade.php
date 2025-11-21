@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="py-12 bg-gradient-to-b from-indigo-50 to-white min-h-screen">
+    <div class="py-12 bg-gradient-to-b  min-h-screen">
         <div class="mx-auto sm:px-6 lg:px-8">
 
             {{-- ALERT SELAMAT DATANG --}}
@@ -140,56 +140,67 @@
                             <div class="space-y-4">
 
                                 @forelse ($data['aktivitas'] as $act)
-                                    <div class="group flex items-start gap-4 p-4 rounded-xl border border-gray-100 
-                                                bg-gray-50 hover:bg-white hover:border-indigo-200 hover:shadow-md 
-                                                transition-all duration-200">
+                          <div class="flex items-center gap-4 p-3 rounded-xl border border-transparent  hover:border-gray-100 hover:bg-gray-50 transition-all">
+                                <div class="flex-shrink-0 w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center 
+                                            text-blue-600 font-semibold overflow-hidden shadow-sm">
+                                    @if ($act->pegawai->user->profile_photo)
+                                        <img src="{{ asset('storage/' . $act->pegawai->user->profile_photo) }}"
+                                            class="w-full h-full object-cover rounded-full">
+                                    @else
+                                        <i data-feather="user" class="w-5 h-5"></i>
+                                    @endif
+                                </div>
 
-                                        {{-- Avatar --}}
-                                        <div class="flex-shrink-0">
-                                            @if($act->pegawai->user->profile_photo_path)
-                                                <img src="{{ $act->pegawai->user->profile_photo_url }}"
-                                                     class="h-12 w-12 rounded-full object-cover border-2 border-white shadow-sm">
-                                            @else
-                                                <div class="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center 
-                                                            text-indigo-600 font-bold text-sm border-2 border-white shadow-sm">
-                                                    {{ strtoupper(substr($act->pegawai->user->name, 0, 2)) }}
-                                                </div>
-                                            @endif
-                                        </div>
+                                {{-- Middle Info --}}
+                                <div class="flex-1 min-w-0">
 
-                                        {{-- Detail --}}
-                                        <div class="flex-1 min-w-0">
-                                            <div class="flex justify-between items-start">
-                                                <p class="text-sm font-bold text-gray-900 truncate group-hover:text-indigo-700 transition-colors">
-                                                    {{ $act->pegawai->user->name }}
-                                                </p>
-                                                <span class="text-[10px] font-medium text-gray-400">
-                                                    {{ $act->created_at->diffForHumans() }}
-                                                </span>
-                                            </div>
+                                    {{-- Nama --}}
+                                    <p class="text-sm font-semibold text-gray-900 truncate">
+                                        {{ $act->pegawai->user->name ?? 'Pegawai' }}
+                                    </p>
 
-                                            <p class="mt-1 text-sm text-gray-600 line-clamp-2">{{ $act->uraian_tugas }}</p>
+                                    {{-- Uraian --}}
+                                    <p class="text-sm text-gray-600 line-clamp-1">
+                                        {{ $act->uraian_tugas }}
+                                    </p>
 
-                                            {{-- Status --}}
-                                            @php
-                                                $styles = [
-                                                    'disetujui' => ['bg' => 'bg-green-50', 'text' => 'text-green-700', 'icon' => 'check-circle'],
-                                                    'ditolak'   => ['bg' => 'bg-red-50', 'text' => 'text-red-700', 'icon' => 'x-circle'],
-                                                    'revisi'    => ['bg' => 'bg-orange-50', 'text' => 'text-orange-700', 'icon' => 'alert-circle'],
-                                                    'default'   => ['bg' => 'bg-gray-100', 'text' => 'text-gray-600', 'icon' => 'clock']
-                                                ];
-                                                $st = $styles[$act->status] ?? $styles['default'];
-                                            @endphp
+                                    {{-- Waktu + Status --}}
+                                    <div class="flex items-center gap-3 mt-1">
 
-                                            <span class="inline-flex items-center px-2.5 py-0.5 mt-3 rounded-md text-xs font-medium {{ $st['bg'] }} {{ $st['text'] }}">
-                                                <i data-feather="{{ $st['icon'] }}" class="w-3 h-3 mr-1"></i>
-                                                {{ ucfirst($act->status) }}
-                                            </span>
-                                        </div>
+                                        {{-- Waktu --}}
+                                        <span class="text-xs text-gray-400 flex items-center">
+                                            <i data-feather="clock" class="w-3 h-3 mr-1"></i>
+                                            {{ $act->created_at->diffForHumans() }}
+                                        </span>
+
+                                        {{-- Status --}}
+                                        @php
+                                            $statusColor = [
+                                                'disetujui' => 'bg-green-100 text-green-700',
+                                                'ditolak'   => 'bg-red-100 text-red-700',
+                                                'revisi'    => 'bg-orange-100 text-orange-700',
+                                                'menunggu'  => 'bg-gray-100 text-gray-600',
+                                            ][$act->status] ?? 'bg-gray-100 text-gray-600';
+                                        @endphp
+
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide {{ $statusColor }}">
+                                            {{ $act->status }}
+                                        </span>
+
                                     </div>
+                                </div>
+
+                                {{-- Button Detail --}}
+                                <a href="{{ route('atasan.verifikasi.show', $act->id) }}"
+                                    class="flex items-center gap-2 px-3 py-2 rounded-lg text-blue-600 hover:bg-blue-50 
+                                        transition-all shrink-0 border border-transparent hover:border-blue-200">
+                                    <i data-feather="eye" class="w-4 h-4"></i>
+                                    <span class="text-sm font-medium">Detail</span>
+                                </a>
+
+                            </div>
 
                                 @empty
-
                                     <div class="flex flex-col items-center justify-center py-10 text-center">
                                         <div class="bg-gray-50 p-4 rounded-full mb-3">
                                             <i data-feather="inbox" class="w-8 h-8 text-gray-300"></i>

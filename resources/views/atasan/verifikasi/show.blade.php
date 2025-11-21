@@ -7,11 +7,21 @@
 
     <div class="py-1">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+
+            <div class="flex justify-start">
+             <a href="{{ url()->previous() }}" class="text-gray-500 hover:text-gray-700 font-medium flex items-center transition mb-4">
+                    <i data-feather="arrow-left" class="w-4 h-4 mr-2"></i>
+                                Kembali
+                </a>
+            </div>
+
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
+                
                 <div class="p-6 sm:px-8 bg-white">
 
                     {{-- HEADER --}}
                     <div>
+                        
                         <h3 class="text-2xl font-semibold text-gray-900">
                             {{ $data->pegawai->user->name }}
                         </h3>
@@ -35,19 +45,27 @@
                                 </dd>
                             </div>
 
-                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                                <dt class="text-sm font-medium text-gray-500">Uraian Tugas</dt>
-                                <dd class="text-sm text-gray-900 sm:col-span-2 whitespace-pre-wrap text-left">
-                                    {{ $data->uraian_tugas }}
-                                </dd>
-                            </div>
+{{-- Uraian Tugas --}}
+<div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+    <dt class="text-sm font-medium text-gray-500">Uraian Tugas</dt>
+    <dd class="sm:col-span-2">
+        <div class="p-3 rounded-lg border bg-gray-50 text-sm text-gray-900 whitespace-pre-wrap">
+            {{ $data->uraian_tugas }}
+        </div>
+    </dd>
+</div>
 
-                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
-                                <dt class="text-sm font-medium text-gray-500">Hasil Pekerjaan</dt>
-                                <dd class="text-sm text-gray-900 sm:col-span-2 whitespace-pre-wrap text-left">
-                                    {{ $data->hasil_pekerjaan ?? '-' }}
-                                </dd>
-                            </div>
+{{-- Hasil Pekerjaan --}}
+<div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+    <dt class="text-sm font-medium text-gray-500">Hasil Pekerjaan</dt>
+    <dd class="sm:col-span-2">
+        <div class="p-3 rounded-lg border bg-gray-50 text-sm text-gray-900 whitespace-pre-wrap">
+            {{ $data->hasil_pekerjaan ?? '-' }}
+        </div>
+    </dd>
+</div>
+
+
 
                             @if ($data->bukti_file)
                                 <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">

@@ -88,8 +88,9 @@ $user = Auth::user();
             </a>
              <a href="{{ route('atasan.pegawai.index') }}" 
                class="flex items-center p-2 rounded-lg {{ request()->routeIs('atasan.pegawai.*') ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
-                <i data-feather="file-text" class="w-5 h-5 mr-3"></i>
-               Kelola Skp
+                <i data-feather="target" class="w-5 h-5 mr-3"></i>
+               Target Skp
+
             </a> 
         </nav>
         @endrole
@@ -115,13 +116,14 @@ $user = Auth::user();
             <a href="{{ route('pegawai.skp.index') }}" 
                class="flex items-center p-2 rounded-lg {{ request()->routeIs('pegawai.skp.*') ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
                 <i data-feather="target" class="w-5 h-5 mr-3"></i>
-                Target SKP
+               Kelola Skp
+                
             </a>
-            <a href="{{ route('pegawai.skp-progress.index') }}" 
+            {{-- <a href="{{ route('pegawai.skp-progress.index') }}" 
                class="flex items-center p-2 rounded-lg {{ request()->routeIs('pegawai.skp-progress.*') ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
                 <i data-feather="trending-up" class="w-5 h-5 mr-3"></i>
                 Progress SKP
-            </a>
+            </a> --}}
         </nav>
         @endrole
         

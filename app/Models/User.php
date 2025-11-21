@@ -74,10 +74,6 @@ class User extends Authenticatable
         return $this->hasMany(Penilaian::class, 'atasan_id');
     }
 
-    public function auditLogs()
-    {
-        return $this->hasMany(AuditLog::class);
-    }
     public function pegawaiDetail()
     {
         return $this->hasOne(PegawaiDetail::class, 'user_id');

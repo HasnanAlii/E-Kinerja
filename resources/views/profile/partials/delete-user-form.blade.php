@@ -18,7 +18,7 @@
         </div>
     </header>
 
-        <div class="flex items-center gap-4 justify-center">
+        <div class="flex items-center gap-4 justify-end">
             <button 
                 x-data 
                 x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')"

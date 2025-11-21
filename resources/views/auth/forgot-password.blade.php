@@ -1,25 +1,27 @@
 <x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+
+    <div class="mb-6 text-center">
+        <h2 class="text-2xl font-bold text-gray-800">
+            Lupa Kata Sandi
+        </h2>
+        <p class="mt-2 text-gray-600">
+            Untuk mereset kata sandi akun Anda, silakan hubungi administrator.
+        </p>
     </div>
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
+        <p class="text-gray-700 text-center leading-relaxed">
+            Demi keamanan sistem, proses reset kata sandi hanya dapat dilakukan oleh administrator.
+            <br><br>
+            Silakan hubungi admin dan berikan informasi akun Anda untuk proses lebih lanjut.
+        </p>
 
-    <form method="POST" action="{{ route('password.email') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <div class="mt-6 text-center">
+            <a href="{{ route('login') }}"
+               class="inline-block px-6 py-2 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition">
+                Kembali ke Login
+            </a>
         </div>
+    </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
-        </div>
-    </form>
 </x-guest-layout>

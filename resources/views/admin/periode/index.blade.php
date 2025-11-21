@@ -41,7 +41,7 @@
                       </div>
             </div>
 
-                <div class="p-6 sm:px-8 bg-white">
+                <div class=" bg-white">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
@@ -49,8 +49,8 @@
                                     <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Nama Periode</th>
                                     <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Mulai</th>
                                     <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Selesai</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                    <th scope="col" class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -65,7 +65,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-base text-gray-700">{{ \Carbon\Carbon::parse($row->tgl_selesai)->isoFormat('D MMM YYYY') }}</div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-6 py-4 whitespace-nowrap text-center">
                                             @if($row->status_aktif)
                                                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                                     Aktif
@@ -77,8 +77,8 @@
                                             @endif
                                         </td>
                                         
-                                        <td class="px-6 py-4 whitespace-nowrap text-base font-medium">
-                                            <div class="flex items-center space-x-4">
+                                        <td class="px-6 py-4 whitespace-nowrap text-base font-medium text-center">
+                                            <div class="flex items-center space-x-4 text-center justify-center">
                                                 <a href="{{ route('admin.periode.edit', $row->id) }}" class="inline-flex items-center text-yellow-600 hover:text-yellow-900">
                                                     <i data-feather="edit" class="w-4 h-4 mr-1"></i>
                                                     Edit

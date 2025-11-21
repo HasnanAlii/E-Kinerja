@@ -71,7 +71,7 @@
                         {{-- File Lampiran --}}
                         <div class="mt-6">
                             <label for="file_surat" class="block text-base font-medium text-gray-700">
-                                Lampiran File (Opsional — PDF, JPG, PNG, maks 2MB)
+                                Lampiran File (Opsional — PDF, JPG, PNG, maks 12MB)
                             </label>
                             <input type="file" name="file_surat" id="file_surat"
                                 class="mt-1 block w-full text-base text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50

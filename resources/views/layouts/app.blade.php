@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'E-Kinerja' }}</title>
-
+    <title>E-Kinerja Dinas Arsip & Perpustakaan Cianjur</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('assets/logo.png') }}">
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -59,6 +60,11 @@
     <script> feather.replace();</script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/locale/id.js"></script>
+    <script>moment.locale('id');</script>
+
 
 </body>
 </html>

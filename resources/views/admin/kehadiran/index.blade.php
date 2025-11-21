@@ -101,15 +101,15 @@
             </form>
         </div>
         <div class="bg-white overflow-hidden shadow-xl sm:rounded-b-lg" >
-            <div class="p-6 sm:px-8 bg-white border-b border-gray-200">
+            <div class=" bg-white border-b border-gray-200">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
                                 <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Pegawai</th>
-                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Masuk</th>
-                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Pulang</th>
+                                <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">Masuk</th>
+                                <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">Pulang</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -118,7 +118,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-base text-gray-700">{{ \Carbon\Carbon::parse($row->tanggal)->isoFormat('D MMM YYYY') }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-base font-medium text-gray-900">{{ $row->pegawai->user->name }}</td>
                                    {{-- Absen Masuk --}}
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-6 py-4 whitespace-nowrap text-center">
                                         @if ($row->jenis)
                                             <span class="text-base text-blue-600 font-semibold">
                                                 {{ ucfirst($row->jenis) }}
@@ -131,7 +131,7 @@
                                     </td>
 
                                     {{-- Absen Pulang --}}
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-6 py-4 whitespace-nowrap text-center">
                                         @if ($row->jenis)
                                             <span class="text-base text-blue-600 font-semibold">
                                                 {{ ucfirst($row->jenis) }}

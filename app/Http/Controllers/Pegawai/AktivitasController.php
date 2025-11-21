@@ -10,33 +10,24 @@ use Illuminate\Support\Facades\Storage; // 1. Tambahkan ini untuk mengelola file
 
 class AktivitasController extends Controller
 {
-    /**
-     * Mendapatkan ID pegawai yang sedang login.
-     * Ini untuk menghindari pengulangan kode dan error jika 'detail' tidak ada.
-     */
+
     private function getPegawaiId()
     {
-        // Gunakan nullsafe operator (?) untuk keamanan
         $pegawaiId = Auth::user()->detail?->id; 
         
         if (!$pegawaiId) {
-            // Jika user pegawai tidak punya relasi 'detail', lempar error
-            // Ini mencegah error lebih lanjut di kode
+
             abort(403, 'Profil pegawai tidak ditemukan.');
         }
         return $pegawaiId;
     }
 
-    /**
-     * Mencari aktivitas dan memastikan kepemilikannya.
-     * Ini PERBAIKAN KEAMANAN PENTING.
-     */
+
     private function findAndCheckOwnership($id)
     {
         $data = Aktivitas::findOrFail($id);
 
         if ($data->pegawai_id !== $this->getPegawaiId()) {
-            // Jika aktivitas bukan milik user, larang akses
             abort(403, 'Anda tidak memiliki izin untuk mengakses aktivitas ini.');
         }
 
@@ -46,7 +37,7 @@ class AktivitasController extends Controller
 
     public function index()
     {
-        $pegawaiId = $this->getPegawaiId(); // Gunakan helper
+        $pegawaiId = $this->getPegawaiId(); 
 
         $data = Aktivitas::where('pegawai_id', $pegawaiId)
             ->latest()
@@ -62,13 +53,12 @@ class AktivitasController extends Controller
 
     public function store(Request $request)
     {
-        // 2. Perbaiki validasi file (tambahkan mimes dan max size)
         $validatedData = $request->validate([
             'tanggal' => 'required|date',
             'uraian_tugas' => 'required|string',
             'waktu_pelaksanaan' => 'required|string|max:100',
             'hasil_pekerjaan' => 'nullable|string',
-            'bukti_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048' // maks 2MB
+            'bukti_file' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:12048'
         ]);
 
         $file = null;
@@ -76,9 +66,11 @@ class AktivitasController extends Controller
             $file = $request->file('bukti_file')->store('bukti_aktivitas', 'public');
         }
 
-        // 3. Gunakan data yang sudah divalidasi
-        Aktivitas::create([
-            'pegawai_id' => $this->getPegawaiId(), // Gunakan helper
+        $pegawai = Auth::user()->detail;
+
+        // 1. Simpan aktivitas
+        $aktivitas = Aktivitas::create([
+            'pegawai_id' => $pegawai->id,
             'tanggal' => $validatedData['tanggal'],
             'uraian_tugas' => $validatedData['uraian_tugas'],
             'waktu_pelaksanaan' => $validatedData['waktu_pelaksanaan'],
@@ -87,14 +79,26 @@ class AktivitasController extends Controller
             'status' => 'menunggu'
         ]);
 
-        // 4. Arahkan ke index (UX lebih baik)
+
+        // ======================================
+        //          NOTIFIKASI KE ATASAN
+        // ======================================
+        $atasanModel = $pegawai->atasan; // ambil dari tabel atasans
+
+        if ($atasanModel && $atasanModel->user) {
+            \App\Models\Notification::create([
+                'user_id'   => $atasanModel->user->id,
+                'aktivitas' => "{$pegawai->user->name} menyetorkan aktivitas harian tanggal {$validatedData['tanggal']}.",
+                'waktu'     => now(),
+            ]);
+        }
+
         return redirect()->route('pegawai.aktivitas.index')
-                         ->with('success', 'Aktivitas berhasil disimpan.');
+                        ->with('success', 'Aktivitas berhasil disimpan.');
     }
 
     public function edit($id)
     {
-        // 5. Gunakan helper untuk keamanan
         $data = $this->findAndCheckOwnership($id);
 
         if ($data->status !== 'menunggu') {
@@ -106,7 +110,6 @@ class AktivitasController extends Controller
 
     public function update(Request $request, $id)
     {
-        // 6. Gunakan helper untuk keamanan
         $data = $this->findAndCheckOwnership($id);
 
         if ($data->status !== 'menunggu') {
@@ -123,7 +126,6 @@ class AktivitasController extends Controller
 
         $file = $data->bukti_file;
         if ($request->hasFile('bukti_file')) {
-            // 7. Hapus file lama jika ada file baru di-upload
             if ($data->bukti_file) {
                 Storage::disk('public')->delete($data->bukti_file);
             }
@@ -138,21 +140,18 @@ class AktivitasController extends Controller
             'bukti_file' => $file
         ]);
 
-        // 8. Arahkan ke index (UX lebih baik)
         return redirect()->route('pegawai.aktivitas.index')
                          ->with('success', 'Aktivitas berhasil diperbarui.');
     }
 
     public function destroy($id)
     {
-        // 9. Gunakan helper untuk keamanan
         $data = $this->findAndCheckOwnership($id);
 
         if ($data->status !== 'menunggu') {
             return back()->with('error', 'Tidak bisa menghapus aktivitas yang sudah diverifikasi.');
         }
 
-        // 10. Hapus file terkait sebelum menghapus data
         if ($data->bukti_file) {
             Storage::disk('public')->delete($data->bukti_file);
         }

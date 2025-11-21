@@ -6,6 +6,10 @@
 
     <title>E-Kinerja Dinas Arsip & Perpustakaan Cianjur</title>
 
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('assets/logo.png') }}">
+
+
     <!-- Font -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
@@ -18,7 +22,7 @@
 <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
 
     <header class="w-full py-4 border-b bg-white shadow-sm">
-        <div class="max-w-6xl mx-auto px-6 flex items-center justify-between">
+        <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
 
             <div class="flex items-center gap-2">
                 <span class="p-2 bg-indigo-600 rounded-lg">
@@ -47,7 +51,7 @@
 
     {{-- HERO SECTION --}}
     <section class="flex-1 py-3">
-        <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
             {{-- LEFT TEXT --}}
             <div>
@@ -91,7 +95,7 @@
 
     {{-- FEATURES SECTION --}}
     <section class="py-6 bg-white border-t">
-        <div class="max-w-6xl mx-auto px-6">
+        <div class="max-w-7xl mx-auto px-6">
 
             <h3 class="text-3xl font-bold text-gray-900 text-center mb-12">
                 Fitur E-Kinerja 

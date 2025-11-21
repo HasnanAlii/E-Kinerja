@@ -102,46 +102,57 @@
                             <div class="space-y-4">
 
                                 @foreach ($data['aktivitas'] as $act)
-                                    <div class="flex items-start gap-4 p-3 hover:bg-gray-50 rounded-xl transition border border-transparent hover:border-gray-100">
+                                             <div class="group flex items-start gap-4 p-4 rounded-xl border border-gray-100 
+                                        bg-gray-50 hover:bg-white hover:border-indigo-200 hover:shadow-md 
+                                        transition-all duration-200">
 
-                                        {{-- Avatar --}}
-                                        <div class="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold overflow-hidden">
-                                            @if ($act->pegawai->user->profile_photo)
+                                        <div class="flex-shrink-0">
+                                            @if($act->pegawai->user->profile_photo)
                                                 <img src="{{ asset('storage/' . $act->pegawai->user->profile_photo) }}"
-                                                    class="w-full h-full rounded-full object-cover shadow-sm">
+                                                    class="h-14 w-14 rounded-full object-cover border-2 border-white shadow-sm">
                                             @else
-                                                <i data-feather="user" class="w-6 h-6"></i>
+                                                <div class="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center 
+                                                            text-indigo-600 font-bold text-sm border-2 border-white shadow-sm">
+                                                    {{ strtoupper(substr($act->pegawai->user->name, 0, 2)) }}
+                                                </div>
+                                                
                                             @endif
                                         </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex justify-between items-start">
+                                                <div>
+                                                    <p class="text-sm font-bold text-gray-900 truncate 
+                                                    group-hover:text-indigo-700 transition-colors">
+                                                        {{ $act->pegawai->user->name }}
+                                                    </p>
+    
+                                                    <p class="mt-2 text-sm text-gray-600 line-clamp-2">
+                                                    {{ $act->uraian_tugas }}
+                                                </p>
+                                                </div>
+                                                <div class="text-right flex flex-col items-end">
+                                                    <span class="text-[10px] font-medium text-gray-400">
+                                                        {{ $act->created_at->diffForHumans() }}
+                                                    </span>
+                                                    @php
+                                                        $styles = [
+                                                            'disetujui' => ['bg' => 'bg-green-50',  'text' => 'text-green-700',  'icon' => 'check-circle'],
+                                                            'ditolak'   => ['bg' => 'bg-red-50',    'text' => 'text-red-700',    'icon' => 'x-circle'],
+                                                            'revisi'    => ['bg' => 'bg-orange-50', 'text' => 'text-orange-700', 'icon' => 'alert-circle'],
+                                                            'default'   => ['bg' => 'bg-gray-100',  'text' => 'text-gray-600',  'icon' => 'clock'],
+                                                        ];
+                                                        $st = $styles[$act->status] ?? $styles['default'];
+                                                    @endphp
 
-                                        <div class="flex-1">
-                                            <p class="text-sm font-bold text-gray-800 truncate">
-                                                {{ $act->pegawai->user->name ?? 'Pegawai' }}
-                                            </p>
-
-                                            <p class="text-sm text-gray-600 line-clamp-1">{{ $act->uraian_tugas }}</p>
-
-                                            <div class="flex items-center gap-2 mt-1">
-                                                <span class="text-xs text-gray-400 flex items-center">
-                                                    <i data-feather="clock" class="w-3 h-3 mr-1"></i>
-                                                    {{ $act->created_at->diffForHumans() }}
-                                                </span>
-
-                                                @php
-                                                    $statusColor = [
-                                                        'disetujui' => 'bg-green-100 text-green-700',
-                                                        'ditolak'   => 'bg-red-100 text-red-700',
-                                                        'revisi'    => 'bg-orange-100 text-orange-700',
-                                                        'menunggu'  => 'bg-gray-100 text-gray-600',
-                                                    ][$act->status] ?? 'bg-gray-100 text-gray-600';
-                                                @endphp
-
-                                                <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase {{ $statusColor }}">
-                                                    {{ $act->status }}
-                                                </span>
+                                                    <span class="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-md 
+                                                        text-xs font-medium {{ $st['bg'] }} {{ $st['text'] }}">
+                                                        <i data-feather="{{ $st['icon'] }}" class="w-3 h-3 mr-1"></i>
+                                                        {{ ucfirst($act->status) }}
+                                                    </span>
+                                                </div>
                                             </div>
+                                            
                                         </div>
-
                                     </div>
                                 @endforeach
 
@@ -235,9 +246,6 @@
                             </div>
 
                         </a>
-
-
-
                         </div>
 
 
@@ -252,5 +260,4 @@
         </div>
     </div>
 
-    <script>feather.replace()</script>
 </x-app-layout>

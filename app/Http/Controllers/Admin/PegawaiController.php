@@ -50,7 +50,7 @@ public function show($id)
     public function store(Request $request)
     {
         $request->validate([
-            // USER
+           
             'nama'            => 'required',
             'email'           => 'required|email|unique:users,email',
             'password'        => 'required|min:5',
@@ -68,7 +68,6 @@ public function show($id)
             'atasan_id'       => 'nullable|exists:atasan,id',
             'jabatan'         => 'nullable|string',
             'nip'             => 'nullable|string',
-            'masa_kontrak'    => 'nullable|date',
             'status'          => 'nullable|string',
             'tanggal_masuk'   => 'nullable|date',
         ]);
@@ -147,7 +146,6 @@ public function show($id)
             'atasan_id'       => 'nullable|exists:atasan,id',
             'jabatan'         => 'nullable|string',
             'nip'             => 'nullable|string',
-            'masa_kontrak'    => 'nullable|date',
             'status'          => 'nullable|string',
             'tanggal_masuk'   => 'nullable|date',
         ]);
@@ -184,7 +182,6 @@ public function show($id)
             'name'         => $request->nama,
             'nip'          => $request->nip,
             'jabatan'      => $request->jabatan,
-            'masa_kontrak' => $request->masa_kontrak,
             'status'       => $request->status,
             'tanggal_masuk'=> $request->tanggal_masuk,
         ]);

@@ -16,15 +16,58 @@ class ProfilController extends Controller
      */
     public function edit(Request $request): View
     {
-        $user = $request->user();
+        $user    = $request->user();
+        $pegawai = $user->pegawaiDetail ?? null;
+        $atasan  = $user->atasan ?? null;
+
+        // Hitung masa kerja pegawai
+        $masaKerjaPegawai = $this->hitungMasaKerja($pegawai->tanggal_masuk ?? null);
+
+        // Hitung masa kerja atasan
+        $masaKerjaAtasan = $this->hitungMasaKerja($atasan->tanggal_masuk ?? null);
 
         return view('profile.update', [
-            'user'     => $user,
-            'pegawai'  => $user->pegawaiDetail ?? null,
-            'atasan'   => $user->atasan ?? null,
+            'user'             => $user,
+            'pegawai'          => $pegawai,
+            'atasan'           => $atasan,
+            'masaKerjaPegawai' => $masaKerjaPegawai,
+            'masaKerjaAtasan'  => $masaKerjaAtasan,
         ]);
     }
+    
+    private function hitungMasaKerja($tanggalMasuk)
+    {
+        if (!$tanggalMasuk) {
+            return null;
+        }
 
+        $start = \Carbon\Carbon::parse($tanggalMasuk);
+        $now   = \Carbon\Carbon::now();
+        $diff  = $start->diff($now);
+
+        $tahun = $diff->y;
+        $bulan = $diff->m;
+        $hari  = $diff->d;
+
+        $hasil = [];
+
+        if ($tahun > 0) {
+            $hasil[] = $tahun . ' tahun';
+        }
+        if ($bulan > 0) {
+            $hasil[] = $bulan . ' bulan';
+        }
+        if ($hari > 0) {
+            $hasil[] = $hari . ' hari';
+        }
+
+        // Jika semua nol (tanggal sama)
+        if (empty($hasil)) {
+            return '0 hari';
+        }
+
+        return implode(' ', $hasil);
+    }
 
 
     /**
@@ -52,7 +95,8 @@ class ProfilController extends Controller
             // Pegawai & Atasan
             'nip'            => 'nullable|string|max:255',
             'jabatan'        => 'nullable|string|max:255',
-            'masa_kontrak'   => 'nullable|date',
+            'dolongan'        => 'nullable|string|max:255',
+
         ]);
 
 
@@ -123,7 +167,6 @@ class ProfilController extends Controller
             $pegawai->fill($request->only([
                 'nip',
                 'jabatan',
-                'masa_kontrak',
             ]));
 
             $pegawai->save();
@@ -160,7 +203,8 @@ class ProfilController extends Controller
             $atasan->fill($request->only([
                 'nip',
                 'jabatan',
-                'masa_kontrak',
+                'golongan',
+
             ]));
 
             $atasan->save();

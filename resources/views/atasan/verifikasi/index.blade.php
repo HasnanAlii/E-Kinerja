@@ -87,6 +87,7 @@
                                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-500 uppercase">Pegawai</th>
                                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-500 uppercase">Tanggal</th>
                                 <th class="px-6 py-4 text-left text-sm font-semibold text-gray-500 uppercase">Aktivitas</th>
+                                <th class="px-6 py-4 text-center text-sm font-semibold text-gray-500 uppercase">Komentar</th>
                                 <th class="px-6 py-4 text-center text-sm font-semibold text-gray-500 uppercase">Status</th>
                                 <th class="px-6 py-4 text-center text-sm font-semibold text-gray-500 uppercase">Aksi</th>
                             </tr>
@@ -132,6 +133,13 @@
                                         <p class="line-clamp-2 max-w-xs">
                                             {{ $row->uraian_tugas }}
                                         </p>
+                                    </td>    
+                                    
+                                    <td class="px-6 py-4 text-base text-gray-700 text-center">
+                                        <button onclick="openCommentModal('{{ $row->id }}')"
+                                            class="text-blue-600 hover:text-blue-800 underline">
+                                            Lihat Komentar
+                                        </button>
                                     </td>
 
                                     {{-- STATUS --}}
@@ -139,33 +147,36 @@
                                         @if ($row->status === 'menunggu')
                                             <span class="inline-flex items-center px-3 py-1 text-sm font-medium bg-yellow-100 text-yellow-800 rounded-full">
                                                 ● Menunggu
-                                            </span>
-                                        @elseif ($row->status === 'disetujui')
+                                            </span>    
+                                        @elseif ($row->status === 'disetujui')    
                                             <span class="inline-flex items-center px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-full">
                                                 ● Disetujui
-                                            </span>
-                                        @elseif ($row->status === 'ditolak')
+                                            </span>    
+                                        @elseif ($row->status === 'ditolak')    
                                             <span class="inline-flex items-center px-3 py-1 text-sm font-medium bg-red-100 text-red-800 rounded-full">
                                                 ● Ditolak
-                                            </span>
-                                        @elseif ($row->status === 'revisi')
+                                            </span>    
+                                        @elseif ($row->status === 'revisi')    
                                             <span class="inline-flex items-center px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full">
                                                 ● Revisi
-                                            </span>
-                                        @endif
-                                    </td>
+                                            </span>    
+                                        @endif    
+                                    </td>    
 
-                                    {{-- AKSI --}}
+
                                     <td class="px-6 py-4 text-center">
                                         <a href="{{ route('atasan.verifikasi.show', $row->id) }}"
-                                            class="inline-flex items-center justify-center w-9 h-9 bg-white border border-gray-200 rounded-lg text-gray-700 hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50 transition-all">
-                                            <i data-feather="eye" class="w-4 h-4"></i>
+                                            class="inline-flex items-center gap-2 px-4 py-2 
+                                                text-blue-600 hover:bg-blue-50 rounded-lg transition-all shrink-0 border border-transparent hover:border-blue-200">
+                                                <i data-feather="eye" class="w-4 h-4"></i>
+                                                <span>Detail</span>
                                         </a>
                                     </td>
+
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-6 py-10 text-center text-base text-gray-500">
+                                    <td colspan="6" class="px-6 py-10 text-center text-base text-gray-500">
                                         Tidak ada aktivitas yang perlu diverifikasi.<br>
                                         <span class="text-sm text-gray-400">Coba ubah filter tanggal atau pegawai.</span>
                                     </td>
@@ -173,6 +184,23 @@
                             @endforelse
                         </tbody>
                     </table>
+                    <script>
+                        const comments = @json($data->pluck('komentar_atasan', 'id'));
+
+                        function openCommentModal(id) {
+                            document.getElementById('komentarText').textContent =
+                                comments[id] ? comments[id] : 'Tidak ada komentar';
+
+                            document.getElementById('commentModal').classList.remove('hidden');
+                            document.getElementById('commentModal').classList.add('flex');
+                        }
+
+                        function closeCommentModal() {
+                            document.getElementById('commentModal').classList.add('hidden');
+                            document.getElementById('commentModal').classList.remove('flex');
+                        }
+                    </script>
+
                 </div>
 
                 {{-- PAGINATION --}}
@@ -193,4 +221,40 @@
             }
         });
     </script>
+    <div id="commentModal" 
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm transition-opacity duration-300">
+        
+        <div class="relative w-full max-w-lg scale-100 transform overflow-hidden rounded-2xl bg-white p-6 shadow-2xl transition-all sm:p-8">
+            
+            <div class="mb-6 flex items-center gap-4">
+                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Komentar Atasan</h2>
+                    <p class="text-sm text-slate-500">Catatan penilaian kinerja</p>
+                </div>
+            </div>
+
+            <div class="mb-8 rounded-xl border border-blue-100 bg-slate-50 p-5">
+                <p id="komentarText" class="whitespace-pre-line text-base leading-relaxed text-slate-700">
+                    </p>
+            </div>
+
+            <div class="flex justify-end">
+                <button onclick="closeCommentModal()" 
+                        class="w-full rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 py-3 px-6 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition-all hover:from-blue-700 hover:to-blue-800 hover:shadow-blue-500/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto">
+                    Tutup Penilaian
+                </button>
+            </div>
+            
+            <button onclick="closeCommentModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-6 w-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
 </x-app-layout>

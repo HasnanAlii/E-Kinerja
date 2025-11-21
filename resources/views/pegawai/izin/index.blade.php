@@ -33,7 +33,7 @@
             @endif
 
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-              <div class="px-6 py-5 border-b bg-gray-50 flex items-center justify-between mb-4 rounded-t-lg">
+              <div class="px-6 py-5 border-b bg-gray-50 flex items-center justify-between rounded-t-lg">
                 <div class="flex items-center gap-3">
                     <span class="p-3 bg-indigo-100 text-indigo-600 rounded-xl">
                         <i data-feather="file-text" class="w-6 h-6"></i>
@@ -57,7 +57,7 @@
                     </a>
                 </div>
             </div>
-                <div class="p-6 sm:px-8 bg-white border-b border-gray-200">
+                <div class=" bg-white border-b border-gray-200">
                     
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
@@ -72,7 +72,7 @@
                                     <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                                         Tanggal Selesai
                                     </th>
-                                    <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                    <th scope="col" class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">
                                         Status
                                     </th>
                                 </tr>
@@ -100,7 +100,7 @@
                                             </div>
                                         </td>
                                         
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-6 py-4 whitespace-nowrap text-center">
                                             @if($row->status == 'menunggu')
                                                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
                                                     Menunggu
@@ -114,7 +114,7 @@
                                                     Ditolak
                                                 </span>
                                             @else
-                                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 capitalize">
+                                                <span class="px-3 py-1 inline-flex  text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800 capitalize">
                                                     {{ $row->status }}
                                                 </span>
                                             @endif

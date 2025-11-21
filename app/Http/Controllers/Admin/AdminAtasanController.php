@@ -56,7 +56,6 @@ class AdminAtasanController extends Controller
             'golongan'        => 'nullable|string',
             'status'          => 'nullable|string',
             'tanggal_masuk'   => 'nullable|date',
-            'masa_kontrak'    => 'nullable|date',
         ]);
 
         // === Create USER ===
@@ -93,7 +92,6 @@ class AdminAtasanController extends Controller
             'status'         => $request->status,
             'golongan'       => $request->golongan,
             'tanggal_masuk'  => $request->tanggal_masuk,
-            'masa_kontrak'   => $request->masa_kontrak,
         ]);
 
         return redirect()->route('admin.atasan.index')
@@ -134,7 +132,6 @@ class AdminAtasanController extends Controller
             'golongan'        => 'nullable|string',
             'status'          => 'nullable|string',
             'tanggal_masuk'   => 'nullable|date',
-            'masa_kontrak'    => 'nullable|date',
         ]);
 
         // === Update USER ===
@@ -172,7 +169,6 @@ class AdminAtasanController extends Controller
             'status'         => $request->status,
             'golongan'       => $request->golongan,
             'tanggal_masuk'  => $request->tanggal_masuk,
-            'masa_kontrak'   => $request->masa_kontrak,
         ]);
 
         return redirect()->route('admin.atasan.index')

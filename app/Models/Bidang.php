@@ -18,6 +18,6 @@ class Bidang extends Model
 
     public function skp()
     {
-        return $this->hasMany(Skp::class);
+        return $this->hasMany(Skp::class, 'bidang_id');
     }
 }

@@ -79,10 +79,10 @@
                                     {{-- <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                                         Nilai Akhir
                                     </th> --}}
-                                    <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                                        Kategori
+                                    <th scope="col" class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                        Predikat
                                     </th>
-                                    <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                    <th scope="col" class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">
                                         Aksi
                                     </th>
                                 </tr>
@@ -129,7 +129,7 @@
                                             </div>
                                         </td> --}}
 
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-6 py-4 whitespace-nowrap text-center">
                                             @if($row->kategori == 'Sangat Baik')
                                                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                                     Sangat Baik
@@ -153,7 +153,7 @@
                                             @endif
                                         </td>
                                         
-                                        <td class="px-6 py-4 whitespace-nowrap text-base font-medium">
+                                        <td class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
                                             <a href="{{ route('atasan.laporan.show', $row->id) }}" 
                                                class="inline-flex items-center text-indigo-600 hover:text-indigo-900">
                                                <i data-feather="eye" class="w-4 h-4 mr-1"></i>

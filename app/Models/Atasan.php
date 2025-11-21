@@ -21,7 +21,6 @@ class Atasan extends Model
         'golongan',
         'tmt_golongan',
         'tanggal_masuk',
-        'masa_kontrak',
         'foto',
     ];
 

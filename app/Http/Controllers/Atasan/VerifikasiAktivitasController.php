@@ -7,6 +7,7 @@ use App\Models\Aktivitas;
 use App\Models\PegawaiDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Notification;
 
 class VerifikasiAktivitasController extends Controller
 {
@@ -52,6 +53,7 @@ class VerifikasiAktivitasController extends Controller
         return view('atasan.verifikasi.show', compact('data'));
     }
 
+
     public function approve($id)
     {
         $data = Aktivitas::findOrFail($id);
@@ -60,6 +62,18 @@ class VerifikasiAktivitasController extends Controller
             'status' => 'disetujui',
             'komentar_atasan' => 'Aktivitas disetujui'
         ]);
+
+        // Notifikasi ke pegawai terkait
+        $pegawai = $data->pegawai; // relasi Aktivitas -> PegawaiDetail
+        $user   = $pegawai?->user ?? null;
+
+        if ($user) {
+            Notification::create([
+                'user_id'   => $user->id,
+                'aktivitas' => "Aktivitas Anda tanggal {$data->tanggal} telah disetujui oleh atasan.",
+                'waktu'     => now(),
+            ]);
+        }
 
         return redirect()
             ->route('atasan.verifikasi.index')
@@ -79,6 +93,18 @@ class VerifikasiAktivitasController extends Controller
             'komentar_atasan' => $request->komentar_atasan
         ]);
 
+        // Notifikasi ke pegawai terkait
+        $pegawai = $data->pegawai;
+        $user   = $pegawai?->user ?? null;
+
+        if ($user) {
+            Notification::create([
+                'user_id'   => $user->id,
+                'aktivitas' => "Aktivitas Anda tanggal {$data->tanggal} ditolak. Komentar: {$request->komentar_atasan}",
+                'waktu'     => now(),
+            ]);
+        }
+
         return redirect()
             ->route('atasan.verifikasi.index')
             ->with('success', 'Aktivitas ditolak.');
@@ -97,9 +123,22 @@ class VerifikasiAktivitasController extends Controller
             'komentar_atasan' => $request->komentar_atasan
         ]);
 
+        // Notifikasi ke pegawai terkait
+        $pegawai = $data->pegawai;
+        $user   = $pegawai?->user ?? null;
+
+        if ($user) {
+            Notification::create([
+                'user_id'   => $user->id,
+                'aktivitas' => "Atasan meminta revisi untuk aktivitas Anda tanggal {$data->tanggal}. Komentar: {$request->komentar_atasan}",
+                'waktu'     => now(),
+            ]);
+        }
+
         return redirect()
             ->route('atasan.verifikasi.index')
             ->with('success', 'Permintaan revisi dikirim ke pegawai.');
     }
+
 
 }

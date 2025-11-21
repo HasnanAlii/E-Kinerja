@@ -86,16 +86,25 @@
                                        class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
                             </div>
 
-                            {{-- Jenis Kelamin --}}
+                 
                             <div>
                                 <label class="font-medium text-gray-700">Jenis Kelamin</label>
                                 <select name="jenis_kelamin"
                                         class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
                                     <option value="">-- Pilih --</option>
-                                    <option value="Laki-laki" @selected($data->user->jenis_kelamin=='Laki-laki')>Laki-laki</option>
-                                    <option value="Perempuan" @selected($data->user->jenis_kelamin=='Perempuan')>Perempuan</option>
+
+                                    <option value="Laki-laki"
+                                        @selected(old('jenis_kelamin', $data->user->jenis_kelamin) == 'Laki-laki')>
+                                        Laki-laki
+                                    </option>
+
+                                    <option value="Perempuan"
+                                        @selected(old('jenis_kelamin', $data->user->jenis_kelamin) == 'Perempuan')>
+                                        Perempuan
+                                    </option>
                                 </select>
                             </div>
+
 
                             {{-- Tempat Lahir --}}
                             <div>
@@ -105,13 +114,15 @@
                                        class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
                             </div>
 
-                            {{-- Tanggal Lahir --}}
-                            <div>
-                                <label class="font-medium text-gray-700">Tanggal Lahir</label>
-                                <input type="date" name="tanggal_lahir"
-                                       value="{{ old('tanggal_lahir', $data->user->tanggal_lahir) }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
-                            </div>
+                        
+                 
+                                <div>
+                                    <label class="font-medium text-gray-700">Tanggal Lahir</label>
+                                    <input type="date" name="tanggal_lahir"
+                                        value="{{ old('tanggal_lahir', $data->user->tanggal_lahir ? \Carbon\Carbon::parse($data->user->tanggal_lahir)->format('Y-m-d') : '') }}"
+                                        class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+
 
                             {{-- Agama --}}
                             <div>

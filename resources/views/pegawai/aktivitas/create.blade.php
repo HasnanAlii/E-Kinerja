@@ -87,7 +87,7 @@
                     {{-- BUKTI FILE --}}
                     <div class="mt-6">
                         <label for="bukti_file" class="block text-base font-medium text-gray-700">
-                            Bukti File (PDF, JPG, PNG – Maks 2MB)
+                            Bukti File (PDF, JPG, PNG – Maks 12MB)
                         </label>
                         <input type="file" name="bukti_file" id="bukti_file"
                                class="mt-1 block w-full rounded-lg border border-gray-300 bg-gray-50 cursor-pointer text-base focus:outline-none file:bg-gray-100 file:px-4 file:py-2 file:rounded-md file:border-0 file:text-base file:font-medium file:text-gray-700">

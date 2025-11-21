@@ -157,7 +157,7 @@
                                 <div class="quick-icon bg-blue-50 text-blue-600">
                                     <i data-feather="user-plus"></i>
                                 </div>
-                                <div>
+                                <div class="ml-4">
                                     <h4 class="quick-title">Tambah Pegawai</h4>
                                     <p class="quick-sub">Tambahkan data pegawai baru.</p>
                                 </div>
@@ -169,7 +169,7 @@
                                 <div class="quick-icon bg-purple-50 text-purple-600">
                                     <i data-feather="layers"></i>
                                 </div>
-                                <div>
+                                <div class="ml-4">
                                     <h4 class="quick-title">Tambah Bidang</h4>
                                     <p class="quick-sub">Kelola struktur bidang instansi.</p>
                                 </div>
@@ -181,7 +181,7 @@
                                 <div class="quick-icon bg-green-50 text-green-600">
                                     <i data-feather="check-circle"></i>
                                 </div>
-                                <div>
+                                <div class="ml-4">
                                     <h4 class="quick-title">Kelola Penilaian</h4>
                                     <p class="quick-sub">Lihat & validasi penilaian pegawai.</p>
                                 </div>
@@ -193,7 +193,7 @@
                                 <div class="quick-icon bg-orange-50 text-orange-600">
                                     <i data-feather="activity"></i>
                                 </div>
-                                <div>
+                                <div class="ml-4">
                                     <h4 class="quick-title">Aktivitas Pegawai</h4>
                                     <p class="quick-sub">Pantau aktivitas harian pegawai.</p>
                                 </div>

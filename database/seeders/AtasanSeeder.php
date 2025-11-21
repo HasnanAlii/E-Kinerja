@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Bidang;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use Carbon\Carbon;
 
 class AtasanSeeder extends Seeder
 {
@@ -16,7 +17,8 @@ class AtasanSeeder extends Seeder
         /**
          * 1. Pastikan role 'atasan' ada
          */
-        Role::firstOrCreate(['name' => 'atasan', 'guard_name' => 'web']);
+        $atasanRole = Role::firstOrCreate(['name' => 'atasan']);
+
 
         /**
          * 2. Pastikan bidang tersedia
@@ -27,64 +29,85 @@ class AtasanSeeder extends Seeder
             Bidang::create(['nama_bidang' => 'Perencanaan']);
         }
 
-        // Ambil ulang setelah dibuat
-        $bidang = Bidang::all();
-
 
         /**
-         * 3. Daftar atasan
+         * 3. Data atasan (tambahkan sesuka Anda)
          */
         $atasanList = [
-
             [
-                'name' => 'Siti Rahmawati',
-                'jabatan' => 'Kepala Bidang Keuangan',
-                'nip' => '19820414 200601 2 002',
-                'bidang' => 'Keuangan',
+                'name'           => 'Siti Rahmawati',
+                'jabatan'        => 'Kepala Bidang Keuangan',
+                'nip'            => '19820414 200601 2 002',
+                'nik'            => '3275004104820002',
+                'jenis_kelamin'  => 'Perempuan',
+                'tanggal_lahir'  => '1982-04-14',
+                'tempat_lahir'   => 'Cianjur',
+                'agama'          => 'Islam',
+                'alamat'         => 'Jl. Veteran Cianjur',
+                'telp'           => '081234567890',
+                'bidang'         => 'Keuangan',
+                'golongan'       => 'III/a',
+                'status'         => 'aktif',
+                'tanggal_masuk'  => Carbon::now()->subYears(5),
+                'masa_kontrak'   => Carbon::now()->addYear(),
+                'foto'           => null,
             ],
-       
-          
         ];
 
 
         /**
-         * 4. Proses pembuatan user + atasan
+         * 4. Proses user + data atasan
          */
         foreach ($atasanList as $a) {
 
-            // Generate email otomatis
+            // Email berdasarkan nama
             $email = strtolower(str_replace(' ', '', $a['name'])) . '@example.com';
 
-            // Buat user
-            $user = User::create([
-                'name' => $a['name'],
-                'email' => $email,
-                'password' => Hash::make('password'),
-            ]);
+            /**
+             * ➤ Buat user lengkap di tabel users
+             */
+            $user = User::firstOrCreate(
+                ['email' => $email],
+                [
+                    'name'            => $a['name'],
+                    'nik'             => $a['nik'],
+                    'jenis_kelamin'   => $a['jenis_kelamin'],
+                    'tanggal_lahir'   => $a['tanggal_lahir'],
+                    'tempat_lahir'    => $a['tempat_lahir'],
+                    'agama'           => $a['agama'],
+                    'alamat'          => $a['alamat'],
+                    'telp'            => $a['telp'],
+                    'profile_photo'   => null,
+                    'password'        => Hash::make('password'),
+                    'email_verified_at' => now(),
+                ]
+            );
 
-            // Assign role
-            $user->assignRole('atasan');
-
-            // Dapatkan bidang sesuai nama (jika ada)
-            $bidang_id = 1;
-
-            if ($a['bidang']) {
-                $bid = Bidang::where('nama_bidang', $a['bidang'])->first();
-                if ($bid) {
-                    $bidang_id = $bid->id;
-                }
+            // Berikan role atasan
+            if (! $user->hasRole('atasan')) {
+                $user->assignRole($atasanRole);
             }
 
-            // Simpan ke tabel atasan
-            Atasan::create([
-                'user_id'      => $user->id,
-                'bidang_id'    => $bidang_id,     // bisa null
-                'nip'          => $a['nip'],
-                'name'         => $a['name'],
-                'jabatan'      => $a['jabatan'],
-                'masa_kontrak' => now()->addYear(),
-                'foto'         => null,
-            ]);
+            // Cari bidang
+            $bidang_id = Bidang::where('nama_bidang', $a['bidang'])->value('id') ?? 1;
+
+            /**
+             * ➤ Simpan ke tabel atasan lengkap
+             */
+            Atasan::updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'user_id'       => $user->id,
+                    'bidang_id'     => $bidang_id,
+                    'nip'           => $a['nip'],
+                    'name'          => $a['name'],
+                    'jabatan'       => $a['jabatan'],
+                    'status'        => $a['status'],
+                    'golongan'      => $a['golongan'],
+                    'tanggal_masuk' => $a['tanggal_masuk'],
+                    'foto'          => $a['foto'],
+                ]
+            );
         }
     }
 }

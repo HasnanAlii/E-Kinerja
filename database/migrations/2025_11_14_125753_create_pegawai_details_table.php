@@ -16,10 +16,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('bidang_id')->constrained('bidang')->onDelete('cascade');
             $table->foreignId('atasan_id')->nullable()->constrained('atasan')->onDelete('set null');
-            $table->string('name')->nullable();
             $table->string('nip')->nullable();
             $table->string('jabatan')->nullable();
-            $table->date('masa_kontrak')->nullable();
             $table->string('foto')->nullable();  
             $table->string('status')->nullable();
             $table->date('tanggal_masuk')->nullable();

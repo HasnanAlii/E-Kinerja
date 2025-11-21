@@ -11,21 +11,22 @@ return new class extends Migration
      */
 public function up()
 {
-    Schema::create('audit_logs', function (Blueprint $table) {
+    Schema::create('notifications', function (Blueprint $table) {
         $table->id();
-        $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
-        $table->text('aktivitas');
-        $table->timestamp('waktu')->useCurrent();
+        $table->unsignedBigInteger('user_id');
+        $table->string('aktivitas');
+        $table->timestamp('waktu');
+        $table->timestamp('read_at')->nullable(); 
         $table->timestamps();
+        $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
     });
 }
-
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('audit_logs');
+        Schema::dropIfExists('notifications');
     }
 };
