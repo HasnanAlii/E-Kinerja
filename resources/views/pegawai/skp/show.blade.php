@@ -229,14 +229,33 @@
                 </div>
 
                 {{-- 5. FOOTER / TANDA TANGAN (Opsional untuk layout laporan) --}}
-                <div class="mt-8 flex justify-end print:mt-12">
-                    <div class="text-center w-64">
-                        <p class="mb-16">Cianjur, {{ now()->format('d F Y') }}</p>
-                        <p class="font-bold border-b border-black inline-block min-w-[150px]">
+           
+                <div class="mt-10 flex justify-between px-10 print:mt-16">
+                    <div class="text-center w-1/2">
+                        <p class="mb-16">
+                            Cianjur, {{ now()->translatedFormat('d F Y') }} <br>
+                            <span class="font-semibold">Pegawai Yang Dinilai</span>
+                        </p>
+
+                        <p class="font-bold border-b border-black inline-block min-w-[200px] py-1">
+                            {{ $data->pegawai->user->name ?? '(Nama Pegawai)' }}
+                        </p>
+                        <p class="mt-1">NIP. {{ $data->pegawai->nip ?? '.......................' }}</p>
+                    </div>
+
+                    {{-- ATASAN --}}
+                    <div class="text-center w-1/2">
+                        <p class="mb-16">
+                            Cianjur, {{ now()->translatedFormat('d F Y') }} <br>
+                            <span class="font-semibold">Atasan Langsung</span>
+                        </p>
+
+                        <p class="font-bold border-b border-black inline-block min-w-[200px] py-1">
                             {{ $atasan->user->name ?? '(Nama Pejabat Penilai)' }}
                         </p>
                         <p class="mt-1">NIP. {{ $atasan->nip ?? '.......................' }}</p>
                     </div>
+
                 </div>
 
             </div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\PegawaiDetail;
 use App\Models\Penilaian;
 use App\Models\PeriodePenilaian;
+use App\Models\Skp;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -67,53 +68,50 @@ class PenilaianController extends Controller
         ])->setPaper('a4', 'portrait');
 
         return $pdf->download('laporan_penilaian_periode_aktif.pdf');
-}
-
-        public function download()
+    }
+    public function download()
     {
         $pegawai = Auth::user()->detail;
 
-        if (! $pegawai) {
+        if (!$pegawai) {
             return redirect()->back()->with('sweet_alert', 'Data pegawai tidak ditemukan.');
         }
 
-        // Periode aktif
         $periodeAktif = PeriodePenilaian::where('status_aktif', 1)->first();
 
-        if (! $periodeAktif) {
+        if (!$periodeAktif) {
             return redirect()->back()->with('sweet_alert', 'Periode penilaian belum aktif.');
         }
 
-        // Ambil penilaian pegawai pada periode aktif
+        // Ambil SKP Final / Dinilai
+        $skp = Skp::with([
+            'pegawai.user',
+            'pegawai.bidang',
+            'pegawai.atasan.user',
+            'hasilKerja'
+        ])
+        ->where('pegawai_id', $pegawai->id)
+        ->whereIn('status', ['Dinilai', 'Final'])
+        ->latest()
+        ->first();
+
+        if (!$skp) {
+            return redirect()->back()->with('sweet_alert', 'SKP Anda belum dinilai.');
+        }
+
+        // Ambil Perilaku Kerja & Nilai Total dari tabel penilaian
         $penilaian = Penilaian::where('pegawai_id', $pegawai->id)
             ->where('periode_id', $periodeAktif->id)
             ->where('status', 1)
             ->latest()
             ->first();
 
-        if (! $penilaian) {
-            return redirect()->back()
-                ->with('sweet_alert', 'Penilaian Anda belum tersedia.');
-        }
+        $pdf = Pdf::loadView('pegawai.penilaian.pdf', compact('skp', 'penilaian'))
+            ->setPaper('a4', 'portrait');
 
-        // Ambil atasan dari pegawai
-        $atasan = $pegawai->atasan?->user;
-
-        if (! $atasan) {
-            $atasan = (object)[ 'name' => 'Atasan Tidak Ditemukan' ];
-        }
-
-        $pdf = Pdf::loadView('pegawai.penilaian.pdf', [
-            'pegawai'   => $pegawai,
-            'penilaian' => $penilaian,
-            'atasan'    => $atasan,
-            'periode'   => $periodeAktif
-        ])->setPaper('a4', 'portrait');
-
-        $fileName = 'penilaian_' . str_replace(' ', '_', strtolower($pegawai->user->name)) . '.pdf';
-
-        return $pdf->download($fileName);
+        return $pdf->download('Penilaian_' . str_replace(' ', '_', strtolower($pegawai->user->name)) . '.pdf');
     }
+
 
     public function create($pegawai_id)
     {

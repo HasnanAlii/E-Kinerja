@@ -20,6 +20,8 @@ class Skp extends Model
         'rating',
         'predikat',
         'status',
+        'komentar_atasan',
+
     ];
         protected $casts = [
         'tanggal_mulai' => 'date',
@@ -50,9 +52,4 @@ class Skp extends Model
         return $this->hasMany(SkpHasilKerja::class, 'skp_id');
     }
 
-    // Banyak aspek perilaku
-    public function perilaku()
-    {
-        return $this->hasMany(SkpPerilaku::class, 'skp_id');
-    }
 }

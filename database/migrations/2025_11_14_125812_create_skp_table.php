@@ -43,9 +43,12 @@ public function up()
         // Nilai Akhir
         $table->string('rating')->nullable();
         $table->string('predikat')->nullable();
+        $table->string('komentar_atasan')->nullable();
+
+        
 
         // Status SKP
-        $table->enum('status', ['Draft', 'Diajukan', 'Dinilai', 'Final'])
+        $table->enum('status', ['Draft', 'Diajukan', 'Disetujui', 'Final'])
               ->default('Draft');
 
         $table->timestamps();

@@ -63,8 +63,7 @@ class VerifikasiAktivitasController extends Controller
             'komentar_atasan' => 'Aktivitas disetujui'
         ]);
 
-        // Notifikasi ke pegawai terkait
-        $pegawai = $data->pegawai; // relasi Aktivitas -> PegawaiDetail
+        $pegawai = $data->pegawai;
         $user   = $pegawai?->user ?? null;
 
         if ($user) {

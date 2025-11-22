@@ -14,7 +14,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
             {{-- ACTION BAR (TOMBOL AKSI) --}}
-            <div class="my-10 pt-6 border-t border-gray-200 print:hidden">
+            <div class="mb-10 pt-6 border-t border-gray-200 print:hidden">
                 <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-4">
                     
                     {{-- KIRI: TOMBOL KEMBALI --}}
@@ -35,7 +35,7 @@
                         </a>
 
                         {{-- 2. Tombol Beri Penilaian (Muncul jika status Diajukan) --}}
-                        @if($skp->status == 'Diajukan')
+                        @if($skp->status == 'Disetujui')
                             <button onclick="openModal('modalPenilaian')" 
                                     class="inline-flex items-center justify-center px-5 py-2.5 text-sm font-bold text-white bg-green-600 rounded-xl shadow-md hover:bg-green-700 hover:shadow-lg transition-all duration-200 transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                                 <i data-feather="check-square" class="w-4 h-4 mr-2"></i>

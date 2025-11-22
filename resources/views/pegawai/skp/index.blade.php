@@ -56,6 +56,9 @@
                                 <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Periode
                                 </th>
+                                 <th class="px-6 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                    Komentar atasan
+                                </th>
                                 <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Status
                                 </th>
@@ -73,6 +76,11 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="text-base text-gray-900">
                                             {{ $row->periode }}
+                                        </span>
+                                    </td>
+                                       <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="text-base text-gray-900">
+                                            {{ $row->komentar_atasan ?? '-' }}
                                         </span>
                                     </td>
 

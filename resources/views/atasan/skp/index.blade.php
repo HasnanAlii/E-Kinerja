@@ -50,17 +50,30 @@
                                 <tr class="hover:bg-indigo-50/30 transition-colors duration-150">
 
                                     {{-- NAMA PEGAWAI --}}
-                                    <td class="px-8 py-4 whitespace-nowrap">
-                                        <div class="flex items-center gap-3">
-                                            <div class="h-9 w-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-xs border border-indigo-200">
-                                                {{ strtoupper(substr($item->pegawai->user->name ?? 'U', 0, 2)) }}
+                               <td class="px-6 py-4 flex items-center gap-3 whitespace-nowrap">
+                                        @if ($item->pegawai->user->profile_photo)
+                                            <img 
+                                                src="{{ asset('storage/' . $item->pegawai->ser->profile_photo) }}"
+                                                class="h-10 w-10 rounded-full object-cover border shadow-sm"
+                                                alt="Foto Profil"
+                                            >
+                                        @else
+                                            <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center border shadow-sm">
+                                                <div class="w-full h-full rounded-full bg-indigo-50 flex items-center justify-center text-indigo-300">
+                                                    <i data-feather="user" class="w-5 h-5"></i>
+                                                </div>
                                             </div>
-                                            <span class="text-sm font-semibold text-gray-900">
-                                                {{ $item->pegawai->user->name ?? '-' }}
+                                        @endif
+
+                                        <div class="flex flex-col">
+                                            <span class="text-base font-semibold text-gray-900">
+                                                {{ $item->pegawai->user->name }}
+                                            </span>
+                                            <span class="text-sm text-gray-500">
+                                                {{ $item->pegawai->jabatan }}
                                             </span>
                                         </div>
                                     </td>
-
                                     {{-- PERIODE --}}
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="text-sm text-gray-600 font-medium bg-gray-100 px-2.5 py-1 rounded-md">
@@ -74,7 +87,7 @@
                                             $statusClasses = [
                                                 'Draft'    => 'bg-gray-100 text-gray-600 border-gray-200',
                                                 'Diajukan' => 'bg-blue-50 text-blue-700 border-blue-200',
-                                                'Dinilai'  => 'bg-yellow-50 text-yellow-700 border-yellow-200',
+                                                'Disetujui'  => 'bg-yellow-50 text-yellow-700 border-yellow-200',
                                                 'Selesai'  => 'bg-green-50 text-green-700 border-green-200',
                                             ];
                                             $class = $statusClasses[$item->status] ?? 'bg-gray-100 text-gray-600';
@@ -147,25 +160,39 @@
                     
                     <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                         <div class="sm:flex sm:items-start">
+                            
                             <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
                                 <i data-feather="refresh-cw" class="h-5 w-5 text-indigo-600"></i>
                             </div>
+                            
                             <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
                                 <h3 class="text-lg font-bold leading-6 text-gray-900" id="modal-title">Update Status SKP</h3>
-                                <div class="mt-2">
-                                    <p class="text-sm text-gray-500 mb-4">Ubah status SKP untuk pegawai <strong>{{ $item->pegawai->user->name }}</strong>.</p>
-                                    
+                                
+                                <div class="mt-4">
                                     <form method="POST" action="{{ route('atasan.skp.updateStatus', $item->id) }}">
                                         @csrf
                                         @method('PUT')
 
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Status Baru</label>
-                                        <select name="status" class="w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition text-sm">
-                                            <option value="Draft" @selected($item->status == 'Draft')>Draft (Revisi)</option>
-                                            <option value="Diajukan" @selected($item->status == 'Diajukan')>Diajukan</option>
-                                            <option value="Dinilai" @selected($item->status == 'Dinilai')>Dinilai </option>
-                                            {{-- <option value="Selesai" @selected($item->status == 'Final')>Selesai (Final)</option> --}}
-                                        </select>
+                                        <div class="space-y-4">
+                                            {{-- Select Status --}}
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Tindakan</label>
+                                                <select name="status" id="statusSelect{{ $item->id }}" 
+                                                    class="w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition text-sm"
+                                                    onchange="toggleCommentField('{{ $item->id }}')">
+                                                    <option value="Disetujui" @selected($item->status == 'Disetujui')>Setujui / Lanjut Penilaian</option>
+                                                    <option value="Draft" @selected($item->status == 'Draft')>Revisi (Kembalikan ke Pegawai)</option>
+                                                </select>
+                                            </div>
+
+                                            {{-- Kolom Komentar Atasan --}}
+                                            <div id="commentField{{ $item->id }}" class="{{ $item->status == 'Draft' ? '' : 'hidden' }}">
+                                                <label class="block text-sm font-medium text-gray-700 mb-1">Catatan Revisi</label>
+                                                <textarea name="komentar_atasan" rows="3"
+                                                    class="w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"
+                                                    placeholder="Berikan catatan perbaikan untuk pegawai..."></textarea>
+                                            </div>
+                                        </div>
 
                                         <div class="mt-6 flex justify-end gap-3">
                                             <button type="button" onclick="closeModal('{{ $item->id }}')"
@@ -174,7 +201,7 @@
                                             </button>
                                             <button type="submit"
                                                 class="inline-flex justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                                                Simpan Perubahan
+                                                Simpan
                                             </button>
                                         </div>
                                     </form>
@@ -187,16 +214,33 @@
         </div>
     @endforeach
 
+    {{-- SCRIPT JS --}}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            feather.replace();
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
         });
 
         function openModal(id) {
             document.getElementById("modal-" + id).classList.remove("hidden");
+            // Panggil toggle saat buka modal untuk set state awal kolom komentar
+            toggleCommentField(id);
         }
+
         function closeModal(id) {
             document.getElementById("modal-" + id).classList.add("hidden");
+        }
+
+        function toggleCommentField(id) {
+            const status = document.getElementById('statusSelect' + id).value;
+            const commentField = document.getElementById('commentField' + id);
+
+            if (status === 'Draft') {
+                commentField.classList.remove('hidden');
+            } else {
+                commentField.classList.add('hidden');
+            }
         }
     </script>
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Atasan;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\PegawaiDetail;
 use App\Models\Skp;
 use App\Models\SkpHasilKerja;
@@ -29,72 +30,61 @@ class SkpController extends Controller
         return view('atasan.skp.feedback', compact('skp'));
     }
 
-    /**
-     * Menyimpan Data Umpan Balik
-     */
-public function updateFeedback(Request $request, $id)
-{
-    $skp = Skp::findOrFail($id);
+        /**
+         * Menyimpan Data Umpan Balik
+         */
+    public function updateFeedback(Request $request, $id)
+    {
+        $skp = Skp::findOrFail($id);
 
-    // 1. UPDATE UMPAN BALIK HASIL KERJA
-    if ($request->has('hasil_kerja')) {
-        foreach ($request->hasil_kerja as $hkId => $feedback) {
-            SkpHasilKerja::where('id', $hkId)->update([
-                'umpan_balik' => $feedback ?? null,
+        if ($request->has('hasil_kerja')) {
+            foreach ($request->hasil_kerja as $hkId => $feedback) {
+                SkpHasilKerja::where('id', $hkId)->update([
+                    'umpan_balik' => $feedback ?? null,
+                ]);
+            }
+        }
+
+        if ($request->has('rhk_pimpinan')) {
+            foreach ($request->rhk_pimpinan as $hkId => $txt) {
+                SkpHasilKerja::where('id', $hkId)->update([
+                    'rhk_pimpinan' => $txt ?? null,
+                ]);
+            }
+        }
+
+        return redirect()
+            ->route('atasan.skp.show', $id)
+            ->with([
+                'message' => 'Umpan balik berhasil disimpan.',
+                'alert-type' => 'success'
+            ]);
+    }
+
+    public function index()
+    {
+        $atasanId = Auth::user()->atasan->id;
+
+        // Ambil ID pegawai bawahan
+        $pegawaiIds = PegawaiDetail::where('atasan_id', $atasanId)
+            ->pluck('id');
+
+        if ($pegawaiIds->isEmpty()) {
+            return view('atasan.skp.index', [
+                'skp' => collect([])->paginate(15),
+                'message' => 'Tidak ada pegawai bawahan yang terdaftar.'
             ]);
         }
+
+        // Ambil SKP bawahan yang statusnya DIajukan
+        $skp = Skp::with(['pegawai', 'pegawai.user'])
+            ->whereIn('pegawai_id', $pegawaiIds)
+            ->whereIn('status', ['Diajukan', 'Disetujui','Final']) 
+            ->orderBy('periode', 'desc')
+            ->paginate(15);
+
+        return view('atasan.skp.index', compact('skp'));
     }
-
-    // 2. UPDATE RHK PIMPINAN (EDITABLE)
-    if ($request->has('rhk_pimpinan')) {
-        foreach ($request->rhk_pimpinan as $hkId => $txt) {
-            SkpHasilKerja::where('id', $hkId)->update([
-                'rhk_pimpinan' => $txt ?? null,
-            ]);
-        }
-    }
-
-    // // 3. UPDATE PERILAKU (Jika diaktifkan)
-    // if ($request->has('perilaku')) {
-    //     foreach ($request->perilaku as $pId => $feedback) {
-    //         SkpPerilaku::where('id', $pId)->update([
-    //             'umpan_balik' => $feedback ?? null,
-    //         ]);
-    //     }
-    // }
-
-    return redirect()
-        ->route('atasan.skp.show', $id)
-        ->with([
-            'message' => 'Umpan balik berhasil disimpan.',
-            'alert-type' => 'success'
-        ]);
-}
-
-public function index()
-{
-    $atasanId = Auth::user()->atasan->id;
-
-    // Ambil ID pegawai bawahan
-    $pegawaiIds = PegawaiDetail::where('atasan_id', $atasanId)
-        ->pluck('id');
-
-    if ($pegawaiIds->isEmpty()) {
-        return view('atasan.skp.index', [
-            'skp' => collect([])->paginate(15),
-            'message' => 'Tidak ada pegawai bawahan yang terdaftar.'
-        ]);
-    }
-
-    // Ambil SKP bawahan yang statusnya DIajukan
-    $skp = Skp::with(['pegawai', 'pegawai.user'])
-        ->whereIn('pegawai_id', $pegawaiIds)
-        ->whereIn('status', ['Diajukan', 'Dinilai','Final']) 
-        ->orderBy('periode', 'desc')
-        ->paginate(15);
-
-    return view('atasan.skp.index', compact('skp'));
-}
 
  
     public function showSkp($id)
@@ -108,48 +98,90 @@ public function index()
             abort(403, 'Anda tidak memiliki akses.');
         }
 
-        $progres = SkpProgress::where('skp_id', $id)
-            ->orderBy('tanggal_update', 'desc')
-            ->get();
-
-        return view('atasan.skp.show', compact('skp', 'progres'));
+        return view('atasan.skp.show', compact('skp'));
     }
 
     /**
      * Update status SKP.
      */
+    
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:Draft,Diajukan,Dinilai,Selesai',
+            'status' => 'required|in:Draft,Diajukan,Disetujui,Selesai',
+            'komentar_atasan' => $request->status === 'Draft' ? 'required|string' : 'nullable|string',
         ]);
 
-        $skp = Skp::findOrFail($id);
+        $skp = Skp::with('pegawai.user')->findOrFail($id);
+        $oldStatus = $skp->status;
 
         $skp->status = $request->status;
+        if ($request->status === 'Draft') {
+            $skp->komentar_atasan = $request->komentar_atasan;
+        }
+
         $skp->save();
+
+        $pegawaiUser = $skp->pegawai->user ?? null;
+
+        /* ===================
+            Status -> Dinilai
+        ===================== */
+        if ($request->status === 'Disetujui' && $oldStatus !== 'Disetujui') {
+
+            if ($pegawaiUser) {
+                Notification::create([
+                    'user_id'   => $pegawaiUser->id,
+                    'aktivitas' => "SKP Anda telah Disetujui oleh atasan.",
+                    'waktu'     => now(),
+                ]);
+            }
+        }
+
+        /* ===================
+            Status -> Draft (Revisi)
+        ===================== */
+        if ($request->status === 'Draft' && $oldStatus !== 'Draft') {
+
+            if ($pegawaiUser) {
+                Notification::create([
+                    'user_id'   => $pegawaiUser->id,
+                    'aktivitas' => "SKP Anda dengan ID {$skp->id} dikembalikan untuk direvisi. Catatan: {$request->komentar_atasan}",
+                    'waktu'     => now(),
+                ]);
+            }
+        }
 
         return back()->with('success', 'Status SKP berhasil diperbarui.');
     }
 
+
  
-public function nilai(Request $request, $id)
-{
-    // 1. Validasi Input (Sesuai dengan name di Modal: rating & predikat)
-    $request->validate([
-        'rating'   => 'required|string', // Contoh: 'Sesuai Ekspektasi'
-        'predikat' => 'required|string', // Contoh: 'Baik'
-    ]);
+    public function nilai(Request $request, $id)
+    {
+        $request->validate([
+            'rating'   => 'required|string',
+            'predikat' => 'required|string',
+        ]);
 
-    $skp = Skp::findOrFail($id);
+        $skp = Skp::with('pegawai.user')->findOrFail($id);
 
-    // 3. Simpan Penilaian
-    $skp->rating   = $request->rating;
-    $skp->predikat = $request->predikat;
-    $skp->status   = 'Final'; // Ubah status menjadi Selesai (Final)
-    $skp->save();
+        $skp->rating   = $request->rating;
+        $skp->predikat = $request->predikat;
+        $skp->status   = 'Final';
+        $skp->save();
 
-    // 4. Redirect kembali dengan pesan sukses
-    return back()->with('success', 'Penilaian SKP berhasil disimpan dan divalidasi.');
-}
+        // Kirim notifikasi ke pegawai
+        $pegawaiUser = $skp->pegawai->user ?? null;
+
+        if ($pegawaiUser) {
+            Notification::create([
+                'user_id'   => $pegawaiUser->id,
+                'aktivitas' => "SKP Anda telah selesai dinilai. Rating: {$request->rating}, Predikat: {$request->predikat}.",
+                'waktu'     => now(),
+            ]);
+        }
+
+        return back()->with('success', 'Penilaian SKP berhasil disimpan dan divalidasi.');
+    }
 }
