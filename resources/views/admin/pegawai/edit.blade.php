@@ -139,7 +139,7 @@
 
                             {{-- Foto Profil --}}
                             <div class="md:col-span-2">
-                                <label class="font-medium text-gray-700">Foto Pegawai</label>
+                                <label class="font-medium text-gray-700">Foto (Opsional)</label>
 
                                 @if ($data->user->profile_photo)
                                     <div class="my-3 flex items-center space-x-4">

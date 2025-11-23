@@ -86,8 +86,8 @@ $user = Auth::user();
                 <i data-feather="file-text" class="w-5 h-5 mr-3"></i>
                 Laporan Penilaian
             </a>
-             <a href="{{ route('atasan.pegawai.index') }}" 
-               class="flex items-center p-2 rounded-lg {{ request()->routeIs('atasan.pegawai.*') ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+             <a href="{{ route('atasan.skp.index') }}" 
+               class="flex items-center p-2 rounded-lg {{ request()->routeIs('atasan.pegawai.*')||request()->routeIs('atasan.skp.*') ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
                 <i data-feather="target" class="w-5 h-5 mr-3"></i>
                Target Skp
 
@@ -114,7 +114,7 @@ $user = Auth::user();
                 Kehadiran
             </a>
             <a href="{{ route('pegawai.skp.index') }}" 
-               class="flex items-center p-2 rounded-lg {{ request()->routeIs('pegawai.skp.*') ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
+               class="flex items-center p-2 rounded-lg {{ request()->routeIs('pegawai.skp.*') || request()->routeIs('skp.*')? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
                 <i data-feather="target" class="w-5 h-5 mr-3"></i>
                Kelola Skp
                 

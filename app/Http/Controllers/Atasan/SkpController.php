@@ -23,7 +23,7 @@ class SkpController extends Controller
     public function editFeedback($id)
     {
         // Muat SKP beserta relasinya
-        $skp = Skp::with(['pegawai.user', 'hasilKerja', 'perilaku'])->findOrFail($id);
+        $skp = Skp::with(['pegawai.user', 'hasilKerja'])->findOrFail($id);
 
         // Pastikan hanya atasan yang bisa akses (Opsional: Tambahkan logika policy di sini)
         

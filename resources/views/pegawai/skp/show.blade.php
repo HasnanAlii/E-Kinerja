@@ -11,7 +11,7 @@
         </div>
     </x-slot>
 
-    <div class="py-8 bg-gray-100 min-h-screen print:bg-white">
+    <div class=" bg-gray-100 min-h-screen print:bg-white">
         
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     

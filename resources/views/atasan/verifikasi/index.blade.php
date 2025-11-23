@@ -233,7 +233,7 @@
                     </svg>
                 </div>
                 <div>
-                    <h2 class="text-xl font-bold text-slate-800">Komentar Atasan</h2>
+                    <h2 class="text-xl font-bold text-slate-800">Komentar Anda</h2>
                     <p class="text-sm text-slate-500">Catatan penilaian kinerja</p>
                 </div>
             </div>

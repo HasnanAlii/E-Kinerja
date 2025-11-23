@@ -110,7 +110,7 @@
                         <table class="w-full">
                             <tr>
                                 <th class="border-b border-black p-1 w-8 text-center">NO</th>
-                                <th class="border-b border-black p-1 text-left" colspan="2">PEJABAT PENILAI KINERJA</th>
+                                <th class="border-b border-black p-1 text-left" colspan="2"> PENILAI KINERJA</th>
                             </tr>
                             @php $atasan = $skp->pegawai->atasan; @endphp
                             <tr>

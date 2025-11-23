@@ -25,13 +25,14 @@
         <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
 
             <div class="flex items-center gap-2">
-                <span class="p-2 bg-indigo-600 rounded-lg">
-                    <i data-feather="archive" class="text-white w-5 h-5"></i>
+                <span class="p-2 ">
+                    <img src="{{ asset('assets/logo.png') }}" alt="Logo Dinas Arsip & Perpustakaan" class="w-20 object-contain">
                 </span>
                 <h1 class="text-lg font-semibold text-gray-900">
                     E-Kinerja Dinas Arsip & Perpustakaan Cianjur
                 </h1>
             </div>
+
 
             <nav class="flex items-center gap-4">
                 @auth
@@ -50,7 +51,7 @@
     </header>
 
     {{-- HERO SECTION --}}
-    <section class="flex-1 py-3">
+    <section class="flex-1 ">
         <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
             {{-- LEFT TEXT --}}
@@ -94,7 +95,7 @@
     </section>
 
     {{-- FEATURES SECTION --}}
-    <section class="py-6 bg-white border-t">
+    <section class="py-4 bg-white border-t">
         <div class="max-w-7xl mx-auto px-6">
 
             <h3 class="text-3xl font-bold text-gray-900 text-center mb-12">

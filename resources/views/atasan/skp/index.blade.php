@@ -53,7 +53,7 @@
                                <td class="px-6 py-4 flex items-center gap-3 whitespace-nowrap">
                                         @if ($item->pegawai->user->profile_photo)
                                             <img 
-                                                src="{{ asset('storage/' . $item->pegawai->ser->profile_photo) }}"
+                                                src="{{ asset('storage/' . $item->pegawai->user->profile_photo) }}"
                                                 class="h-10 w-10 rounded-full object-cover border shadow-sm"
                                                 alt="Foto Profil"
                                             >

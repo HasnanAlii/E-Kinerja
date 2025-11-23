@@ -230,18 +230,17 @@
 
                         <div class="p-5 space-y-4">
 
-                            {{-- Tambah SKP --}}
-                            <a href="{{ route('atasan.skp.create') }}"
+                            <a href="{{ route('atasan.verifikasi.index') }}"
                                class="group flex items-center p-4 bg-white border border-gray-200 rounded-xl 
                                       shadow-sm hover:shadow-md hover:border-indigo-500 hover:ring-1 hover:ring-indigo-500 
                                       transition-all duration-200">
                                 <div class="flex-shrink-0 p-3 bg-indigo-50 text-indigo-600 rounded-lg 
                                             group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                                    <i data-feather="plus-circle" class="w-6 h-6"></i>
+                                    <i data-feather="check-square" class="w-6 h-6"></i>
                                 </div>
                                 <div class="ml-4">
-                                    <h4 class="font-bold text-gray-800 group-hover:text-indigo-700">Tambah SKP</h4>
-                                    <p class="text-xs text-gray-500 mt-0.5">Buat sasaran kinerja baru.</p>
+                                    <h4 class="font-bold text-gray-800 group-hover:text-indigo-700">Verifikasi Aktivitas</h4>
+                                    <p class="text-xs text-gray-500 mt-0.5">Verifikasi Aktivitas Harian Bawahan Anda.</p>
                                 </div>
                             </a>
 

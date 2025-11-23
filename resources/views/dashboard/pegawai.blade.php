@@ -96,7 +96,7 @@
 
                     {{-- AKTIVITAS TERBARU --}}
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                        <h3 class="font-bold text-gray-800 mb-4">Aktivitas Terbaru</h3>
+                        <h3 class="font-bold text-gray-800 mb-4">Aktivitas Terbaru Anda</h3>
 
                         @if($data['aktivitas']->count() > 0)
                             <div class="space-y-4">
@@ -107,27 +107,21 @@
                                         transition-all duration-200">
 
                                         <div class="flex-shrink-0">
-                                            @if($act->pegawai->user->profile_photo)
-                                                <img src="{{ asset('storage/' . $act->pegawai->user->profile_photo) }}"
-                                                    class="h-14 w-14 rounded-full object-cover border-2 border-white shadow-sm">
-                                            @else
-                                                <div class="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center 
-                                                            text-indigo-600 font-bold text-sm border-2 border-white shadow-sm">
-                                                    {{ strtoupper(substr($act->pegawai->user->name, 0, 2)) }}
+                                                <div class="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center  text-indigo-600 font-bold text-sm border-2 border-white shadow-sm">
+                                                 <i data-feather="file-text" class="w-5 h-5"></i>
+
                                                 </div>
-                                                
-                                            @endif
                                         </div>
                                         <div class="flex-1 min-w-0">
                                             <div class="flex justify-between items-start">
                                                 <div>
                                                     <p class="text-sm font-bold text-gray-900 truncate 
                                                     group-hover:text-indigo-700 transition-colors">
-                                                        {{ $act->pegawai->user->name }}
+                                                        {{ $act->uraian_tugas}}
                                                     </p>
     
                                                     <p class="mt-2 text-sm text-gray-600 line-clamp-2">
-                                                    {{ $act->uraian_tugas }}
+                                                    {{ $act->hasil_pekerjaan }}
                                                 </p>
                                                 </div>
                                                 <div class="text-right flex flex-col items-end">

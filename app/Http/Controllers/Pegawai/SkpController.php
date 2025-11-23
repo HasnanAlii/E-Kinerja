@@ -95,20 +95,6 @@ class SkpController extends Controller
             }
         }
 
-        /**
-         * SIMPAN PERILAKU ASN
-         */
-        if ($request->perilaku) {
-            foreach ($request->perilaku as $aspek => $value) {
-                SkpPerilaku::create([
-                    'skp_id' => $skp->id,
-                    'aspek' => $aspek,
-                    'perilaku' => $value['perilaku'] ?? null,
-                    'ekspektasi' => $value['ekspektasi'] ?? null,
-                    'umpan_balik' => $value['umpan_balik'] ?? null,
-                ]);
-            }
-        }
 
         return redirect()->route('skp.index')
             ->with('success', 'SKP berhasil dibuat.');
@@ -119,7 +105,7 @@ class SkpController extends Controller
      */
     public function show($id)
     {
-        $data = Skp::with(['hasilKerja', 'perilaku', 'pegawai.user', 'bidang'])
+        $data = Skp::with(['hasilKerja', 'pegawai.user', 'bidang'])
                    ->findOrFail($id);
 
         return view('pegawai.skp.show', compact('data'));
@@ -183,19 +169,6 @@ class SkpController extends Controller
                     'target' => $item['target'] ?? null,
                     'realisasi' => $item['realisasi'] ?? null,
                     'umpan_balik' => $item['umpan_balik'] ?? null,
-                ]);
-            }
-        }
-
-        /**
-         * UPDATE PERILAKU ASN
-         */
-        if ($request->perilaku) {
-            foreach ($request->perilaku as $idRow => $item) {
-                SkpPerilaku::where('id', $idRow)->update([
-                    'perilaku' => $item['perilaku'],
-                    'ekspektasi' => $item['ekspektasi'],
-                    'umpan_balik' => $item['umpan_balik'],
                 ]);
             }
         }

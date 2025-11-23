@@ -96,7 +96,7 @@ class PenilaianController extends Controller
         ->first();
 
         if (!$skp) {
-            return redirect()->back()->with('sweet_alert', 'SKP Anda belum dinilai.');
+            return redirect()->back()->with('sweet_alert', 'Penilaian Anda belum tersedia.');
         }
 
         // Ambil Perilaku Kerja & Nilai Total dari tabel penilaian

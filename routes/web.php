@@ -63,11 +63,11 @@ Route::middleware(['auth', 'role:pegawai'])->prefix('pegawai')->name('pegawai.')
     Route::resource('izin', IzinSakitController::class)->only(['index', 'create', 'store']);
 
     // SKP Target
-    Route::get('skp', [SkpController::class, 'index'])->name('skp.index');
+    Route::get('skp/all', [SkpController::class, 'index'])->name('skp.index');
 
     // SKP Progress / Capaian
-    Route::resource('skp-progress', SkpProgressController::class)->only(['index', 'create', 'store']);
-    Route::get('/pegawai/penilaian/download-all', [PenilaianAtasan::class, 'download'])->name('penilaian.download');
+    // Route::resource('skp-progress', SkpProgressController::class)->only(['index', 'create', 'store']);
+    Route::get('/penilaian/download-all', [PenilaianAtasan::class, 'download'])->name('penilaian.download');
 
    
 });
@@ -86,8 +86,7 @@ Route::middleware(['auth', 'role:atasan'])->prefix('atasan')->name('atasan.')->g
     Route::get('penilaian/{pegawai}/create', [PenilaianAtasan::class, 'create'])->name('penilaian.create');
     Route::post('penilaian/store', [PenilaianAtasan::class, 'store'])->name('penilaian.store');
 
-    Route::get('/pegawai', [AtasanSkpController::class, 'index'])->name('pegawai.index');
-    Route::get('/pegawai/{id}', [AtasanSkpController::class, 'showPegawai'])->name('pegawai.show');
+    // Route::get('/skp', [AtasanSkpController::class, 'index'])->name('pegawai.index');
 
     Route::get('/skp/{id}', [AtasanSkpController::class, 'showSkp'])->name('skp.show');
     Route::post('/skp/{id}/status', [AtasanSkpController::class, 'updateStatus'])->name('skp.updateStatus');
@@ -120,14 +119,10 @@ Route::middleware(['auth', 'role:atasan'])->prefix('atasan')->name('atasan.')->g
         ->name('izin.reject');
 
     Route::get('/skp', [AtasanSkpController::class, 'index'])->name('skp.index');
-    Route::get('/skp/pegawai/{id}', [AtasanSkpController::class, 'showPegawai'])->name('pegawai.show');
 
     Route::get('/skp/{id}', [AtasanSkpController::class, 'showSkp'])->name('skp.show');
     Route::put('/skp/{id}/status', [AtasanSkpController::class, 'updateStatus'])->name('skp.updateStatus');
     Route::post('/skp/{id}/nilai', [AtasanSkpController::class, 'nilai'])->name('skp.nilai');
-    // Tambah SKP
-    Route::get('/atasan/skp/create', [AtasanSKPController::class, 'create'])
-        ->name('skp.create');
 
     // Unduh laporan penilaian semua pegawai aktif
     Route::get('/atasan/penilaian/download-all', [PenilaianAtasan::class, 'downloadAll'])
@@ -174,14 +169,14 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth'])->group(function () {
 
     // SKP Utama
-    Route::get('/skp', [SkpController::class, 'index'])->name('skp.index');
-    Route::get('/skp/create', [SkpController::class, 'create'])->name('skp.create');
-    Route::post('/skp', [SkpController::class, 'store'])->name('skp.store');
-    Route::get('/skp/{id}', [SkpController::class, 'show'])->name('skp.show');
-    Route::get('/skp/{id}/edit', [SkpController::class, 'edit'])->name('skp.edit');
-    Route::put('/skp/{id}', [SkpController::class, 'update'])->name('skp.update');
-    Route::delete('/skp/{id}', [SkpController::class, 'destroy'])->name('skp.destroy');
-    Route::post('/skp/{id}/ajukan', [SkpController::class, 'ajukan'])->name('skp.ajukan');
+    Route::get('pegawai/skp', [SkpController::class, 'index'])->name('skp.index');
+    Route::get('pegawai/skp/create', [SkpController::class, 'create'])->name('skp.create');
+    Route::post('pegawai/skp', [SkpController::class, 'store'])->name('skp.store');
+    Route::get('pegawai/skp/{id}', [SkpController::class, 'show'])->name('skp.show');
+    Route::get('pegawai/skp/{id}/edit', [SkpController::class, 'edit'])->name('skp.edit');
+    Route::put('pegawai/skp/{id}', [SkpController::class, 'update'])->name('skp.update');
+    Route::delete('pegawai/skp/{id}', [SkpController::class, 'destroy'])->name('skp.destroy');
+    Route::post('pegawai/skp/{id}/ajukan', [SkpController::class, 'ajukan'])->name('skp.ajukan');
 
 
     // Menampilkan Form Umpan Balik

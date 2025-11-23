@@ -4,7 +4,7 @@
     <div class="px-10 mx-auto py-3 flex justify-between items-center">
 
         <div class="text-xl font-bold text-gray-700">
-            {{ $title ?? 'Dashboard' }}
+            {{-- {{ $title ?? 'Dashboard' }} --}}
         </div>
 
         <div class="flex items-center gap-6">
@@ -23,7 +23,7 @@
 
             <div x-data="notificationComponent()" class="relative">
 
-                <button @click="toggleNotif()" class="relative focus:outline-none">
+                <button @click="toggleNotif()" class="relative focus:outline-none mt-2">
                     <i data-feather="bell" class="w-6 h-6 text-gray-600"></i>
 
                     <template x-if="unreadCount > 0">
