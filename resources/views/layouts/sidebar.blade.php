@@ -116,7 +116,7 @@ $user = Auth::user();
             <a href="{{ route('pegawai.skp.index') }}" 
                class="flex items-center p-2 rounded-lg {{ request()->routeIs('pegawai.skp.*') || request()->routeIs('skp.*')? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
                 <i data-feather="target" class="w-5 h-5 mr-3"></i>
-               Kelola Skp
+                Target Skp
                 
             </a>
             {{-- <a href="{{ route('pegawai.skp-progress.index') }}" 

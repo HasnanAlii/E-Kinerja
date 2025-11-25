@@ -254,7 +254,7 @@
                                     <i data-feather="download" class="w-6 h-6"></i>
                                 </div>
                                 <div class="ml-4">
-                                    <h4 class="font-bold text-gray-800 group-hover:text-green-700">Laporan Penilaian</h4>
+                                    <h4 class="font-bold text-gray-800 group-hover:text-green-700">Unduh Penilaian</h4>
                                     <p class="text-xs text-gray-500 mt-0.5">Unduh rekap nilai pegawai.</p>
                                 </div>
                             </a>
