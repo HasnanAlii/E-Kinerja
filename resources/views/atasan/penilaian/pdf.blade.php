@@ -106,13 +106,13 @@ function predikatNilai($nilai) {
 @endphp
 
 
-    {{-- 1. HEADER --}}
     <div class="header">
         <h1>LAPORAN REKAPITULASI PENILAIAN KINERJA PEGAWAI</h1>
         <h2>PERIODE: {{ strtoupper($periode->nama_periode) }}</h2>
+        <div style="margin-top:6px;">
+            <span>Penilaian: {{ \Carbon\Carbon::parse($periode->tgl_mulai)->format('d M Y') }} s.d. {{ \Carbon\Carbon::parse($periode->tgl_selesai)->format('d M Y') }}</span>
+        </div>
     </div>
-
-    {{-- 2. INFO TAMBAHAN --}}
     <table class="info-table">
         <tr>
             <td width="120px" class="bold">UNIT KERJA</td>
@@ -122,7 +122,6 @@ function predikatNilai($nilai) {
         </tr>
     </table>
 
-    {{-- 3. TABEL PENILAIAN --}}
     <table class="data-table">
         <thead>
             <tr>
@@ -145,7 +144,6 @@ function predikatNilai($nilai) {
         <tbody>
             @forelse ($pegawaiAktif as $i => $p)
                 @php
-                    // Ambil data penilaian berdasarkan pegawai & periode
                     $n = \App\Models\Penilaian::where('pegawai_id', $p->id)
                             ->where('periode_id', $periode->id)
                             ->first();
@@ -189,14 +187,13 @@ function predikatNilai($nilai) {
         </tbody>
     </table>
 
-    {{-- 4. TANDA TANGAN --}}
     <div class="signature-section">
         <table class="signature-table">
             <tr>
-                <td width="60%"></td> {{-- Spasi Kosong --}}
+                <td width="60%"></td> 
                 <td width="40%">
                     Cianjur, {{ now()->translatedFormat('d F Y') }}<br>
-                    Pejabat Penilai Kinerja,<br>
+                     Penilai Kinerja,<br>
                     <br><br><br><br>
                     <u class="bold uppercase">{{ Auth::user()->name }}</u><br>
                     NIP. {{ Auth::user()->atasan->nip ?? '-' }}

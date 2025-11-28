@@ -18,9 +18,9 @@
                         <i data-feather="info" class="w-6 h-6"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-indigo-900">Informasi SKP</h3>
+                        <h3 class="text-lg font-bold text-indigo-900">Pembuatan SKP</h3>
                         <p class="text-sm text-indigo-700 mt-1">
-                            Silakan isi periode dan target kinerja organisasi. Data ini akan menjadi acuan dalam penilaian kinerja pegawai.
+                            Silakan SKP dan target kinerja organisasi. Data ini akan menjadi acuan dalam penilaian kinerja pegawai.
                         </p>
                     </div>
                 </div>
@@ -32,14 +32,14 @@
                         {{-- SECTION 1: PERIODE --}}
                         <div>
                             <h4 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2 uppercase tracking-wide">
-                                <i data-feather="calendar" class="w-4 h-4 text-gray-400"></i>
-                                Periode Penilaian
+                                <i data-feather="check-square" class="w-4 h-4 text-gray-400"></i>
+                                 SKP
                             </h4>
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {{-- Nama Periode --}}
                                 <div class="md:col-span-2">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Periode <span class="text-red-500">*</span></label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama SKP <span class="text-red-500">*</span></label>
                                     <div class="relative">
                                         <input name="periode" required
                                                class="w-full pl-4 pr-4 py-2.5 rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition-all"

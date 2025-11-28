@@ -32,40 +32,76 @@
                     </div>
                 </div>
 
-                {{-- RIGHT SECTION: FILTER & ACTIONS --}}
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
                     
-                    {{-- Filter Form --}}
-                    <form method="GET" class="flex items-center">
-                        <div class="relative w-full md:w-auto">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                                <i data-feather="filter" class="w-4 h-4"></i>
-                            </div>
-                            <select name="bidang_id" onchange="this.form.submit()" 
-                                class="w-full md:w-64 pl-10 pr-8 py-2.5 bg-white border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 cursor-pointer appearance-none hover:bg-gray-100">
-                                <option value="">Semua Bidang</option>
-                                @foreach($bidang as $b)
-                                    <option value="{{ $b->id }}" {{ request('bidang_id') == $b->id ? 'selected' : '' }}>
-                                        {{ $b->nama_bidang }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            {{-- Custom Arrow Icon (Optional, Tailwind biasanya sudah handle, tapi ini untuk memastikan) --}}
-                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
-                                <i data-feather="chevron-down" class="w-4 h-4"></i>
-                            </div>
-                        </div>
-                    </form>
+             <form method="GET" class="flex items-center space-x-3">
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                        <i data-feather="filter" class="w-4 h-4"></i>
+                    </div>
+                    <select name="bidang_id" onchange="this.form.submit()"
+                        class="pl-10 pr-8 py-2.5 bg-white border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition cursor-pointer hover:bg-gray-100">
+                        <option value="">Semua Bidang</option>
+                        @foreach($bidang as $b)
+                            <option value="{{ $b->id }}" {{ request('bidang_id') == $b->id ? 'selected' : '' }}>
+                                {{ $b->nama_bidang }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
+                        <i data-feather="chevron-down" class="w-4 h-4"></i>
+                    </div>
+                </div>
+
+                {{-- FILTER PERIODE --}}
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                        <i data-feather="calendar" class="w-4 h-4"></i>
+                    </div>
+                    <select name="periode_id" onchange="this.form.submit()"
+                        class="pl-10 pr-8 py-2.5 bg-white border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition cursor-pointer hover:bg-gray-100">
+                        <option value="">Semua Periode</option>
+                        @foreach($periode as $p)
+                            <option value="{{ $p->id }}" {{ request('periode_id') == $p->id ? 'selected' : '' }}>
+                                {{ $p->nama_periode }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
+                        <i data-feather="chevron-down" class="w-4 h-4"></i>
+                    </div>
+                </div>
+            </form>
+
 
                     {{-- Separator (Hidden on mobile) --}}
                     <div class="hidden sm:block h-8 w-px bg-gray-200"></div>
 
                     {{-- Action Button --}}
-                    <button id="btn-validasi" 
-                        class="group inline-flex items-center justify-center bg-indigo-600 text-white px-5 py-2.5 rounded-xl shadow-md shadow-indigo-200 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-300 transition-all duration-200 transform hover:-translate-y-0.5 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        <i data-feather="check-circle" class="w-4 h-4 mr-2 group-hover:text-indigo-100 transition-colors"></i>
-                        <span class="font-medium text-sm">Validasi Laporan</span>
-                    </button>
+                @foreach ($data as $item)
+                    <tr>
+                        <td>
+                            @if ($item->periode->penilaian->every(fn($p) => $p->status == true))
+                                {{-- Sudah divalidasi --}}
+                                <button type="button"
+                                    onclick="laporanSudahValid()"
+                                    class="group inline-flex items-center justify-center bg-gray-400 text-white px-5 py-2.5 rounded-xl shadow-md cursor-not-allowed">
+                                    <i data-feather="check-circle" class="w-4 h-4 mr-2"></i>
+                                    <span class="font-medium text-sm">Sudah Divalidasi</span>
+                                </button>
+
+                            @else
+                                {{-- Belum divalidasi --}}
+                                <button id="btn-validasi"
+                                    class="group inline-flex items-center justify-center bg-indigo-600 text-white px-5 py-2.5 rounded-xl shadow-md hover:bg-indigo-700 transition">
+                                    <i data-feather="check-circle" class="w-4 h-4 mr-2"></i>
+                                    <span class="font-medium text-sm">Validasi Laporan</span>
+                                </button>
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+
 
                 </div>
             </div>

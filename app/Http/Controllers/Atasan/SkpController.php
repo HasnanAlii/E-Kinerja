@@ -7,32 +7,22 @@ use App\Models\Notification;
 use App\Models\PegawaiDetail;
 use App\Models\Skp;
 use App\Models\SkpHasilKerja;
-use App\Models\SkpPerilaku;
-use App\Models\SkpProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class SkpController extends Controller
 {
-    /**
-     * Daftar pegawai bawahan yang dinaungi atasan.
-     */
-    /**
-     * Menampilkan Form Edit Umpan Balik
-     */
+  
     public function editFeedback($id)
     {
-        // Muat SKP beserta relasinya
         $skp = Skp::with(['pegawai.user', 'hasilKerja'])->findOrFail($id);
 
-        // Pastikan hanya atasan yang bisa akses (Opsional: Tambahkan logika policy di sini)
         
         return view('atasan.skp.feedback', compact('skp'));
     }
 
-        /**
-         * Menyimpan Data Umpan Balik
-         */
     public function updateFeedback(Request $request, $id)
     {
         $skp = Skp::findOrFail($id);
@@ -93,7 +83,6 @@ class SkpController extends Controller
 
         $skp = Skp::with(['pegawai', 'bidang'])->findOrFail($id);
 
-        // Cek apakah SKP ini milik bawahan yang sesuai
         if ($skp->pegawai->atasan_id !== Auth::user()->atasan->id) {
             abort(403, 'Anda tidak memiliki akses.');
         }
@@ -101,59 +90,56 @@ class SkpController extends Controller
         return view('atasan.skp.show', compact('skp'));
     }
 
-    /**
-     * Update status SKP.
-     */
-    
+
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:Draft,Diajukan,Disetujui,Selesai',
-            'komentar_atasan' => $request->status === 'Draft' ? 'required|string' : 'nullable|string',
-        ]);
+            'status' => ['required', 'in:Draft,Diajukan,Revisi,Disetujui,Selesai'],
+            'komentar_atasan' => ['required', 'string'],
 
+        ]);
         $skp = Skp::with('pegawai.user')->findOrFail($id);
         $oldStatus = $skp->status;
 
         $skp->status = $request->status;
-        if ($request->status === 'Draft') {
-            $skp->komentar_atasan = $request->komentar_atasan;
-        }
+
+        $skp->komentar_atasan = $request->status === 'Revisi'
+            ? $request->komentar_atasan
+            : null;
 
         $skp->save();
 
         $pegawaiUser = $skp->pegawai->user ?? null;
 
-        /* ===================
-            Status -> Dinilai
-        ===================== */
+        // ==========================
+        // NOTIFIKASI: DISETUJUI
+        // ==========================
         if ($request->status === 'Disetujui' && $oldStatus !== 'Disetujui') {
-
             if ($pegawaiUser) {
                 Notification::create([
-                    'user_id'   => $pegawaiUser->id,
+                    'user_id' => $pegawaiUser->id,
                     'aktivitas' => "SKP Anda telah Disetujui oleh atasan.",
-                    'waktu'     => now(),
+                    'waktu' => now(),
                 ]);
             }
         }
 
-        /* ===================
-            Status -> Draft (Revisi)
-        ===================== */
-        if ($request->status === 'Draft' && $oldStatus !== 'Draft') {
-
+        // ==========================
+        // NOTIFIKASI: REVISI
+        // ==========================
+        if ($request->status === 'Revisi' && $oldStatus !== 'Revisi') {
             if ($pegawaiUser) {
                 Notification::create([
-                    'user_id'   => $pegawaiUser->id,
-                    'aktivitas' => "SKP Anda dengan ID {$skp->id} dikembalikan untuk direvisi. Catatan: {$request->komentar_atasan}",
-                    'waktu'     => now(),
+                    'user_id' => $pegawaiUser->id,
+                    'aktivitas' => "SKP Anda (ID {$skp->id}) dikembalikan untuk revisi. Catatan: {$request->komentar_atasan}",
+                    'waktu' => now(),
                 ]);
             }
         }
 
         return back()->with('success', 'Status SKP berhasil diperbarui.');
     }
+
 
 
  

@@ -64,6 +64,12 @@ Route::middleware(['auth', 'role:pegawai'])->prefix('pegawai')->name('pegawai.')
 
     // SKP Target
     Route::get('skp/all', [SkpController::class, 'index'])->name('skp.index');
+    Route::get('skp/edit', [SkpController::class, 'create'])->name('skp.edit');
+    Route::get('skp/edit/{id}', [SkpController::class, 'update'])->name('skp.update');
+    Route::get('skp/cetak/{id}', [SkpController::class, 'cetak'])->name('skp.cetak');
+
+
+
 
     // SKP Progress / Capaian
     // Route::resource('skp-progress', SkpProgressController::class)->only(['index', 'create', 'store']);

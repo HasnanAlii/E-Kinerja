@@ -37,12 +37,12 @@ $user = Auth::user();
             </a>
               <a href="{{ route('admin.kehadiran.index') }}" 
                class="flex items-center p-2 rounded-lg {{ request()->routeIs('admin.kehadiran.*')||request()->routeIs('atasan.izin.*') ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
-                <i data-feather="map-pin" class="w-5 h-5 mr-3"></i>
+                <i data-feather="calendar" class="w-5 h-5 mr-3"></i>
                 Kehadiran Pegawai
             </a>
             <a href="{{ route('admin.periode.index') }}" 
                class="flex items-center p-2 rounded-lg {{ request()->routeIs('admin.periode.*') ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
-                <i data-feather="calendar" class="w-5 h-5 mr-3"></i>
+                <i data-feather="repeat" class="w-5 h-5 mr-3"></i>
                 Periode Penilaian
             </a>
             <a href="{{ route('admin.penilaian.index') }}" 
@@ -73,7 +73,7 @@ $user = Auth::user();
             </a>
             <a href="{{ route('atasan.kehadiran.index') }}" 
                class="flex items-center p-2 rounded-lg {{ request()->routeIs('atasan.kehadiran.*')||request()->routeIs('atasan.izin.*') ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
-                <i data-feather="map-pin" class="w-5 h-5 mr-3"></i>
+                <i data-feather="calendar" class="w-5 h-5 mr-3"></i>
                 Kehadiran
             </a>
             <a href="{{ route('atasan.penilaian.index') }}" 
@@ -110,7 +110,7 @@ $user = Auth::user();
             </a>
             <a href="{{ route('pegawai.kehadiran.index') }}" 
                class="flex items-center p-2 rounded-lg {{ request()->routeIs('pegawai.kehadiran.*')||request()->routeIs('pegawai.izin.*') ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }}">
-                <i data-feather="map-pin" class="w-5 h-5 mr-3"></i>
+                <i data-feather="calendar" class="w-5 h-5 mr-3"></i>
                 Kehadiran
             </a>
             <a href="{{ route('pegawai.skp.index') }}" 

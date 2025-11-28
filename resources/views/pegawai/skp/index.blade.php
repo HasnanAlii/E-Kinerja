@@ -89,6 +89,7 @@
                                         <span class="px-3 py-1 text-sm rounded-full
                                             @if($row->status=='Draft') bg-gray-100 text-gray-700
                                             @elseif($row->status=='Diajukan') bg-blue-100 text-blue-700
+                                            @elseif($row->status=='Revisi') bg-yellow-100 text-yellow-700
                                             @elseif($row->status=='Dinilai') bg-yellow-100 text-yellow-700
                                             @else bg-green-100 text-green-700
                                             @endif">
@@ -108,16 +109,17 @@
                                             </a>
 
                                             {{-- Tombol Ajukan (jika Draft) --}}
-                                            @if($row->status == 'Draft')
-                                                <form method="POST" action="{{ route('skp.ajukan', $row->id) }}">
-                                                    @csrf
-                                                    <button type="submit"
-                                                      class="inline-flex items-center text-indigo-600 font-medium hover:text-indigo-800 transition">
-                                                        <i data-feather="send" class="w-4 h-4 mr-1"></i>
-                                                        Ajukan
-                                                    </button>
-                                                </form>
-                                            @endif
+                                        @if($row->status == 'Draft' || $row->status == 'Revisi')
+                                            <form method="POST" action="{{ route('skp.ajukan', $row->id) }}" class="ajukan-form">
+                                                @csrf
+                                                <button type="button"
+                                                    class="btn-ajukan inline-flex items-center text-indigo-600 font-medium hover:text-indigo-800 transition">
+                                                    <i data-feather="send" class="w-4 h-4 mr-1"></i>
+                                                    Ajukan
+                                                </button>
+                                            </form>
+                                        @endif
+
 
                                         </div>
 
@@ -150,4 +152,25 @@
 </x-app-layout>
 
                               
-    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.querySelectorAll('.btn-ajukan').forEach(button => {
+    button.addEventListener('click', function (e) {
+        let form = this.closest('.ajukan-form');
+
+        Swal.fire({
+            title: 'Ajukan SKP?',
+            text: "Apakah anda yakin ingin mengajukan SKP?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, ajukan!',
+            cancelButtonText: 'Batal',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
+    });
+});
+</script>

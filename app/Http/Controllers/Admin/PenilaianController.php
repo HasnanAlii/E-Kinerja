@@ -13,22 +13,30 @@ use Illuminate\Support\Facades\Auth;
 class PenilaianController extends Controller
 {
 
-    public function index(Request $request)
-    {
-        $periode = PeriodePenilaian::all();
-        $bidang = Bidang::all();
-        $query = Penilaian::with(['pegawai.user', 'atasan', 'periode']);
+public function index(Request $request)
+{
+    $periode = PeriodePenilaian::all();
+    $bidang = Bidang::all();
 
-        if ($request->bidang_id) {
-            $query->whereHas('pegawai', function ($q) use ($request) {
-                $q->where('bidang_id', $request->bidang_id);
-            });
-        }
+    $query = Penilaian::with(['pegawai.user', 'atasan', 'periode']);
 
-        $data = $query->paginate(30);
-
-        return view('admin.penilaian.index', compact('data', 'periode', 'bidang'));
+    // Filter Bidang
+    if ($request->bidang_id) {
+        $query->whereHas('pegawai', function ($q) use ($request) {
+            $q->where('bidang_id', $request->bidang_id);
+        });
     }
+
+    // 🔥 Filter Periode
+    if ($request->periode_id) {
+        $query->where('periode_id', $request->periode_id);
+    }
+
+    $data = $query->paginate(30);
+
+    return view('admin.penilaian.index', compact('data', 'periode', 'bidang'));
+}
+
 
     public function show($id)
     {

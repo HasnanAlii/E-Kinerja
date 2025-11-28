@@ -278,37 +278,6 @@
                     </table>
                 </div>
 
-                {{-- 5. TABEL PERILAKU KERJA --}}
-                {{-- <div class="overflow-x-auto">
-                    <h3 class="font-bold text-sm mb-1 border border-black border-b-0 p-1 bg-gray-50">PERILAKU KERJA</h3>
-                    <table class="w-full border-collapse border border-black text-xs sm:text-sm">
-                        <thead class="bg-gray-100 font-bold text-center">
-                            <tr>
-                                <th class="border border-black p-2 w-8">NO</th>
-                                <th class="border border-black p-2 w-32">ASPEK PERILAKU</th>
-                                <th class="border border-black p-2">INDIKATOR PERILAKU & EKSPEKTASI KHUSUS</th>
-                                <th class="border border-black p-2 w-40">UMPAN BALIK</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse($skp->perilaku as $index => $p)
-                                <tr>
-                                    <td class="border border-black p-2 text-center align-top">{{ $loop->iteration }}</td>
-                                    <td class="border border-black p-2 font-semibold align-top">{{ $p->aspek }}</td>
-                                    <td class="border border-black p-2 align-top">
-                                        <div class="mb-1 text-gray-900 font-medium">{{ $p->perilaku }}</div>
-                                        <div class="text-gray-600 italic">Ekspektasi: {{ $p->ekspektasi ?? '-' }}</div>
-                                    </td>
-                                    <td class="border border-black p-2 align-top">{{ $p->umpan_balik ?? '-' }}</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="4" class="border border-black p-4 text-center text-gray-500 italic">Data perilaku belum diisi.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div> --}}
 
                 <div class="mt-4 border border-black p-4 flex justify-between items-center bg-gray-50">
                     <div class="text-sm font-bold">RATING HASIL KERJA: <span class="text-indigo-700">{{ $skp->rating ?? '-' }}</span></div>

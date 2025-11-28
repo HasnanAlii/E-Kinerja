@@ -1,196 +1,223 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
-            <i data-feather="edit" class="w-5 h-5 text-indigo-600"></i>
-            Edit SKP - {{ $data->periode }}
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <i data-feather="edit-3" class="w-5 h-5 text-indigo-600"></i>
+                Edit Evaluasi Kinerja Pegawai
+            </h2>
+
+            <a href="{{ route('skp.show', $skp->id) }}"
+               class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700">
+                <i data-feather="arrow-left" class="w-4 h-4 inline mr-1"></i> Kembali
+            </a>
+        </div>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+    <div class="bg-gray-100 min-h-screen py-8">
+        <div class=" mx-auto sm:px-6 lg:px-8">
 
-            <form method="POST" action="{{ route('skp.update', $data->id) }}">
+            <form action="{{ route('skp.update', $skp->id) }}" method="POST">
                 @csrf
                 @method('PUT')
 
-                {{-- Identitas --}}
-                <div class="bg-white p-6 rounded-xl shadow border mb-6">
-                    <h3 class="text-lg font-semibold text-gray-700 mb-4">Identitas SKP</h3>
+                <div class="bg-white shadow-xl border border-gray-300 p-8 sm:p-12">
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {{-- HEADER DOKUMEN --}}
+                    <div class="text-center mb-6 uppercase font-bold text-gray-900 leading-relaxed">
+                        <h1 class="text-lg">EVALUASI KINERJA PEGAWAI</h1>
+                        <h2 class="text-base">PENDEKATAN HASIL KERJA KUANTITATIF</h2>
+                        <p class="mt-2 text-sm">PERIODE: {{ $skp->periode }}</p>
+                    </div>
+
+                    {{-- INFO PEMERINTAH --}}
+                    <div class="flex justify-between text-sm font-bold text-gray-800 mb-2 uppercase border-b-2 border-black pb-1">
+                        <div>PEMERINTAH KAB. CIANJUR</div>
+                        <div>PERIODE PENILAIAN: 
+                            {{ \Carbon\Carbon::parse($skp->tanggal_mulai)->format('d M Y') }} SD 
+                            {{ \Carbon\Carbon::parse($skp->tanggal_selesai)->format('d M Y') }}
+                        </div>
+                    </div>
+
+                    {{-- TABEL IDENTITAS --}}
+                    <div class="grid grid-cols-1 md:grid-cols-2 border border-black mb-1 text-sm">
+
+                        {{-- KOLOM KIRI PEGAWAI --}}
+                        <div class="border-r border-black">
+                            <table class="w-full">
+                                <tr>
+                                    <th class="border-b border-black p-1 w-8 text-center">NO</th>
+                                    <th class="border-b border-black p-1 text-left" colspan="2">PEGAWAI YANG DINILAI</th>
+                                </tr>
+                                <tr>
+                                    <td class="border-b border-gray-300 p-1 text-center">1</td>
+                                    <td class="border-b border-gray-300 p-1 w-32">NAMA</td>
+                                    <td class="border-b border-gray-300 p-1 font-semibold uppercase">
+                                        {{ $skp->pegawai->user->name }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="border-b border-gray-300 p-1 text-center">2</td>
+                                    <td class="border-b border-gray-300 p-1">NIP</td>
+                                    <td class="border-b border-gray-300 p-1">{{ $skp->pegawai->nip ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="border-b border-gray-300 p-1 text-center">3</td>
+                                    <td class="border-b border-gray-300 p-1">PANGKAT/GOL</td>
+                                    <td class="border-b border-gray-300 p-1">{{ $skp->pegawai->golongan ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="border-b border-gray-300 p-1 text-center">4</td>
+                                    <td class="border-b border-gray-300 p-1">JABATAN</td>
+                                    <td class="border-b border-gray-300 p-1">{{ $skp->pegawai->jabatan ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-1 text-center">5</td>
+                                    <td class="p-1">UNIT KERJA</td>
+                                    <td class="p-1">{{ $skp->pegawai->bidang->nama_bidang ?? '-' }}</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        {{-- KOLOM KANAN ATASAN --}}
                         <div>
-                            <label class="font-medium text-gray-700">Periode</label>
-                            <input name="periode" required value="{{ old('periode', $data->periode) }}"
-                                   class="w-full mt-1 rounded-lg border-gray-300">
+                            <table class="w-full">
+                                <tr>
+                                    <th class="border-b border-black p-1 w-8 text-center">NO</th>
+                                    <th class="border-b border-black p-1 text-left" colspan="2">ATASAN PENILAI KINERJA</th>
+                                </tr>
+
+                                @php $atasan = $skp->pegawai->atasan; @endphp
+
+                                <tr>
+                                    <td class="border-b border-gray-300 p-1 text-center">1</td>
+                                    <td class="border-b border-gray-300 p-1 w-32">NAMA</td>
+                                    <td class="border-b border-gray-300 p-1 font-semibold uppercase">
+                                        {{ $atasan->user->name ?? '-' }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="border-b border-gray-300 p-1 text-center">2</td>
+                                    <td class="border-b border-gray-300 p-1">NIP</td>
+                                    <td class="border-b border-gray-300 p-1">{{ $atasan->nip ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="border-b border-gray-300 p-1 text-center">3</td>
+                                    <td class="border-b border-gray-300 p-1">PANGKAT/GOL</td>
+                                    <td class="border-b border-gray-300 p-1">{{ $atasan->golongan ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="border-b border-gray-300 p-1 text-center">4</td>
+                                    <td class="border-b border-gray-300 p-1">JABATAN</td>
+                                    <td class="border-b border-gray-300 p-1">{{ $atasan->jabatan ?? '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-1 text-center">5</td>
+                                    <td class="p-1">UNIT KERJA</td>
+                                    <td class="p-1">{{ $atasan->bidang->nama_bidang ?? '-' }}</td>
+                                </tr>
+                            </table>
                         </div>
 
-                        <div>
-                            <label class="font-medium text-gray-700">Tanggal Mulai</label>
-                            <input type="date" name="tanggal_mulai" value="{{ old('tanggal_mulai', $data->tanggal_mulai?->format('Y-m-d')) }}"
-                                   class="w-full mt-1 rounded-lg border-gray-300">
+                    </div>
+
+                    {{-- CAPAIAN KINERJA --}}
+                    <div class="border-x border-b border-black mb-1 text-sm">
+                        <div class="p-2 border-b border-black font-bold">
+                            CAPAIAN KINERJA ORGANISASI:
+                            <span class="font-normal ml-2">{{ $skp->capaian_kinerja_organisasi ?? '-' }}</span>
                         </div>
-
-                        <div>
-                            <label class="font-medium text-gray-700">Tanggal Selesai</label>
-                            <input type="date" name="tanggal_selesai" value="{{ old('tanggal_selesai', $data->tanggal_selesai?->format('Y-m-d')) }}"
-                                   class="w-full mt-1 rounded-lg border-gray-300">
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Capaian & Pola --}}
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                    <div class="bg-white p-6 rounded-xl shadow border">
-                        <h4 class="font-semibold text-gray-700 mb-2">Capaian Kinerja Organisasi</h4>
-                        <textarea name="capaian_kinerja_organisasi" rows="4" class="w-full border-gray-300 rounded-lg">{{ old('capaian_kinerja_organisasi', $data->capaian_kinerja_organisasi) }}</textarea>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-xl shadow border">
-                        <h4 class="font-semibold text-gray-700 mb-2">Pola Distribusi</h4>
-                        <textarea name="pola_distribusi" rows="4" class="w-full border-gray-300 rounded-lg">{{ old('pola_distribusi', $data->pola_distribusi) }}</textarea>
-                    </div>
-                </div>
-
-                {{-- Hasil Kerja (edit inline) --}}
-                <div class="bg-white p-6 rounded-xl shadow border mb-6">
-                    <h4 class="text-lg font-semibold text-gray-700 mb-4">Hasil Kerja</h4>
-
-                    <div class="space-y-4">
-                        @foreach($data->hasilKerja as $hk)
-                            <div class="p-4 border rounded-lg bg-gray-50">
-                                <input type="hidden" name="hasil_kerja[{{ $hk->id }}][id]" value="{{ $hk->id }}">
-
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div>
-                                        <label class="text-sm text-gray-600">Jenis</label>
-                                        <select name="hasil_kerja[{{ $hk->id }}][jenis]" class="w-full mt-1 rounded-lg border-gray-300">
-                                            <option value="Utama" {{ $hk->jenis=='Utama' ? 'selected' : '' }}>Utama</option>
-                                            <option value="Hasil Kerja" {{ $hk->jenis=='Hasil Kerja' ? 'selected' : '' }}>Hasil Kerja</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="md:col-span-2">
-                                        <label class="text-sm text-gray-600">RHK</label>
-                                        <input name="hasil_kerja[{{ $hk->id }}][rhk]" value="{{ old("hasil_kerja.{$hk->id}.rhk", $hk->rhk) }}" class="w-full mt-1 rounded-lg border-gray-300">
-                                    </div>
-                                </div>
-
-                                <div class="mt-3">
-                                    <label class="text-sm text-gray-600">Indikator</label>
-                                    <textarea name="hasil_kerja[{{ $hk->id }}][indikator_kinerja]" rows="3" class="w-full mt-1 rounded-lg border-gray-300">{{ old("hasil_kerja.{$hk->id}.indikator_kinerja", $hk->indikator_kinerja) }}</textarea>
-                                </div>
-
-                                <div class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    <div>
-                                        <label class="text-sm text-gray-600">Aspek</label>
-                                        <input name="hasil_kerja[{{ $hk->id }}][aspek]" value="{{ old("hasil_kerja.{$hk->id}.aspek", $hk->aspek) }}" class="w-full mt-1 rounded-lg border-gray-300">
-                                    </div>
-                                    <div>
-                                        <label class="text-sm text-gray-600">Target</label>
-                                        <input name="hasil_kerja[{{ $hk->id }}][target]" value="{{ old("hasil_kerja.{$hk->id}.target", $hk->target) }}" class="w-full mt-1 rounded-lg border-gray-300">
-                                    </div>
-                                    <div>
-                                        <label class="text-sm text-gray-600">Realisasi</label>
-                                        <input name="hasil_kerja[{{ $hk->id }}][realisasi]" value="{{ old("hasil_kerja.{$hk->id}.realisasi", $hk->realisasi) }}" class="w-full mt-1 rounded-lg border-gray-300">
-                                    </div>
-                                </div>
-
-                                <div class="mt-3">
-                                    <label class="text-sm text-gray-600">Umpan Balik</label>
-                                    <textarea name="hasil_kerja[{{ $hk->id }}][umpan_balik]" rows="2" class="w-full mt-1 rounded-lg border-gray-300">{{ old("hasil_kerja.{$hk->id}.umpan_balik", $hk->umpan_balik) }}</textarea>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-
-                    {{-- tombol tambah baris baru (alpine) --}}
-                    <div x-data="{ newRows: [] }" class="mt-4">
-                        <template x-for="(r, i) in newRows" :key="i">
-                            <div class="p-4 border rounded-lg bg-white mb-3">
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div>
-                                        <label class="text-sm text-gray-600">Jenis</label>
-                                        <select :name="`new_hasil_kerja[${i}][jenis]`" class="w-full mt-1 rounded-lg border-gray-300">
-                                            <option value="Utama">Utama</option>
-                                            <option value="Hasil Kerja">Hasil Kerja</option>
-                                        </select>
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <label class="text-sm text-gray-600">RHK</label>
-                                        <input :name="`new_hasil_kerja[${i}][rhk]`" class="w-full mt-1 rounded-lg border-gray-300">
-                                    </div>
-                                </div>
-
-                                <div class="mt-3">
-                                    <label class="text-sm text-gray-600">Indikator</label>
-                                    <textarea :name="`new_hasil_kerja[${i}][indikator_kinerja]`" rows="3" class="w-full mt-1 rounded-lg border-gray-300"></textarea>
-                                </div>
-
-                                <div class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    <input :name="`new_hasil_kerja[${i}][aspek]`" placeholder="Aspek" class="rounded-lg border-gray-300 p-2">
-                                    <input :name="`new_hasil_kerja[${i}][target]`" placeholder="Target" class="rounded-lg border-gray-300 p-2">
-                                    <input :name="`new_hasil_kerja[${i}][realisasi]`" placeholder="Realisasi" class="rounded-lg border-gray-300 p-2">
-                                </div>
-
-                                <div class="mt-3">
-                                    <label class="text-sm text-gray-600">Umpan Balik</label>
-                                    <textarea :name="`new_hasil_kerja[${i}][umpan_balik]`" rows="2" class="w-full mt-1 rounded-lg border-gray-300"></textarea>
-                                </div>
-                            </div>
-                        </template>
-
-                        <div class="flex gap-2 mt-3">
-                            <button type="button" @click="newRows.push({})" class="px-4 py-2 bg-blue-600 text-white rounded-xl">
-                                + Tambah Baris Baru
-                            </button>
-
-                            <button type="button" @click="newRows.pop()" class="px-4 py-2 bg-gray-100 rounded-xl">
-                                Hapus Baris Baru
-                            </button>
+                        <div class="p-2 font-bold">
+                            POLA DISTRIBUSI:
+                            <span class="font-normal ml-2">{{ $skp->pola_distribusi ?? '-' }}</span>
                         </div>
                     </div>
-                </div>
 
-                {{-- Perilaku ASN --}}
-                <div class="bg-white p-6 rounded-xl shadow border mb-6">
-                    <h4 class="text-lg font-semibold text-gray-700 mb-4">Perilaku ASN</h4>
+                    {{-- HASIL KERJA --}}
+                    <h3 class="font-bold text-sm mb-1 border border-black border-b-0 p-1 bg-gray-50">HASIL KERJA</h3>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        @foreach($data->perilaku as $p)
-                            <div class="p-4 border rounded-lg bg-gray-50">
-                                <input type="hidden" name="perilaku[{{ $p->id }}][id]" value="{{ $p->id }}">
-                                <h5 class="font-semibold text-gray-800">{{ $p->aspek }}</h5>
+                    <table class="w-full border-collapse border border-black text-xs sm:text-sm">
 
-                                <label class="text-sm text-gray-600 mt-2 block">Perilaku</label>
-                                <textarea name="perilaku[{{ $p->id }}][perilaku]" rows="2" class="w-full mt-1 rounded-lg border-gray-300">{{ old("perilaku.{$p->id}.perilaku", $p->perilaku) }}</textarea>
+                        {{-- HEADER --}}
+                        <thead class="text-center font-bold bg-gray-50">
+                            <tr>
+                                <th class="border border-black p-2 w-8">NO</th>
+                                <th class="border border-black p-2 w-1/5">RENCANA HASIL KERJA PIMPINAN YANG DIINTERVENSI</th>
+                                <th class="border border-black p-2 w-1/5">RENCANA HASIL KERJA</th>
+                                <th class="border border-black p-2 w-32">ASPEK</th>
+                                <th class="border border-black p-2 ">INDIKATOR KINERJA INDIVIDU</th>
+                                <th class="border border-black p-2 w-32">TARGET</th>
+                                <th class="border border-black p-2 ">REALISASI</th>
+                                <th class="border border-black p-2 w-28">UMPAN BALIK</th>
+                            </tr>
+                        </thead>
 
-                                <label class="text-sm text-gray-600 mt-2 block">Ekspektasi</label>
-                                <textarea name="perilaku[{{ $p->id }}][ekspektasi]" rows="2" class="w-full mt-1 rounded-lg border-gray-300">{{ old("perilaku.{$p->id}.ekspektasi", $p->ekspektasi) }}</textarea>
+                        <tbody>
 
-                                <label class="text-sm text-gray-600 mt-2 block">Umpan Balik</label>
-                                <textarea name="perilaku[{{ $p->id }}][umpan_balik]" rows="2" class="w-full mt-1 rounded-lg border-gray-300">{{ old("perilaku.{$p->id}.umpan_balik", $p->umpan_balik) }}</textarea>
-                            </div>
-                        @endforeach
+                            <tr class="bg-gray-100 font-bold">
+                                <td colspan="8" class="border border-black p-1 text-left pl-2">UTAMA</td>
+                            </tr>
+
+                            @foreach($skp->hasilKerja as $i => $row)
+                            <tr>
+                                <td class="border border-black p-2 text-center align-top">{{ $i + 1 }}</td>
+
+                                {{-- RHK PIMPINAN --}}
+                                <td class="border border-black p-2 align-top">
+                                    <textarea readonly class="w-full bg-gray-100 border-none" rows="6">{{ $row->rhk_pimpinan }}</textarea>
+                                </td>
+
+                                {{-- RHK --}}
+                                <td class="border border-black p-2 align-top">
+                                    <textarea name="hasil_kerja[{{ $row->id }}][rhk]" class="w-full" rows="6">{{ $row->rhk }}</textarea>
+                                </td>
+
+                                {{-- ASPEK --}}
+                                <td class="border border-black p-2 align-top text-center">
+                                    <textarea name="hasil_kerja[{{ $row->id }}][aspek]" class="w-full text-center" rows="6">{{ $row->aspek }}</textarea>
+                                </td>
+
+                                {{-- INDIKATOR --}}
+                                <td class="border border-black p-2 align-top">
+                                    <textarea name="hasil_kerja[{{ $row->id }}][indikator_kinerja]" class="w-full" rows="6">{{ $row->indikator_kinerja }}</textarea>
+                                </td>
+
+                                {{-- TARGET --}}
+                                <td class="border border-black p-2 align-top text-center">
+                                    <textarea name="hasil_kerja[{{ $row->id }}][target]" class="w-full text-left" rows="6">{{ $row->target }}</textarea>
+                                </td>
+
+                                {{-- REALISASI --}}
+                                <td class="border border-black p-2 align-top text-left">
+                                    <textarea name="hasil_kerja[{{ $row->id }}][realisasi]" class="w-full text-left" rows="6">{{ $row->realisasi }}</textarea>
+                                </td>
+
+                                {{-- UMPAN BALIK --}}
+                                <td class="border border-black p-2 align-top">
+                                    <textarea readonly class="w-full bg-gray-100 border-none" rows="6">{{ $row->umpan_balik }}</textarea>
+                                </td>
+                            </tr>
+                            @endforeach
+
+                        </tbody>
+                    </table>
+
+                    {{-- BUTTON SECTION --}}
+                    <div class="flex justify-end gap-4 pt-6 mt-6 border-t">
+                        <a href="{{ route('skp.show', $skp->id) }}"
+                            class="px-5 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                            Batal
+                        </a>
+
+                        <button type="submit"
+                            class="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                            Simpan Perubahan
+                        </button>
                     </div>
 
-                    {{-- Tambah aspek baru --}}
-                    <div x-data="{ newAspek: '' }" class="mt-4">
-                        <div class="flex gap-2">
-                            <input x-model="newAspek" placeholder="Aspek baru (contoh: Kreatif)" class="rounded-lg border-gray-300 px-3 py-2 flex-1">
-                            <button type="button" @click="$dispatch('add-aspek', newAspek); newAspek='';" class="px-4 py-2 bg-blue-600 text-white rounded-xl">
-                                Tambah Aspek
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Submit --}}
-                <div class="flex justify-end gap-3">
-                    <a href="{{ route('skp.show', $data->id) }}" class="px-4 py-2 bg-white border rounded-lg text-gray-700">Batal</a>
-                    <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-xl">Simpan Perubahan</button>
                 </div>
             </form>
-
         </div>
     </div>
+
+    <script>feather.replace();</script>
 </x-app-layout>

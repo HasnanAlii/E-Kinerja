@@ -119,17 +119,27 @@
 
                                         </div>
                                     </td>
-
-
                                     {{-- AKSI --}}
                                     <td class="px-6 py-4 whitespace-nowrap text-center text-base font-medium">
-                                        <a href="{{ route('atasan.penilaian.create', $item->id) }}" 
-                                           class="inline-flex items-center text-indigo-600 hover:text-indigo-900">
-                                           <i data-feather="edit-3" class="w-4 h-4 mr-1"></i>
-                                           Isi Penilaian
-                                        </a>
-                                    </td>
 
+                                        @if ($item->sudah_dinilai == 0)
+                                            {{-- 👉 Belum dinilai → tombol normal --}}
+                                            <a href="{{ route('atasan.penilaian.create', $item->id) }}" 
+                                            class="inline-flex items-center text-indigo-600 hover:text-indigo-900">
+                                            <i data-feather="edit-3" class="w-4 h-4 mr-1"></i>
+                                            Isi Penilaian
+                                            </a>
+                                        @else
+                                            {{-- 👉 Sudah dinilai → tampilkan SweetAlert --}}
+                                            <a href="javascript:void(0)" 
+                                            onclick="penilaianSudahAda()" 
+                                            class="inline-flex items-center text-gray-400 cursor-not-allowed">
+                                            <i data-feather="check-circle" class="w-4 h-4 mr-1"></i>
+                                            Sudah Dinilai
+                                            </a>
+                                        @endif
+
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
@@ -155,3 +165,17 @@
 
     </div>
 </x-app-layout>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+function penilaianSudahAda() {
+    Swal.fire({
+        icon: 'info',
+        title: 'Sudah Dinilai',
+        text: 'Penilaian untuk pegawai ini sudah dilakukan.',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
+    });
+}
+</script>
+

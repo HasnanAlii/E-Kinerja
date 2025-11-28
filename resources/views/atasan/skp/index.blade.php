@@ -85,7 +85,6 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
                                         @php
                                             $statusClasses = [
-                                                'Draft'    => 'bg-gray-100 text-gray-600 border-gray-200',
                                                 'Diajukan' => 'bg-blue-50 text-blue-700 border-blue-200',
                                                 'Disetujui'  => 'bg-yellow-50 text-yellow-700 border-yellow-200',
                                                 'Selesai'  => 'bg-green-50 text-green-700 border-green-200',
@@ -181,17 +180,19 @@
                                                     class="w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 transition text-sm"
                                                     onchange="toggleCommentField('{{ $item->id }}')">
                                                     <option value="Disetujui" @selected($item->status == 'Disetujui')>Setujui / Lanjut Penilaian</option>
-                                                    <option value="Draft" @selected($item->status == 'Draft')>Revisi (Kembalikan ke Pegawai)</option>
+                                                    <option value="Revisi" @selected($item->status == 'Revisi')>Revisi (Kembalikan ke Pegawai)</option>
                                                 </select>
                                             </div>
 
                                             {{-- Kolom Komentar Atasan --}}
-                                            <div id="commentField{{ $item->id }}" class="{{ $item->status == 'Draft' ? '' : 'hidden' }}">
-                                                <label class="block text-sm font-medium text-gray-700 mb-1">Catatan Revisi</label>
-                                                <textarea name="komentar_atasan" rows="3"
-                                                    class="w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"
-                                                    placeholder="Berikan catatan perbaikan untuk pegawai..."></textarea>
-                                            </div>
+                                      <div id="commentField{{ $item->id }}">
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Catatan</label>
+                                            
+                                            <textarea name="komentar_atasan" id="komentar_atasan{{ $item->id }}" rows="3" required
+                                                class="w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"
+                                                placeholder="Berikan catatan perbaikan untuk pegawai..."></textarea>
+                                        </div>
+
                                         </div>
 
                                         <div class="mt-6 flex justify-end gap-3">
@@ -236,12 +237,28 @@
             const status = document.getElementById('statusSelect' + id).value;
             const commentField = document.getElementById('commentField' + id);
 
-            if (status === 'Draft') {
+            if (status === 'Revisi') {
                 commentField.classList.remove('hidden');
             } else {
                 commentField.classList.add('hidden');
             }
         }
+        function toggleCommentField(id) {
+            const status = document.getElementById('statusSelect' + id).value;
+            const textarea = document.getElementById('komentar_atasan' + id);
+
+            if (status === 'Disetujui') {
+                // Auto isi default jika kosong
+                if (textarea.value.trim() === "") {
+                    textarea.value = "SKP anda disetujui.";
+                }
+            }
+
+            if (status === 'Revisi') {
+                textarea.value = ""; // User harus isi manual saat revisi
+            }
+        }
+
     </script>
 
 </x-app-layout>

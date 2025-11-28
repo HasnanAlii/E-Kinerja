@@ -37,6 +37,14 @@
     <h2>Evaluasi Kinerja Pegawai</h2>
     <h3>Pendekatan Hasil Kerja Kuantitatif</h3>
     <p class="center">PERIODE: {{ $skp->periode }}</p>
+    <div style="text-align: right; width: 100%; margin-bottom: 5px;">
+        <p>
+            PENILAIAN:
+            {{ \Carbon\Carbon::parse($skp->tanggal_mulai)->format('d M Y') }}
+            SD
+            {{ \Carbon\Carbon::parse($skp->tanggal_selesai)->format('d M Y') }}
+        </p>
+    </div>
 
     {{-- IDENTITAS --}}
     <table>

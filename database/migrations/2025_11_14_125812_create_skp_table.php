@@ -48,7 +48,7 @@ public function up()
         
 
         // Status SKP
-        $table->enum('status', ['Draft', 'Diajukan', 'Disetujui', 'Final'])
+        $table->enum('status', ['Draft', 'Diajukan', 'Disetujui', 'Revisi','Final'])
               ->default('Draft');
 
         $table->timestamps();
