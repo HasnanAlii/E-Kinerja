@@ -39,103 +39,135 @@
 
                             {{-- Nama --}}
                             <div class="md:col-span-2">
-                                <label class="font-medium text-gray-700">Nama Pegawai</label>
-                                <input type="text" name="nama" value="{{ old('nama') }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                <label class="font-medium text-gray-700">
+                                    Nama Pegawai <span class="text-red-600">*</span>
+                                </label>
+                                <input type="text" name="nama" required value="{{ old('nama') }}"
+                                       class="mt-1 w-full rounded-md border-gray-300 shadow-sm">
                             </div>
 
                             {{-- Email --}}
                             <div>
-                                <label class="font-medium text-gray-700">Email</label>
-                                <input type="email" name="email" value="{{ old('email') }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                <label class="font-medium text-gray-700">
+                                    Email <span class="text-red-600">*</span>
+                                </label>
+                                <input type="email" name="email" required value="{{ old('email') }}"
+                                       class="mt-1 w-full rounded-md border-gray-300 shadow-sm">
                             </div>
 
                             {{-- Password --}}
                             <div>
-                                <label class="font-medium text-gray-700">Password</label>
-                                <input type="password" name="password"
-                                       class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                <label class="font-medium text-gray-700">
+                                    Password <span class="text-red-600">*</span>
+                                </label>
+                                <input type="password" name="password" required
+                                       class="mt-1 w-full rounded-md border-gray-300 shadow-sm">
                             </div>
 
                         </div>
                     </div>
+{{-- ================================================= --}}
+{{-- SECTION 2 — Data Pribadi User --}}
+{{-- ================================================= --}}
+<div>
+    <h3 class="text-lg font-bold flex items-center text-gray-900 space-x-2">
+        <i data-feather="user" class="w-5 h-5 text-indigo-600"></i>
+        <span>Data Pribadi</span>
+    </h3>
 
-                    {{-- ================================================= --}}
-                    {{-- SECTION 2 — Data Pribadi User --}}
-                    {{-- ================================================= --}}
-                    <div>
-                        <h3 class="text-lg font-bold flex items-center text-gray-900 space-x-2">
-                            <i data-feather="user" class="w-5 h-5 text-indigo-600"></i>
-                            <span>Data Pribadi</span>
-                        </h3>
+    <p class="mt-1 text-sm text-gray-500 italic">
+        Data pribadi bersifat opsional dan dapat diisi oleh pegawai setelah akun dibuat.
+    </p>
 
-                        <p class="mt-1 text-sm text-gray-600">Informasi ini disimpan pada tabel user.</p>
+    <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                        <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-6">
+        {{-- NIK --}}
+        <div>
+            <label class="font-medium text-gray-700">NIK (Opsional)</label>
+            <input type="text" name="nik" value="{{ old('nik') }}"
+                   class="mt-1 w-full rounded-md border-gray-300">
+        </div>
 
-                            {{-- NIK --}}
-                            <div>
-                                <label class="font-medium text-gray-700">NIK</label>
-                                <input type="text" name="nik" value="{{ old('nik') }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
-                            </div>
+        {{-- Jenis Kelamin --}}
+        <div>
+            <label class="font-medium text-gray-700">Jenis Kelamin (Opsional)</label>
+            <select name="jenis_kelamin"
+                    class="mt-1 w-full rounded-md border-gray-300">
+                <option value="">-- Pilih --</option>
+                <option value="Laki-laki" @selected(old('jenis_kelamin')=='Laki-laki')>Laki-laki</option>
+                <option value="Perempuan" @selected(old('jenis_kelamin')=='Perempuan')>Perempuan</option>
+            </select>
+        </div>
 
-                            {{-- Jenis Kelamin --}}
-                            <div>
-                                <label class="font-medium text-gray-700">Jenis Kelamin</label>
-                                <select name="jenis_kelamin"
-                                        class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
-                                    <option value="">-- Pilih --</option>
-                                    <option value="Laki-laki" @selected(old('jenis_kelamin')=='Laki-laki')>Laki-laki</option>
-                                    <option value="Perempuan" @selected(old('jenis_kelamin')=='Perempuan')>Perempuan</option>
-                                </select>
-                            </div>
+        {{-- Tempat Lahir --}}
+        <div>
+            <label class="font-medium text-gray-700">Tempat Lahir (Opsional)</label>
+            <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir') }}"
+                   class="mt-1 w-full rounded-md border-gray-300">
+        </div>
 
-                            {{-- Tempat Lahir --}}
-                            <div>
-                                <label class="font-medium text-gray-700">Tempat Lahir</label>
-                                <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir') }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
-                            </div>
+        {{-- Tanggal Lahir --}}
+        <div>
+            <label class="font-medium text-gray-700">Tanggal Lahir (Opsional)</label>
+            <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}"
+                   class="mt-1 w-full rounded-md border-gray-300">
+        </div>
 
-                            {{-- Tanggal Lahir --}}
-                            <div>
-                                <label class="font-medium text-gray-700">Tanggal Lahir</label>
-                                <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
-                            </div>
+        {{-- Agama --}}
+        <div>
+            <label class="font-medium text-gray-700">Agama (Opsional)</label>
+            <input type="text" name="agama" value="{{ old('agama') }}"
+                   class="mt-1 w-full rounded-md border-gray-300">
+        </div>
 
-                            {{-- Agama --}}
-                            <div>
-                                <label class="font-medium text-gray-700">Agama</label>
-                                <input type="text" name="agama" value="{{ old('agama') }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
-                            </div>
+        {{-- Telepon --}}
+        <div>
+            <label class="font-medium text-gray-700">Telepon (Opsional)</label>
+            <input type="text" name="telp" value="{{ old('telp') }}"
+                   class="mt-1 w-full rounded-md border-gray-300">
+        </div>
 
-                            {{-- Telepon --}}
-                            <div>
-                                <label class="font-medium text-gray-700">Telepon</label>
-                                <input type="text" name="telp" value="{{ old('telp') }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
-                            </div>
+        {{-- Alamat --}}
+        <div class="md:col-span-2">
+            <label class="font-medium text-gray-700">Alamat (Opsional)</label>
+            <textarea name="alamat" rows="2"
+                      class="mt-1 w-full rounded-md border-gray-300">{{ old('alamat') }}</textarea>
+        </div>
 
-                            {{-- Alamat --}}
-                            <div class="md:col-span-2">
-                                <label class="font-medium text-gray-700">Alamat</label>
-                                <textarea name="alamat" rows="2"
-                                          class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">{{ old('alamat') }}</textarea>
-                            </div>
+        {{-- Foto (Opsional) --}}
+        <div class="md:col-span-2">
+            <label class="font-medium text-gray-700">Foto Profil (Opsional)</label>
 
-                            {{-- Foto Profil User --}}
-                            <div class="md:col-span-2">
-                                <label class="font-medium text-gray-700">Foto (Opsional)</label>
-                                <input type="file" name="profile_photo"
-                                       class="mt-1 w-full border-gray-300 rounded-lg file:bg-gray-100 file:px-4 file:py-2 file:border-0">
-                            </div>
+            <div class="mt-2 flex items-center">
+                {{-- Preview --}}
+                <img id="previewImage" 
+                     src="{{ asset('images/default-preview.png') }}" 
+                     class="hidden w-20 h-20 rounded-lg object-cover mr-4 border border-gray-300">
 
-                        </div>
-                    </div>
+                {{-- Custom File Input --}}
+                <label class="cursor-pointer bg-blue-50 text-blue-700 border border-blue-300 hover:bg-blue-100 
+                               transition px-4 py-2 rounded-lg flex items-center gap-2 font-medium shadow-sm">
+
+                    <i data-feather="upload" class="w-5 h-5"></i>
+                    <span>Pilih Foto</span>
+
+                    <input type="file" name="profile_photo" id="profile_photo"
+                        class="hidden" accept="image/*" onchange="previewFile(event)">
+                </label>
+            </div>
+        </div>
+
+        <script>
+        function previewFile(event) {
+            const image = document.getElementById('previewImage');
+            image.src = URL.createObjectURL(event.target.files[0]);
+            image.classList.remove('hidden');
+        }
+        </script>
+
+    </div>
+</div>
+
 
                     {{-- ================================================= --}}
                     {{-- SECTION 3 — Detail Pegawai --}}
@@ -152,9 +184,11 @@
 
                             {{-- Bidang --}}
                             <div>
-                                <label class="font-medium text-gray-700">Bidang</label>
-                                <select name="bidang_id"
-                                        class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                                <label class="font-medium text-gray-700">
+                                    Bidang <span class="text-red-600">*</span>
+                                </label>
+                                <select name="bidang_id" required
+                                        class="mt-1 w-full rounded-md border-gray-300">
                                     <option value="">-- Pilih Bidang --</option>
                                     @foreach ($bidang as $b)
                                         <option value="{{ $b->id }}" @selected(old('bidang_id')==$b->id)>
@@ -166,9 +200,11 @@
 
                             {{-- Atasan --}}
                             <div>
-                                <label class="font-medium text-gray-700">Atasan</label>
-                                <select name="atasan_id"
-                                        class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                                <label class="font-medium text-gray-700">
+                                    Atasan <span class="text-red-600">*</span>
+                                </label>
+                                <select name="atasan_id" required
+                                        class="mt-1 w-full rounded-md border-gray-300">
                                     <option value="">-- Pilih Atasan --</option>
                                     @foreach ($atasan as $a)
                                         <option value="{{ $a->id }}" @selected(old('atasan_id')==$a->id)>
@@ -180,48 +216,43 @@
 
                             {{-- Jabatan --}}
                             <div>
-                                <label class="font-medium text-gray-700">Jabatan</label>
-                                <input type="text" name="jabatan" value="{{ old('jabatan') }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                                <label class="font-medium text-gray-700">
+                                    Jabatan <span class="text-red-600">*</span>
+                                </label>
+                                <input type="text" name="jabatan" required value="{{ old('jabatan') }}"
+                                       class="mt-1 w-full rounded-md border-gray-300">
                             </div>
 
-                            {{-- NIP --}}
+                            {{-- NIP (opsional) --}}
                             <div>
-                                <label class="font-medium text-gray-700">NIP</label>
+                                <label class="font-medium text-gray-700">NIP (Opsional)</label>
                                 <input type="text" name="nip" value="{{ old('nip') }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                                       class="mt-1 w-full rounded-md border-gray-300">
                             </div>
 
                             {{-- Status --}}
                             <div>
-                                <label class="font-medium text-gray-700">Status Kepegawaian</label>
-                                <select name="status"
-                                        class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                                <label class="font-medium text-gray-700">
+                                    Status Kepegawaian <span class="text-red-600">*</span>
+                                </label>
+                                <select name="status" required
+                                        class="mt-1 w-full rounded-md border-gray-300">
                                     <option value="">-- Pilih Status --</option>
-                                    <option value="Aktif" {{ old('status') == 'Aktif' ? 'selected' : '' }}>Aktif</option>
-                                    <option value="Tidak Aktif" {{ old('status') == 'Tidak Aktif' ? 'selected' : '' }}>Tidak Aktif</option>
+                                    <option value="Aktif" @selected(old('status')=='Aktif')>Aktif</option>
+                                    <option value="Tidak Aktif" @selected(old('status')=='Tidak Aktif')>Tidak Aktif</option>
                                 </select>
                             </div>
 
-
                             {{-- Tanggal Masuk --}}
                             <div>
-                                <label class="font-medium text-gray-700">Tanggal Masuk</label>
-                                <input type="date" name="tanggal_masuk" value="{{ old('tanggal_masuk') }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                                <label class="font-medium text-gray-700">
+                                    Tanggal Masuk <span class="text-red-600">*</span>
+                                </label>
+                                <input type="date" name="tanggal_masuk" required value="{{ old('tanggal_masuk') }}"
+                                       class="mt-1 w-full rounded-md border-gray-300">
                             </div>
-                            </div>
 
-
-                            {{-- Masa Kontrak --}}
-                            {{-- <div>
-                                <label class="font-medium text-gray-700">Masa Kontrak</label>
-                                <input type="date" name="masa_kontrak" value="{{ old('masa_kontrak') }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
-                            </div> --}}
-
-
-                        
+                        </div>
                     </div>
 
                     {{-- ================================================= --}}

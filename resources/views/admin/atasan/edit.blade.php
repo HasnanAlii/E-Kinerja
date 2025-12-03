@@ -28,32 +28,32 @@
                     @method('PUT')
 
                     {{-- ================================================= --}}
-                    {{-- SECTION 1 — AKUN USER --}}
+                    {{-- SECTION 1 — Akun User --}}
                     {{-- ================================================= --}}
                     <div>
-                        <h3 class="text-lg font-bold text-gray-900 flex items-center space-x-2">
+                        <h3 class="text-lg font-bold flex items-center text-gray-900 space-x-2">
                             <i data-feather="lock" class="w-5 h-5 text-indigo-600"></i>
                             <span>Akun Atasan</span>
                         </h3>
+
+                        <p class="mt-1 text-sm text-gray-600">Digunakan untuk login ke sistem.</p>
 
                         <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-6">
 
                             {{-- Nama --}}
                             <div class="md:col-span-2">
-                                <label class="font-medium text-gray-700">Nama Lengkap</label>
+                                <label class="font-medium text-gray-700">Nama Lengkap <span class="text-red-600">*</span></label>
                                 <input type="text" name="nama"
-                                       value="{{ old('nama', $data->user->name) }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                                       required>
+                                       value="{{ old('nama', $data->user->name) }}" required
+                                       class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500">
                             </div>
 
                             {{-- Email --}}
                             <div>
-                                <label class="font-medium text-gray-700">Email</label>
+                                <label class="font-medium text-gray-700">Email <span class="text-red-600">*</span></label>
                                 <input type="email" name="email"
-                                       value="{{ old('email', $data->user->email) }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                                       required>
+                                       value="{{ old('email', $data->user->email) }}" required
+                                       class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500">
                             </div>
 
                             {{-- Password --}}
@@ -61,116 +61,121 @@
                                 <label class="font-medium text-gray-700">Password Baru (Opsional)</label>
                                 <input type="password" name="password"
                                        placeholder="Kosongkan jika tidak diganti"
-                                       class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                       class="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500">
                             </div>
 
                         </div>
                     </div>
 
                     {{-- ================================================= --}}
-                    {{-- SECTION 2 — DATA PRIBADI USER --}}
+                    {{-- SECTION 2 — Data Pribadi (Opsional) --}}
                     {{-- ================================================= --}}
                     <div>
-                        <h3 class="text-lg font-bold text-gray-900 flex items-center space-x-2">
+                        <h3 class="text-lg font-bold flex items-center text-gray-900 space-x-2">
                             <i data-feather="user" class="w-5 h-5 text-indigo-600"></i>
                             <span>Data Pribadi</span>
                         </h3>
+
+                        <p class="mt-1 text-sm text-gray-500 italic">
+                            Data pribadi bersifat opsional dan dapat diperbarui sewaktu-waktu.
+                        </p>
 
                         <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-6">
 
                             {{-- NIK --}}
                             <div>
-                                <label class="font-medium text-gray-700">NIK</label>
+                                <label class="font-medium text-gray-700">NIK (Opsional)</label>
                                 <input type="text" name="nik"
                                        value="{{ old('nik', $data->user->nik) }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500">
                             </div>
 
-                 
+                            {{-- Jenis Kelamin --}}
                             <div>
-                                <label class="font-medium text-gray-700">Jenis Kelamin</label>
+                                <label class="font-medium text-gray-700">Jenis Kelamin (Opsional)</label>
                                 <select name="jenis_kelamin"
-                                        class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                                        class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500">
                                     <option value="">-- Pilih --</option>
-
-                                    <option value="Laki-laki"
-                                        @selected(old('jenis_kelamin', $data->user->jenis_kelamin) == 'Laki-laki')>
-                                        Laki-laki
-                                    </option>
-
-                                    <option value="Perempuan"
-                                        @selected(old('jenis_kelamin', $data->user->jenis_kelamin) == 'Perempuan')>
-                                        Perempuan
-                                    </option>
+                                    <option value="Laki-laki" @selected(old('jenis_kelamin', $data->user->jenis_kelamin)=='Laki-laki')>Laki-laki</option>
+                                    <option value="Perempuan" @selected(old('jenis_kelamin', $data->user->jenis_kelamin)=='Perempuan')>Perempuan</option>
                                 </select>
                             </div>
 
-
                             {{-- Tempat Lahir --}}
                             <div>
-                                <label class="font-medium text-gray-700">Tempat Lahir</label>
+                                <label class="font-medium text-gray-700">Tempat Lahir (Opsional)</label>
                                 <input type="text" name="tempat_lahir"
                                        value="{{ old('tempat_lahir', $data->user->tempat_lahir) }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500">
                             </div>
 
-                        
-                 
-                                <div>
-                                    <label class="font-medium text-gray-700">Tanggal Lahir</label>
-                                    <input type="date" name="tanggal_lahir"
-                                        value="{{ old('tanggal_lahir', $data->user->tanggal_lahir ? \Carbon\Carbon::parse($data->user->tanggal_lahir)->format('Y-m-d') : '') }}"
-                                        class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
-                                </div>
-
+                            {{-- Tanggal Lahir --}}
+                            <div>
+                                <label class="font-medium text-gray-700">Tanggal Lahir (Opsional)</label>
+                                <input type="date" name="tanggal_lahir"
+                                       value="{{ old('tanggal_lahir', $data->user->tanggal_lahir ? \Carbon\Carbon::parse($data->user->tanggal_lahir)->format('Y-m-d') : '') }}"
+                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500">
+                            </div>
 
                             {{-- Agama --}}
                             <div>
-                                <label class="font-medium text-gray-700">Agama</label>
+                                <label class="font-medium text-gray-700">Agama (Opsional)</label>
                                 <input type="text" name="agama"
                                        value="{{ old('agama', $data->user->agama) }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500">
                             </div>
 
                             {{-- Telp --}}
                             <div>
-                                <label class="font-medium text-gray-700">Telepon</label>
+                                <label class="font-medium text-gray-700">Telepon (Opsional)</label>
                                 <input type="text" name="telp"
                                        value="{{ old('telp', $data->user->telp) }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500">
                             </div>
 
                             {{-- Alamat --}}
                             <div class="md:col-span-2">
-                                <label class="font-medium text-gray-700">Alamat</label>
+                                <label class="font-medium text-gray-700">Alamat (Opsional)</label>
                                 <textarea name="alamat" rows="2"
-                                          class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">{{ old('alamat', $data->user->alamat) }}</textarea>
+                                          class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500">{{ old('alamat', $data->user->alamat) }}</textarea>
                             </div>
 
                             {{-- Foto Profil --}}
                             <div class="md:col-span-2">
-                                <label class="font-medium text-gray-700">Foto </label>
+                                <label class="font-medium text-gray-700">Foto Profil (Opsional)</label>
 
+                                {{-- Preview foto lama --}}
                                 @if ($data->user->profile_photo)
                                     <div class="my-3 flex items-center space-x-4">
                                         <img src="{{ asset('storage/'.$data->user->profile_photo) }}"
-                                             class="w-24 h-24 object-cover rounded-xl border shadow">
+                                             class="w-20 h-20 rounded-xl border shadow object-cover">
                                         <p class="text-gray-500 text-sm italic">Foto saat ini</p>
                                     </div>
                                 @endif
 
-                                <input type="file" name="profile_photo"
-                                       class="w-full border-gray-300 rounded-lg file:bg-gray-100 file:px-4 file:py-2 file:border-0">
+                                {{-- Preview baru --}}
+                                <img id="previewImage" class="hidden w-20 h-20 rounded-lg object-cover mb-3 border">
+
+                                {{-- Tombol upload --}}
+                                <label class="cursor-pointer bg-blue-50 text-blue-700 border border-blue-300 hover:bg-blue-100 
+                                               transition px-4 py-2 rounded-lg flex items-center gap-2 font-medium shadow-sm">
+
+                                    <i data-feather="upload" class="w-5 h-5"></i>
+                                    <span>Pilih Foto Baru</span>
+
+                                    <input type="file" name="profile_photo" id="profile_photo"
+                                           class="hidden" accept="image/*" onchange="previewFile(event)">
+                                </label>
                             </div>
 
                         </div>
                     </div>
 
                     {{-- ================================================= --}}
-                    {{-- SECTION 3 — DETAIL ATASAN --}}
+                    {{-- SECTION 3 — Detail Atasan --}}
                     {{-- ================================================= --}}
                     <div>
-                        <h3 class="text-lg font-bold text-gray-900 flex items-center space-x-2">
+                        <h3 class="text-lg font-bold flex items-center text-gray-900 space-x-2">
                             <i data-feather="briefcase" class="w-5 h-5 text-indigo-600"></i>
                             <span>Detail Atasan</span>
                         </h3>
@@ -179,10 +184,11 @@
 
                             {{-- Bidang --}}
                             <div>
-                                <label class="font-medium text-gray-700">Bidang</label>
-                                <select name="bidang_id"
-                                        class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
-                                        required>
+                                <label class="font-medium text-gray-700">
+                                    Bidang <span class="text-red-600">*</span>
+                                </label>
+                                <select name="bidang_id" required
+                                        class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500">
                                     @foreach ($bidang as $b)
                                         <option value="{{ $b->id }}" @selected($data->bidang_id==$b->id)>
                                             {{ $b->nama_bidang }}
@@ -193,37 +199,37 @@
 
                             {{-- Jabatan --}}
                             <div>
-                                <label class="font-medium text-gray-700">Jabatan</label>
+                                <label class="font-medium text-gray-700">Jabatan <span class="text-red-600">*</span></label>
                                 <input type="text" name="jabatan"
-                                       value="{{ old('jabatan', $data->jabatan) }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                                       value="{{ old('jabatan', $data->jabatan) }}" required
+                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500">
                             </div>
 
                             {{-- NIP --}}
                             <div>
-                                <label class="font-medium text-gray-700">NIP</label>
+                                <label class="font-medium text-gray-700">NIP (Opsional)</label>
                                 <input type="text" name="nip"
                                        value="{{ old('nip', $data->nip) }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500">
                             </div>
 
                             {{-- Golongan --}}
                             <div>
-                                <label class="font-medium text-gray-700">Golongan</label>
+                                <label class="font-medium text-gray-700">Golongan (Opsional)</label>
                                 <input type="text" name="golongan"
                                        value="{{ old('golongan', $data->golongan) }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500">
                             </div>
 
                             {{-- Status --}}
                             <div>
                                 <label class="font-medium text-gray-700">Status Kepegawaian</label>
-                                       <select name="status"
-                                                class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500">
-                                            <option value="">-- Pilih Status --</option>
-                                            <option value="Aktif" {{ old('status', $data->status) == 'Aktif' ? 'selected' : '' }}>Aktif</option>
-                                            <option value="Tidak Aktif" {{ old('status', $data->status) == 'Tidak Aktif' ? 'selected' : '' }}>Tidak Aktif</option>
-                                        </select>
+                                <select name="status"
+                                        class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500">
+                                    <option value="">-- Pilih Status --</option>
+                                    <option value="Aktif" @selected(old('status', $data->status)=='Aktif')>Aktif</option>
+                                    <option value="Tidak Aktif" @selected(old('status', $data->status)=='Tidak Aktif')>Tidak Aktif</option>
+                                </select>
                             </div>
 
                             {{-- Tanggal Masuk --}}
@@ -231,25 +237,13 @@
                                 <label class="font-medium text-gray-700">Tanggal Masuk</label>
                                 <input type="date" name="tanggal_masuk"
                                        value="{{ old('tanggal_masuk', $data->tanggal_masuk) }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
+                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500">
                             </div>
-
-                            {{-- Masa Kontrak
-                            <div>
-                                <label class="font-medium text-gray-700">Masa Kontrak</label>
-                                <input type="date" name="masa_kontrak"
-                                       value="{{ old('masa_kontrak', $data->masa_kontrak) }}"
-                                       class="mt-1 w-full rounded-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500">
-                            </div> --}}
-
-                     
 
                         </div>
                     </div>
 
-                    {{-- ================================================= --}}
                     {{-- FOOTER --}}
-                    {{-- ================================================= --}}
                     <div class="flex items-center justify-end pt-6 border-t border-gray-200">
 
                         <a href="{{ route('admin.atasan.index') }}"
@@ -268,8 +262,15 @@
                 </form>
 
             </div>
-
         </div>
     </div>
 
 </x-app-layout>
+
+<script>
+function previewFile(event) {
+    const image = document.getElementById('previewImage');
+    image.src = URL.createObjectURL(event.target.files[0]);
+    image.classList.remove('hidden');
+}
+</script>

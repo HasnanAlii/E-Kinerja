@@ -104,7 +104,7 @@ public function show($id)
             'name'         => $request->nama,
             'nip'          => $request->nip,
             'jabatan'      => $request->jabatan,
-            'masa_kontrak' => $request->masa_kontrak,
+            // 'masa_kontrak' => $request->masa_kontrak,
             'status'       => $request->status,
             'tanggal_masuk'=> $request->tanggal_masuk,
         ]);
