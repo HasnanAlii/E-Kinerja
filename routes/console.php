@@ -10,5 +10,8 @@ Artisan::command('inspire', function () {
 
 Schedule::command('notifications:clean-old --days=5')
     ->dailyAt('02:00');
+
+
+Schedule::command('kehadiran:generate-alpha')->dailyAt('00:00');
     
 // Schedule::command('notifications:test-clean')->everyMinute();

@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Atasan;
 
 use App\Http\Controllers\Controller;
 use App\Models\Bidang;
+use App\Models\IzinSakit;
 use App\Models\Kehadiran;
 use App\Models\Pegawai;
 use App\Models\PegawaiDetail;
+use App\Models\PeriodePenilaian;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -154,4 +157,72 @@ class AtasanKehadiranController extends Controller
         return redirect()->route('atasan.kehadiran.index')
             ->with('success', 'Data kehadiran manual berhasil ditambahkan.');
     }
+
+
+public function cetakKehadiran(Request $request)
+{
+    $pegawaiId = $request->pegawai_id;
+
+    $pegawai = PegawaiDetail::with(['user','bidang'])->findOrFail($pegawaiId);
+
+    $query = Kehadiran::where('pegawai_id', $pegawaiId);
+
+    if ($request->filled('tanggal_dari') && $request->filled('tanggal_sampai')) {
+        $query->whereBetween('tanggal', [
+            $request->tanggal_dari,
+            $request->tanggal_sampai
+        ]);
+    }
+
+    $detail = $query->orderBy('tanggal')->get();
+
+    $rekap = [
+        'hadir' => $detail->where('jenis','hadir'),
+        'izin'  => $detail->where('jenis','izin'),
+        'sakit' => $detail->where('jenis','sakit'),
+        'cuti'  => $detail->where('jenis','cuti'),
+        'alpha' => $detail->where('jenis','alpha'),
+    ];
+
+    $pdf = Pdf::loadView('atasan.kehadiran.pdf', compact('pegawai','detail','rekap'))
+        ->setPaper('a4','portrait');
+
+    return $pdf->stream("Laporan_Kehadiran_{$pegawai->user->name}.pdf");
+}
+
+
+public function cetakadmin($pegawaiId)
+{
+    // Pegawai yang dipilih dari tabel (bukan user login)
+    $pegawai = PegawaiDetail::with(['user','bidang'])->findOrFail($pegawaiId);
+
+    // Periode aktif
+    $periode = PeriodePenilaian::where('status_aktif', true)->first();
+
+    // Ambil seluruh kehadiran dalam periode aktif
+    $detail = Kehadiran::where('pegawai_id', $pegawaiId)
+   
+        ->get();
+
+    // Kelompokkan per jenis (list tanggal)
+    $rekap = [
+        'hadir' => $detail->where('jenis', 'hadir'),
+        'izin'  => $detail->where('jenis', 'izin'),
+        'sakit' => $detail->where('jenis', 'sakit'),
+        'cuti'  => $detail->where('jenis', 'cuti'),
+        'alpha' => $detail->where('jenis', 'alpha'),
+    ];
+
+    $pdf = Pdf::loadView('admin.kehadiran.pdf', compact(
+        'pegawai',
+        'periode',
+        'detail',
+        'rekap'
+    ))->setPaper('a4','portrait');
+
+    return $pdf->stream("Laporan_Kehadiran_{$pegawai->user->name}.pdf");
+}
+
+
+
 }

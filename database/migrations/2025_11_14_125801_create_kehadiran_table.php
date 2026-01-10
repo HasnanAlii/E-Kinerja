@@ -9,20 +9,19 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-public function up()
-{
-    Schema::create('kehadirans', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('pegawai_id')->constrained('pegawai_details')->onDelete('cascade');
-        $table->date('tanggal');
-        $table->string('jenis')->nullable();
-        $table->time('check_in')->nullable();
-        $table->time('check_out')->nullable();
-   
+    public function up()
+    {
+        Schema::create('kehadirans', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('pegawai_id')->constrained('pegawai_details')->onDelete('cascade');
+            $table->date('tanggal');
+            $table->enum('jenis', ['hadir', 'izin', 'sakit', 'cuti', 'alpha'])->nullable();
+            $table->time('check_in')->nullable();
+            $table->time('check_out')->nullable();
+            $table->timestamps();
+        });
+    }
 
-        $table->timestamps();
-    });
-}
 
 
     /**

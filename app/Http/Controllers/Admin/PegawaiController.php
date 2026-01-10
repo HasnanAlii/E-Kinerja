@@ -38,15 +38,37 @@ class PegawaiController extends Controller
     }
 public function show($id)
 {
+    // Ambil periode yang sedang aktif (status_aktif = true)
+    $periode = \App\Models\PeriodePenilaian::where('status_aktif', true)->first();
+
     $data = PegawaiDetail::with([
         'user',
         'bidang',
         'atasan',
-        'atasan.user'
+        'atasan.user',
+        'kehadiran' => function ($q) use ($periode) {
+            if ($periode) {
+                $q->whereBetween('tanggal', [
+                    $periode->tgl_mulai,
+                    $periode->tgl_selesai
+                ]);
+            }
+        },
+        'izinSakit' => function ($q) use ($periode) {
+            if ($periode) {
+                $q->whereBetween('tanggal_mulai', [
+                    $periode->tgl_mulai,
+                    $periode->tgl_selesai
+                ]);
+            }
+        }
     ])->findOrFail($id);
 
-    return view('admin.pegawai.show', compact('data'));
+    return view('admin.pegawai.show', compact('data', 'periode'));
 }
+
+
+
     public function store(Request $request)
     {
         $request->validate([

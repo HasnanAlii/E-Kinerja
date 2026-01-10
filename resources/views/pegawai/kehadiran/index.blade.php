@@ -20,7 +20,7 @@
                         <a href="{{ route('pegawai.izin.index') }}"
                            class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-base flex items-center">
                             <i data-feather="file-text" class="w-5 h-5 mr-2"></i>
-                            Izin / Sakit
+                            Izin / Sakit / Cuti
                         </a>
                     </nav>
                 </div>
@@ -106,27 +106,27 @@
 
                                         {{-- Absen Masuk --}}
                                         <td class="px-6 py-4 whitespace-nowrap text-center">
-                                            @if ($row->jenis)
+                                            @if ($row->jenis != 'hadir')
                                                 <span class="text-base text-blue-600 font-semibold text-center">
                                                     {{ ucfirst($row->jenis) }}
                                                 </span>
                                             @else
                                                 <div class="text-base text-gray-900 text-center">
-                                                    {{ $row->check_in ? \Carbon\Carbon::parse($row->check_in)->format('H:i:s') : '-' }}
+                                                    {{ $row->check_in ? \Carbon\Carbon::parse($row->check_in)->format('H:i') : '-' }}
                                                 </div>
                                             @endif
                                         </td>
 
                                         {{-- Absen Pulang --}}
                                         <td class="px-6 py-4 whitespace-nowrap text-center">
-                                            @if ($row->jenis)
+                                             @if ($row->jenis != 'hadir')
                                                 <span class="text-base text-blue-600 font-semibold text-center">
                                                     {{ ucfirst($row->jenis) }}
                                                 </span>
                                             @else
                                                 @if ($row->check_out)
                                                     <div class="text-base text-gray-900">
-                                                        {{ \Carbon\Carbon::parse($row->check_out)->format('H:i:s') }}
+                                                        {{ \Carbon\Carbon::parse($row->check_out)->format('H:i') }}
                                                     </div>
                                                 @else
                                                     <span class="text-base text-center text-gray-400 italic">Belum Absen Pulang</span>

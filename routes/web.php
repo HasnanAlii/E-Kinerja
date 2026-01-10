@@ -31,6 +31,7 @@ Route::get('/skp/{skp}/hasil-kerja/create', [SkpHasilKerjaController::class, 'cr
 // Menyimpan data RHK
 Route::post('/skp/{skp}/hasil-kerja', [SkpHasilKerjaController::class, 'store'])->name('skp.hasil_kerja.store');
 use App\Http\Controllers\SkpPerilakuController;
+use Laravel\Prompts\Key;
 
 Route::get('/', function () {
     return view('welcome');
@@ -191,8 +192,16 @@ Route::middleware(['auth'])->group(function () {
     // Menyimpan Umpan Balik
     Route::put('/skp/{id}/feedback', [AtasanSkpController::class, 'updateFeedback'])->name('skp.feedback.update');
 
+    Route::get('/laporan-kehadiran', 
+        [AtasanKehadiranController::class, 'cetakKehadiran'])
+        ->name('laporan.kehadiran.perpegawai');
         
-});
+    Route::get('/laporan-kehadiran-admin/{pegawai}', 
+        [AtasanKehadiranController::class, 'cetakadmin'])
+        ->name('laporan.kehadiran.perpegawaiadmin');
+
+                
+    });
 
 
 

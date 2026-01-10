@@ -39,6 +39,7 @@
                                 <option value="" disabled {{ old('jenis') ? '' : 'selected' }}>-- Pilih Jenis --</option>
                                 <option value="izin" {{ old('jenis') == 'izin' ? 'selected' : '' }}>Izin</option>
                                 <option value="sakit" {{ old('jenis') == 'sakit' ? 'selected' : '' }}>Sakit</option>
+                                <option value="cuti" {{ old('jenis') == 'cuti' ? 'selected' : '' }}>Cuti</option>
                             </select>
                             @error('jenis')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>

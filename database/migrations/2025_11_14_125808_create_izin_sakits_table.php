@@ -14,7 +14,7 @@ public function up()
     Schema::create('izin_sakit', function (Blueprint $table) {
         $table->id();
         $table->foreignId('pegawai_id')->constrained('pegawai_details')->onDelete('cascade');
-        $table->enum('jenis', ['izin', 'sakit']);
+        $table->enum('jenis', ['izin', 'sakit', 'cuti']);
         $table->date('tanggal_mulai');
         $table->date('tanggal_selesai');
         $table->string('file_surat')->nullable();

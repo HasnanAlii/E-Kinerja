@@ -69,6 +69,7 @@ class PenilaianController extends Controller
 
         return $pdf->download('laporan_penilaian_periode_aktif.pdf');
     }
+    
     public function download()
     {
         $pegawai = Auth::user()->detail;

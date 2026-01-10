@@ -28,7 +28,7 @@ class IzinSakitController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'jenis' => 'required|in:izin,sakit',
+            'jenis' => 'required|in:izin,sakit,cuti',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date',
             'file_surat' => 'nullable|file|mimes:jpg,png,pdf'

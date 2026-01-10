@@ -41,25 +41,48 @@
                         @csrf
                         <input type="hidden" name="pegawai_id" value="{{ $pegawai->id }}">
                         <input type="hidden" name="periode_id" value="{{ $periode->id }}">
-
                         @php
-                            $indikator = [
-                                'skp' => 'Capaian SKP',
-                                'kedisiplinan' => 'Kedisiplinan',
-                                'perilaku' => 'Perilaku',
-                                'komunikasi' => 'Komunikasi',
-                                'tanggung_jawab' => 'Tanggung Jawab',
-                                'kerja_sama' => 'Kerja Sama',
-                                'produktivitas' => 'Produktivitas'
-                            ];
+                        $indikator = [
+                            'skp' => [
+                                'label' => 'Capaian SKP',
+                                'desc'  => 'Tingkat kesesuaian hasil kerja dengan target SKP yang telah ditetapkan selama periode penilaian.'
+                            ],
+                            'kedisiplinan' => [
+                                'label' => 'Kedisiplinan',
+                                'desc'  => 'Kepatuhan terhadap jam kerja, ketepatan waktu hadir/pulang, serta ketaatan pada aturan dan SOP.'
+                            ],
+                            'perilaku' => [
+                                'label' => 'Perilaku',
+                                'desc'  => 'Sikap, etika, sopan santun, dan profesionalitas pegawai dalam lingkungan kerja.'
+                            ],
+                            'komunikasi' => [
+                                'label' => 'Komunikasi',
+                                'desc'  => 'Kemampuan menyampaikan informasi secara jelas, menerima arahan, serta berkoordinasi dengan atasan dan rekan kerja.'
+                            ],
+                            'tanggung_jawab' => [
+                                'label' => 'Tanggung Jawab',
+                                'desc'  => 'Kesungguhan dalam menyelesaikan tugas, ketelitian, serta kemampuan mempertanggungjawabkan hasil pekerjaan.'
+                            ],
+                            'kerja_sama' => [
+                                'label' => 'Kerja Sama',
+                                'desc'  => 'Kemampuan bekerja dalam tim, saling membantu, menjaga hubungan kerja, dan mendukung pencapaian tujuan bersama.'
+                            ],
+                            'produktivitas' => [
+                                'label' => 'Produktivitas',
+                                'desc'  => 'Jumlah dan kualitas output kerja, kecepatan penyelesaian tugas, serta efektivitas dalam penggunaan waktu kerja.'
+                            ],
+                        ];
                         @endphp
 
                         <div class="space-y-8">
-                            @foreach ($indikator as $key => $label)
+                            @foreach ($indikator as $key => $item)
                                 <div class="pb-6 border-b border-gray-100 last:border-0">
-                                    <label class="block text-lg font-semibold text-gray-800 mb-4">
-                                        {{ $loop->iteration }}. {{ $label }}
+                                    <label class="block text-lg font-semibold text-gray-800">
+                                        {{ $loop->iteration }}. {{ $item['label'] }}
                                     </label>
+                                    <p class="text-sm text-gray-500 mt-1 mb-4">
+                                        {{ $item['desc'] }}
+                                    </p>
 
                                     <div class="flex flex-wrap gap-3 sm:gap-4">
                                         @for ($i = 1; $i <= 5; $i++)

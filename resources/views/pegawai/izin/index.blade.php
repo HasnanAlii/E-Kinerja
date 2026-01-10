@@ -1,7 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            Pengajuan Izin / Sakit
+            Pengajuan Izin / Sakit / Cuti
+
         </h2>
     </x-slot>
 
@@ -19,7 +20,7 @@
                         <a href="{{ route('pegawai.izin.index') }}"
                          class="border-indigo-500 text-indigo-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-base flex items-center">
                             <i data-feather="file-text" class="w-5 h-5 mr-2"></i>
-                            Izin / Sakit
+                            Izin / Sakit / Cuti
                         </a>
                     </nav>
                 </div>

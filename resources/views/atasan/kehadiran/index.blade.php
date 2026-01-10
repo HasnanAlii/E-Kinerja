@@ -19,7 +19,7 @@
                         <a href="{{ route('atasan.izin.index') }}"
                            class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-base flex items-center">
                             <i data-feather="file-text" class="w-5 h-5 mr-2"></i>
-                            Izin / Sakit
+                            Izin / Sakit / Cuti
                         </a>
                     </nav>
                 </div>
@@ -35,30 +35,34 @@
           <div class="bg-white shadow-xl sm:rounded-2xl overflow-hidden border border-gray-100">
 
     {{-- HEADER CARD --}}
-    <div class="px-6 py-6 border-b border-gray-200 bg-gray-50 flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+   <div class="px-6 py-6 border-b border-gray-200 bg-gray-50 flex flex-col xl:flex-row xl:items-center justify-between gap-6">
 
-        {{-- LEFT SECTION: ICON + TITLE --}}
-        <div class="flex items-center gap-4">
-            <div class="p-3 bg-indigo-50 text-indigo-600 rounded-2xl shadow-sm ring-1 ring-indigo-100">
-                <i data-feather="clock" class="w-6 h-6"></i>
-            </div>
-            <div>
-                <h3 class="text-lg font-bold text-gray-900 tracking-tight">Rekap Kehadiran Pegawai</h3>
-                <p class="text-sm text-gray-500 mt-0.5">
-                    Lihat dan kelola data kehadiran berdasarkan pegawai & periode tanggal.
-                </p>
-            </div>
+    {{-- LEFT: ICON & TITLE --}}
+    <div class="flex items-center gap-4">
+        <div class="p-3 bg-indigo-50 text-indigo-600 rounded-2xl shadow-sm ring-1 ring-indigo-100">
+            <i data-feather="clock" class="w-6 h-6"></i>
         </div>
+        <div>
+            <h3 class="text-lg font-bold text-gray-900 tracking-tight">Rekap Kehadiran Pegawai</h3>
+            <p class="text-sm text-gray-500 mt-0.5">
+                Lihat dan kelola data kehadiran berdasarkan pegawai dan rentang tanggal.
+            </p>
+        </div>
+    </div>
 
-        {{-- RIGHT SECTION: FILTER FORM --}}
+    {{-- RIGHT: FILTER & EXPORT --}}
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full xl:w-auto">
+
+        {{-- FILTER FORM --}}
         <form method="GET" class="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
 
             {{-- Filter Pegawai --}}
-            <div class="relative w-full sm:w-56"> <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+            <div class="relative w-full sm:w-56">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                     <i data-feather="user" class="w-4 h-4"></i>
                 </div>
                 <select name="pegawai_id"
-                    class="w-full pl-10 pr-8 py-2.5 bg-white border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 cursor-pointer appearance-none hover:bg-gray-100">
+                    class="w-full pl-10 pr-8 py-2.5 bg-white border border-gray-200 text-gray-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition cursor-pointer appearance-none hover:bg-gray-100">
                     <option value="">Semua Pegawai</option>
                     @foreach($pegawais as $p)
                         <option value="{{ $p->id }}" @selected(request('pegawai_id') == $p->id)>
@@ -71,37 +75,36 @@
                 </div>
             </div>
 
-            {{-- Filter Tanggal (Grouped Input) --}}
+            {{-- Filter Tanggal --}}
             <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl p-1 shadow-sm">
-                
-                {{-- Tanggal Dari --}}
-                <div class="relative flex-1 sm:w-36">
-                    <input type="date" name="tanggal_dari" 
-                        value="{{ request('tanggal_dari') }}"
-                        class="w-full py-1.5 pl-2 pr-0 bg-transparent border-none text-gray-700 text-sm focus:ring-0 cursor-pointer"
-                        placeholder="Dari">
-                </div>
+                <input type="date" name="tanggal_dari" value="{{ request('tanggal_dari') }}"
+                    class="py-1.5 px-2 bg-transparent border-none text-sm focus:ring-0 cursor-pointer">
 
-                <span class="text-gray-400 text-xs font-medium px-1">s/d</span>
+                <span class="text-gray-400 text-xs font-medium">s/d</span>
 
-                {{-- Tanggal Sampai --}}
-                <div class="relative flex-1 sm:w-36">
-                    <input type="date" name="tanggal_sampai" 
-                        value="{{ request('tanggal_sampai') }}"
-                        class="w-full py-1.5 pl-0 pr-2 bg-transparent border-none text-gray-700 text-sm focus:ring-0 cursor-pointer text-right"
-                        placeholder="Sampai">
-                </div>
+                <input type="date" name="tanggal_sampai" value="{{ request('tanggal_sampai') }}"
+                    class="py-1.5 px-2 bg-transparent border-none text-sm focus:ring-0 cursor-pointer">
             </div>
 
             {{-- Tombol Filter --}}
             <button type="submit"
-                class="inline-flex items-center justify-center bg-indigo-600 text-white px-5 py-2.5 rounded-xl shadow-md shadow-indigo-200 hover:bg-indigo-700 transition-all duration-200 transform hover:-translate-y-0.5 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                class="inline-flex items-center justify-center bg-indigo-600 text-white px-5 py-2.5 rounded-xl shadow-md hover:bg-indigo-700 transition">
                 <i data-feather="filter" class="w-4 h-4 mr-2"></i>
-                <span class="font-medium text-sm">Filter</span>
+                Filter
             </button>
-
         </form>
+
+        {{-- EXPORT PDF --}}
+        <a href="{{ route('laporan.kehadiran.perpegawai') . '?' . http_build_query(request()->only(['pegawai_id','tanggal_dari','tanggal_sampai'])) }}"
+           target="_blank"
+           class="inline-flex items-center justify-center px-5 py-2.5 bg-red-600 text-white text-sm font-medium rounded-xl shadow-md hover:bg-red-700 transition">
+            <i data-feather="file-text" class="w-4 h-4 mr-2"></i>
+            Laporan PDF
+        </a>
+
     </div>
+</div>
+
 
         <div class="bg-white overflow-hidden shadow-xl sm:rounded-b-lg" >
             <div class=" bg-white border-b border-gray-200">
@@ -123,27 +126,27 @@
                                     
                                    {{-- Absen Masuk --}}
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
-                                        @if ($row->jenis)
+                                        @if ($row->jenis != 'hadir')
                                             <span class="text-base text-blue-600 font-semibold">
                                                 {{ ucfirst($row->jenis) }}
                                             </span>
                                         @else
                                             <div class="text-base text-gray-900">
-                                                {{ $row->check_in ? \Carbon\Carbon::parse($row->check_in)->format('H:i:s') : '-' }}
+                                                {{ $row->check_in ? \Carbon\Carbon::parse($row->check_in)->format('H:i') : '-' }}
                                             </div>
                                         @endif
                                     </td>
 
                                     {{-- Absen Pulang --}}
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
-                                        @if ($row->jenis)
+                                        @if ($row->jenis != 'hadir')
                                             <span class="text-base text-blue-600 font-semibold">
                                                 {{ ucfirst($row->jenis) }}
                                             </span>
                                         @else
                                             @if ($row->check_out)
                                                 <div class="text-base text-gray-900">
-                                                    {{ \Carbon\Carbon::parse($row->check_out)->format('H:i:s') }}
+                                                    {{ \Carbon\Carbon::parse($row->check_out)->format('H:i') }}
                                                 </div>
                                             @else
                                                 <span class="text-base text-gray-400 italic">Belum Absen Pulang</span>

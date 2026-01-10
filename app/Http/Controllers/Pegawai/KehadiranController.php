@@ -42,6 +42,7 @@ class KehadiranController extends Controller
             'pegawai_id' => $pegawai->id,
             'tanggal' => date('Y-m-d'),
             'check_in' => now(),
+            'jenis' => 'hadir'
         ]);
 
         return back()->with('success', 'Absen masuk berhasil!');

@@ -82,19 +82,40 @@
                                 </div>
                             </div>
 
+                          <div class="mt-6 grid grid-cols-1 gap-3">
+
+                        <a href="{{ route('laporan.kehadiran.perpegawaiadmin', $data->id) }}"
+                            target="_blank"
+                            class="flex items-center justify-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition shadow-sm">
+                                <i data-feather="file-text" class="w-4 h-4 mr-2"></i>
+                                Laporan Kehadiran PDF
+                            </a>
+                          </div>
                             {{-- Action Buttons --}}
-                            <div class="mt-6 grid grid-cols-2 gap-3">
-                                <a href="{{ route('admin.pegawai.edit', $data->id) }}"
-                                   class="flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition shadow-sm">
-                                    <i data-feather="edit-2" class="w-4 h-4 mr-2"></i> Edit
-                                </a>
-                                <form action="{{ route('admin.pegawai.destroy', $data->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pegawai ini?');">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="w-full flex items-center justify-center px-4 py-2 bg-white text-red-600 border border-red-200 text-sm font-medium rounded-lg hover:bg-red-50 transition">
-                                        <i data-feather="trash-2" class="w-4 h-4 mr-2"></i> Hapus
-                                    </button>
-                                </form>
-                            </div>
+                          <div class="mt-6 grid grid-cols-2 gap-3">
+
+                        <!-- Export PDF -->
+                    
+                        <!-- Edit -->
+                        <a href="{{ route('admin.pegawai.edit', $data->id) }}"
+                        class="flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition shadow-sm">
+                            <i data-feather="edit-2" class="w-4 h-4 mr-2"></i>
+                            Edit
+                        </a>
+
+                        <!-- Hapus -->
+                        <form action="{{ route('admin.pegawai.destroy', $data->id) }}" method="POST"
+                            onsubmit="return confirm('Yakin ingin menghapus pegawai ini?');">
+                            @csrf @method('DELETE')
+                            <button type="submit"
+                                class="w-full flex items-center justify-center px-4 py-2 bg-white text-red-600 border border-red-300 text-sm font-medium rounded-lg hover:bg-red-50 transition shadow-sm">
+                                <i data-feather="trash-2" class="w-4 h-4 mr-2"></i>
+                                Hapus
+                            </button>
+                        </form>
+
+                    </div>
+
                         </div>
                     </div>
 

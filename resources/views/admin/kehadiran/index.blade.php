@@ -119,27 +119,27 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-base font-medium text-gray-900">{{ $row->pegawai->user->name }}</td>
                                    {{-- Absen Masuk --}}
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
-                                        @if ($row->jenis)
+                                        @if ($row->jenis != 'hadir')
                                             <span class="text-base text-blue-600 font-semibold">
                                                 {{ ucfirst($row->jenis) }}
                                             </span>
                                         @else
                                             <div class="text-base text-gray-900">
-                                                {{ $row->check_in ? \Carbon\Carbon::parse($row->check_in)->format('H:i:s') : '-' }}
+                                                {{ $row->check_in ? \Carbon\Carbon::parse($row->check_in)->format('H:i') : '-' }}
                                             </div>
                                         @endif
                                     </td>
 
                                     {{-- Absen Pulang --}}
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
-                                        @if ($row->jenis)
+                                        @if ($row->jenis != 'hadir')
                                             <span class="text-base text-blue-600 font-semibold">
                                                 {{ ucfirst($row->jenis) }}
                                             </span>
                                         @else
                                             @if ($row->check_out)
                                                 <div class="text-base text-gray-900">
-                                                    {{ \Carbon\Carbon::parse($row->check_out)->format('H:i:s') }}
+                                                    {{ \Carbon\Carbon::parse($row->check_out)->format('H:i') }}
                                                 </div>
                                             @else
                                                 <span class="text-base text-gray-400 italic">Belum Absen Pulang</span>

@@ -20,6 +20,14 @@
                             <td class="py-2 px-3">{{ $p->nama_lengkap }}</td>
                             <td class="py-2 px-3">{{ $p->bidang->nama }}</td>
                             <td class="py-2 px-3">
+
+
+                        <a href="{{ route('laporan.kehadiran.perpegawai', $data->id) }}"
+                            target="_blank"
+                            class="flex items-center justify-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition shadow-sm">
+                                <i data-feather="file-text" class="w-4 h-4 mr-2"></i>
+                                Laporan Kehadiran PDF
+                            </a>
                                 <a href="{{ route('atasan.pegawai.show', $p->id) }}"
                                     class="text-blue-600 hover:underline">Lihat SKP</a>
                             </td>
