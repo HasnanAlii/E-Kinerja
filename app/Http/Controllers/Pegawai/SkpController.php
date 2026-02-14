@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Pegawai;
 use App\Http\Controllers\Controller;
 use App\Models\Skp;
 use App\Models\SkpHasilKerja;
-use App\Models\SkpPerilaku;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -62,6 +61,7 @@ class SkpController extends Controller
         $request->validate([
             'periode' => 'required|string',
             'tanggal_mulai' => 'required|date',
+
             'tanggal_selesai' => 'required|date',
         ]);
 
@@ -79,7 +79,8 @@ class SkpController extends Controller
             'capaian_kinerja_organisasi' => $request->capaian_kinerja_organisasi,
             'pola_distribusi'            => $request->pola_distribusi,
 
-            'status' => 'Draft'
+            'status' => 'Draft',
+            
         ]);
 
 
@@ -132,6 +133,7 @@ class SkpController extends Controller
                 'tanggal_selesai' => $request->tanggal_selesai,
                 'capaian_kinerja_organisasi' => $request->capaian_kinerja_organisasi,
                 'pola_distribusi' => $request->pola_distribusi,
+
             ]);
 
             if ($request->hasil_kerja) {
@@ -163,7 +165,10 @@ class SkpController extends Controller
     {
         $skp = Skp::findOrFail($id);
 
-        $skp->update(['status' => 'Diajukan']);
+        $skp->update([
+            'status' => 'Diajukan',
+            'tanggal_diajukan' => now()
+        ]);
 
         return back()->with('success', 'SKP berhasil diajukan.');
     }
@@ -176,7 +181,9 @@ class SkpController extends Controller
         $skp->update([
             'rating'   => $request->rating,
             'predikat' => $request->predikat,
-            'status'   => 'Dinilai'
+            'status'   => 'Dinilai',
+            'tanggal_dinilai' => now()
+            
         ]);
 
         return back()->with('success', 'Penilaian berhasil disimpan.');
@@ -190,7 +197,7 @@ class SkpController extends Controller
             return back()->with('error', 'SKP belum selesai dinilai.');
         }
 
-        $skp->update(['status' => 'Final']);
+        $skp->update(['status' => 'Final', 'tanggal_revisi' => now()]);
 
         return back()->with('success', 'SKP telah difinalisasi.');
     }

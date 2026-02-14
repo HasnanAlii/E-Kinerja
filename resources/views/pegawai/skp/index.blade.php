@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+    <div class=" mx-auto sm:px-6 lg:px-8">
 
       
         {{-- Notifikasi --}}
@@ -60,11 +60,21 @@
                                     Komentar atasan
                                 </th>
                                 <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                    Tanggal Diajukan
+                                </th> 
+                                <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                    Tanggal Status
+                                </th>
+                                <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                    Tanggal Dinilai
+                                </th> 
+                                <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Status
                                 </th>
                                 <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider">
                                     Aksi
                                 </th>
+
                             </tr>
                         </thead>
 
@@ -84,6 +94,30 @@
                                         </span>
                                     </td>
 
+                                      <td class="px-6 py-4 whitespace-nowrap text-center">
+                                                <span class="text-sm text-gray-500">
+                                                 {{ $row->tanggal_diajukan ? \Carbon\Carbon::parse($row->tanggal_diajukan)->format('d M Y') : '-' }}
+                                             </span>
+                                    </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-center">
+                                            @if ($row->status == 'Disetujui' || $row->status == 'Final')
+                                             <span class="text-sm text-gray-500">
+                                                 {{ $row->tanggal_disetujui ? \Carbon\Carbon::parse($row->tanggal_disetujui)->format('d M Y') : '-' }} (Disetujui)
+                                             </span> 
+                                            @elseif ($row->status == 'Revisi')
+                                             <span class="text-sm text-gray-500">
+                                                 {{ $row->tanggal_revisi ? \Carbon\Carbon::parse($row->tanggal_revisi)->format('d M Y') : '-' }} (Revisi)
+                                             </span>
+                                            @else
+                                             -
+                                        @endif
+                                    </td>
+                                     <td class="px-6 py-4 whitespace-nowrap text-center">
+                                             <span class="text-sm text-gray-500">
+                                                 {{ $row->tanggal_dinilai ? \Carbon\Carbon::parse($row->tanggal_dinilai)->format('d M Y') : '-' }}
+                                             </span>
+                                    </td>
+
                                     {{-- STATUS --}}
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
                                         <span class="px-3 py-1 text-sm rounded-full
@@ -96,7 +130,8 @@
                                             {{ $row->status }}
                                         </span>
                                     </td>
-
+                                   
+                                  
                                     {{-- ACTION --}}
                                      <td class="px-6 py-4 whitespace-nowrap text-center">
                                         <div class="flex items-center gap-3 justify-center">
@@ -129,7 +164,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="px-6 py-4 text-center text-base text-gray-500">
+                                    <td colspan="6" class="px-6 py-4 text-center text-base text-gray-500">
                                         Belum ada SKP yang dibuat.
                                     </td>
                                 </tr>

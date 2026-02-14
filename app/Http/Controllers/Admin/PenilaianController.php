@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\Bidang;
+use App\Models\Notification;
 use App\Models\Penilaian;
 use App\Models\PeriodePenilaian;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -61,10 +63,10 @@ public function index(Request $request)
         // ============================
         // NOTIFIKASI KE SEMUA PEGAWAI
         // ============================
-        $semuaPegawai = \App\Models\User::role('pegawai')->get();
+        $semuaPegawai = User::role('pegawai')->get();
 
         foreach ($semuaPegawai as $pegawai) {
-            \App\Models\Notification::create([
+            Notification::create([
                 'user_id'   => $pegawai->id,
                 'aktivitas' => "Penilaian periode {$periodeAktif->nama_periode} telah divalidasi oleh admin.",
                 'waktu'     => now(),

@@ -85,7 +85,7 @@
 
             {{-- RIGHT ILLUSTRATION --}}
             <div class="flex justify-center">
-                <img src="https://img.icons8.com/fluency/500/working-with-a-laptop.png"
+                <img src="{{ asset('assets/ilustrasi.png') }}"
                     class="max-w-md w-full drop-shadow-xl"
                     alt="E-Kinerja Illustration">
             </div>

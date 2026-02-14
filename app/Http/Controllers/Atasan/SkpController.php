@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 
+use function Symfony\Component\String\s;
 
 class SkpController extends Controller
 {
@@ -107,6 +108,12 @@ class SkpController extends Controller
             ? $request->komentar_atasan
             : null;
 
+        if($request->status === 'Disetujui') {
+            $skp->tanggal_disetujui = now();
+        }elseif($request->status === 'Revisi') {
+            $skp->tanggal_revisi = now();
+        }
+
         $skp->save();
 
         $pegawaiUser = $skp->pegawai->user ?? null;
@@ -155,6 +162,7 @@ class SkpController extends Controller
         $skp->rating   = $request->rating;
         $skp->predikat = $request->predikat;
         $skp->status   = 'Final';
+        $skp->tanggal_dinilai = now();
         $skp->save();
 
         // Kirim notifikasi ke pegawai

@@ -50,6 +50,12 @@ public function up()
         // Status SKP
         $table->enum('status', ['Draft', 'Diajukan', 'Disetujui', 'Revisi','Final'])
               ->default('Draft');
+        $table->date('tanggal_disetujui')->nullable();
+        $table->date('tanggal_diajukan')->nullable();
+        $table->date('tanggal_dinilai')->nullable();
+        $table->date('tanggal_revisi')->nullable();
+
+
 
         $table->timestamps();
     });

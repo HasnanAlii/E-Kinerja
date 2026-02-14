@@ -196,14 +196,25 @@
 
 {{-- PENILAIAN AKHIR --}}
     <table>
-        <tr>
-          <td class="bold bg-gray mt-3" style="width: 200px;">NILAI SKP</td>
-            <td>{{ $skp->predikat ?? '-' }}</td> 
-        </tr>
-        <tr>
-          <td class="bold bg-gray">KINERJA PEGAWAI</td>
-            <td>{{ $penilaian->kategori ?? '-' }}</td> 
-        </tr>
+    <tr>
+        <td class="bold bg-gray mt-3" style="width: 200px;">NILAI SKP</td>
+        <td>{{ $skp->predikat ?? '-' }}</td> 
+    </tr>
+    
+    <tr>
+        <td class="bold bg-gray">KINERJA PEGAWAI</td>
+        <td>{{ $penilaian->kategori ?? '-' }}</td> 
+    </tr>
+    
+    <tr>
+        <td class="bold bg-gray">DINILAI PADA</td>
+        <td>
+            {{ isset($penilaian->updated_at) 
+                ? $penilaian->updated_at->format('d-m-Y') 
+                : '-' }}
+        </td>
+    </tr>
+
     </table>
 
 

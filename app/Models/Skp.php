@@ -21,11 +21,19 @@ class Skp extends Model
         'predikat',
         'status',
         'komentar_atasan',
+        'tanggal_diajukan',
+        'tanggal_disetujui',
+        'tanggal_dinilai',
+        'tanggal_revisi'
 
     ];
         protected $casts = [
         'tanggal_mulai' => 'date',
         'tanggal_selesai' => 'date',
+        'tanggal_diajukan' => 'date',
+        'tanggal_disetujui' => 'date',
+        'tanggal_dinilai' => 'date',
+        'tanggal_revisi' => 'date',
     ];
 
     // Pegawai yang dinilai

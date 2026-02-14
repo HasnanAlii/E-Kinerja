@@ -39,6 +39,24 @@
                                         {{ $item->status }}
                                     </span>
                                 </td>
+                                      <td class="px-6 py-4 whitespace-nowrap text-center">
+                                        <span class="text-sm text-gray-500">
+                                            {{ $row->tanggal_diajukan ? \Carbon\Carbon::parse($row->tanggal_diajukan)->format('d M Y') : '-' }}
+                                        </span>
+                                    </td>
+                                     <td class="px-6 py-4 whitespace-nowrap text-center">
+                                        @if ($row->status == 'Revisi')
+                                             <span class="text-sm text-gray-500">
+                                            {{ $row->tanggal_revisi ? \Carbon\Carbon::parse($row->tanggal_revisi)->format('d M Y') : '-' }}
+                                             </span>
+                                        @else
+                                             <span class="text-sm text-gray-500">
+                                                 {{ $row->tanggal_dinilai ? \Carbon\Carbon::parse($row->tanggal_dinilai)->format('d M Y') : '-' }}
+                                             </span>
+                                            
+                                        @endif
+                                    </td>
+                                  
 
                                 <td class="px-4 py-2 text-center flex justify-center gap-3">
                                     <a href="{{ route('admin.skp.show', $item->id) }}"

@@ -7,7 +7,7 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
+        <div class=" mx-auto sm:px-6 lg:px-8">
 
             {{-- Notifikasi --}}
             @if (session('success'))
@@ -40,6 +40,9 @@
                             <tr>
                                 <th class="px-8 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Pegawai</th>
                                 <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Periode</th>
+                                <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Tanggal Diajukan</th>
+                                <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Tanggal Disetujui</th>
+                                <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Tanggal Dinilai</th>
                                 <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
                                 <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Aksi</th>
                             </tr>
@@ -79,6 +82,21 @@
                                         <span class="text-sm text-gray-600 font-medium bg-gray-100 px-2.5 py-1 rounded-md">
                                             {{ $item->periode }}
                                         </span>
+                                    </td>      
+                                     <td class="px-6 py-4 whitespace-nowrap text-center">
+                                        <span class="text-sm text-gray-500">
+                                            {{ $item->tanggal_diajukan ? \Carbon\Carbon::parse($item->tanggal_diajukan)->format('d M Y') : '-' }}
+                                        </span>
+                                    </td>
+                                     <td class="px-6 py-4 whitespace-nowrap text-center">
+                                        <span class="text-sm text-gray-500">
+                                            {{ $item->tanggal_disetujui ? \Carbon\Carbon::parse($item->tanggal_disetujui)->format('d M Y') : '-' }}
+                                        </span>
+                                    </td>
+                                     <td class="px-6 py-4 whitespace-nowrap text-center">
+                                             <span class="text-sm text-gray-500">
+                                                 {{ $item->tanggal_dinilai ? \Carbon\Carbon::parse($item->tanggal_dinilai)->format('d M Y') : '-' }}
+                                             </span>
                                     </td>
 
                                     {{-- STATUS BADGE --}}
@@ -117,6 +135,8 @@
                                             </button>
                                         </div>
                                     </td>
+                                   
+                                  
                                 </tr>
                             @empty
                                 <tr>
