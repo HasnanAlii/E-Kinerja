@@ -206,11 +206,26 @@
         <td>{{ $penilaian->kategori ?? '-' }}</td> 
     </tr>
     
-    <tr>
+    {{-- <tr>
         <td class="bold bg-gray">DINILAI PADA</td>
         <td>
             {{ isset($penilaian->updated_at) 
                 ? $penilaian->updated_at->format('d-m-Y') 
+                : '-' }}
+        </td>
+    </tr> --}}
+       <tr>
+        <td class="bold bg-gray">Tanggal Disetujui</td>
+        <td>
+            {{ isset($skp->tanggal_disetujui) 
+                ? $skp->tanggal_disetujui->format('d-m-Y') 
+                : '-' }}
+        </td>
+    </tr>   <tr>
+        <td class="bold bg-gray">Tanggal Dinilai</td>
+        <td>
+             {{ isset($skp->tanggal_dinilai) 
+                ? $skp->tanggal_dinilai->format('d-m-Y') 
                 : '-' }}
         </td>
     </tr>
