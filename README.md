@@ -1,59 +1,188 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# E-Kinerja — Sistem Manajemen Kinerja Pegawai
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi manajemen kinerja dan kehadiran pegawai berbasis web, dilengkapi dengan fitur **pengawasan CCTV AI real-time** menggunakan YOLOv8 untuk monitoring kehadiran di ruang kerja.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Arsitektur Sistem
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Sistem ini terdiri dari **dua komponen** yang harus berjalan bersamaan:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Komponen | Teknologi | Port |
+|---|---|---|
+| Aplikasi Web Utama | Laravel 12 + Vite (Alpine.js) | `8000` |
+| Layanan AI Monitoring CCTV | Python Flask + YOLOv8 | `5000` |
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Prasyarat
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Pastikan semua software berikut sudah terinstal:
 
-## Laravel Sponsors
+| Software | Versi Minimum |
+|---|---|
+| PHP | `>= 8.2` |
+| Composer | `>= 2.x` |
+| Node.js | `>= 18.x` |
+| npm | `>= 9.x` |
+| Python | `>= 3.10` |
+| MySQL | `>= 8.0` |
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## Instalasi
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 1. Clone Repositori
 
-## Contributing
+```bash
+git clone <url-repository>
+cd E-Kinerja
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 2. Install Dependensi PHP
 
-## Code of Conduct
+```bash
+composer install
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 3. Buat & Konfigurasi File Environment
 
-## Security Vulnerabilities
+```bash
+cp .env.example .env
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Edit file `.env`, sesuaikan konfigurasi database:
 
-## License
+```env
+APP_NAME="E-Kinerja"
+APP_URL=http://localhost:8000
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=e_kinerja
+DB_USERNAME=root
+DB_PASSWORD=           # isi password MySQL Anda
+```
+
+Buat database di MySQL terlebih dahulu:
+
+```sql
+CREATE DATABASE e_kinerja CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+### 4. Generate Application Key
+
+```bash
+php artisan key:generate
+```
+
+### 5. Migrasi & Seeder Database (Laravel)
+
+```bash
+php artisan migrate --seed
+```
+
+Seeder akan membuat akun default berikut:
+
+| Role | Email | Password |
+|---|---|---|
+| Admin | `admin@gmail.com` | `password` |
+| Pegawai | `pegawai@gmail.com` | `password` |
+
+### 6. Install Dependensi Frontend
+
+```bash
+npm install
+```
+
+---
+
+## Setup CV Backend (Python)
+
+### 1. Buat Virtual Environment
+
+```bash
+cd cv-backend
+python3 -m venv venv
+```
+
+### 2. Aktifkan Virtual Environment
+
+```bash
+# Linux / macOS
+source venv/bin/activate
+
+# Windows
+venv\Scripts\activate
+```
+
+### 3. Install Dependensi Python
+
+```bash
+pip install -r requirements.txt
+```
+
+> **Catatan:** Proses ini akan mengunduh PyTorch dan Ultralytics YOLOv8 (~2 GB). Pastikan koneksi internet stabil.
+
+### 4. Jalankan Migrasi Tabel CCTV
+
+Setelah `php artisan migrate --seed` selesai, jalankan skrip ini dari **root direktori proyek**:
+
+```bash
+./cv-backend/venv/bin/python cv-backend/migrations/run_migrations.py
+```
+
+> ⚠️ **Penting:** Langkah ini **harus diulangi** setiap kali Anda menjalankan `php artisan migrate:fresh`, karena tabel CCTV (`cctv_monitoring_logs`, `deteksi_aktivitas`, `zona_kameras`) dikelola oleh skrip Python ini — bukan oleh migrasi Laravel.
+
+---
+
+## Menjalankan Aplikasi
+
+Jalankan ketiga perintah berikut di **terminal terpisah** secara bersamaan:
+
+**Terminal 1 — Laravel:**
+```bash
+php artisan serve
+```
+
+**Terminal 2 — Frontend (Vite):**
+```bash
+npm run dev
+```
+
+**Terminal 3 — CV Backend (Python):**
+```bash
+./cv-backend/venv/bin/python cv-backend/app.py
+```
+
+Akses aplikasi di `http://localhost:8000`
+
+---
+
+## Fitur Monitoring CCTV
+
+1. Login sebagai **Atasan**
+2. Buka menu **Manajemen Kehadiran**
+3. Klik **Atur Zona** untuk mendefinisikan posisi duduk setiap pegawai di frame kamera
+4. Aktifkan **Mulai Kamera** untuk memulai pengawasan AI secara live
+
+> **Catatan:** Sistem monitoring CCTV bersifat **read-only** terhadap data absensi resmi. Kamera hanya mencatat log deteksi (`cctv_monitoring_logs`) dan **tidak mengubah** data absensi pegawai (check-in / check-out).
+
+---
+
+## Troubleshooting
+
+| Masalah | Solusi |
+|---|---|
+| Layar kamera hitam | Pastikan CV Backend (`app.py`) sedang berjalan di port `5000` |
+| Error koneksi DB pada Python | CV Backend membaca `.env` Laravel secara otomatis — periksa konfigurasi `DB_*` di `.env` |
+| Tabel `cctv_monitoring_logs` tidak ditemukan | Jalankan ulang `./cv-backend/venv/bin/python cv-backend/migrations/run_migrations.py` |
+| Error `AttributeError: 'Conv' object has no attribute 'bn'` | Error kompatibilitas Python 3.14+ dengan PyTorch — sudah ditangani oleh patch di `ultralytics/nn/tasks.py` |
+| Port 5000 sudah digunakan | Jalankan dengan `PORT=5001 ./cv-backend/venv/bin/python cv-backend/app.py` |
+
+---
+
+## Lisensi
+
+Proyek ini dilisensikan di bawah [MIT License](https://opensource.org/licenses/MIT).

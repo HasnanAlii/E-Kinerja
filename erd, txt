@@ -1,0 +1,75 @@
+Tabel-tabel baru untuk fitur Monitoring CCTV:
+
+=====================================================================
+TABEL: cctv_monitoring_logs
+Keterangan: Menyimpan log monitoring harian per pegawai dari kamera CCTV
+Dibuat oleh: Python CV Backend (cv-backend/migrations/run_migrations.py)
+Relasi: pegawai_details (pegawai_id)
+---------------------------------------------------------------------
+Kolom              | Tipe                | Keterangan
+-------------------+---------------------+----------------------------
+id                 | BIGINT UNSIGNED PK  | Primary key auto increment
+pegawai_id         | BIGINT UNSIGNED FK  | → pegawai_details.id (CASCADE)
+tanggal            | DATE NOT NULL       | Tanggal monitoring
+waktu_mulai        | DATETIME NOT NULL   | Waktu pertama kali terdeteksi
+waktu_selesai      | DATETIME NULL       | Waktu terakhir kali terdeteksi
+durasi_stay        | INTEGER             | Total durasi di meja (detik)
+status_terakhir    | VARCHAR(50)         | 'di_meja' / 'keluar_ruangan'
+last_seen          | DATETIME            | Timestamp terakhir terdeteksi
+---------------------------------------------------------------------
+
+=====================================================================
+TABEL: deteksi_aktivitas
+Keterangan: Log event deteksi per frame kamera (event-driven, banyak record per hari)
+Dibuat oleh: Python CV Backend (cv-backend/migrations/run_migrations.py)
+Relasi: pegawai_details (pegawai_id)
+---------------------------------------------------------------------
+Kolom              | Tipe                | Keterangan
+-------------------+---------------------+----------------------------
+id                 | BIGINT UNSIGNED PK  | Primary key auto increment
+pegawai_id         | BIGINT UNSIGNED FK  | → pegawai_details.id (CASCADE)
+waktu_deteksi      | DATETIME NOT NULL   | Waktu deteksi terjadi
+hasil_deteksi      | VARCHAR(255)        | Deskripsi hasil deteksi AI
+confidence         | FLOAT               | Tingkat keyakinan model (0.0-1.0)
+---------------------------------------------------------------------
+
+=====================================================================
+TABEL: zona_kameras
+Keterangan: Konfigurasi zona/posisi meja setiap pegawai dalam frame kamera
+Dibuat oleh: Python CV Backend (cv-backend/migrations/run_migrations.py)
+Relasi: pegawai_details (pegawai_id), UNIQUE per pegawai
+---------------------------------------------------------------------
+Kolom              | Tipe                | Keterangan
+-------------------+---------------------+----------------------------
+id                 | BIGINT UNSIGNED PK  | Primary key auto increment
+pegawai_id         | BIGINT UNSIGNED FK  | → pegawai_details.id (CASCADE, UNIQUE)
+x1_pct             | FLOAT NOT NULL      | Batas kiri zona (0-100% lebar frame)
+y1_pct             | FLOAT NOT NULL      | Batas atas zona (0-100% tinggi frame)
+x2_pct             | FLOAT NOT NULL      | Batas kanan zona (0-100% lebar frame)
+y2_pct             | FLOAT NOT NULL      | Batas bawah zona (0-100% tinggi frame)
+label              | VARCHAR(100) NULL   | Label zona, contoh: "Meja A"
+warna              | VARCHAR(20) NULL    | Warna hex untuk tampilan UI, contoh: "#2ECC71"
+updated_at         | DATETIME            | Waktu terakhir diperbarui
+---------------------------------------------------------------------
+
+=====================================================================
+RELASI ANTAR TABEL (ERD)
+=====================================================================
+
+pegawai_details
+    |
+    |--- (1:N) ---> cctv_monitoring_logs    (satu pegawai, banyak log harian)
+    |
+    |--- (1:N) ---> deteksi_aktivitas       (satu pegawai, banyak event deteksi)
+    |
+    |--- (1:1) ---> zona_kameras            (satu pegawai, satu zona meja)
+
+=====================================================================
+CATATAN
+=====================================================================
+- Ketiga tabel ini TIDAK dikelola oleh Laravel Migrations.
+- Dibuat dan dikelola oleh Python SQLAlchemy melalui:
+    ./cv-backend/venv/bin/python cv-backend/migrations/run_migrations.py
+- Wajib dijalankan ulang setiap kali: php artisan migrate:fresh
+- Kolom persentase zona (x1_pct, y1_pct, x2_pct, y2_pct) menyimpan
+  koordinat dalam satuan persen (0-100) agar resolusi-independen.
