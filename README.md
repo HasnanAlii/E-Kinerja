@@ -1,6 +1,42 @@
 # E-Kinerja — Employee Performance & Real-Time AI Monitoring System
 
-A modern employee performance and attendance management web application integrated with **real-time AI CCTV surveillance** using YOLOv8 to monitor and track workspace presence.
+A comprehensive web-based Employee Performance and Attendance Management system integrated with **real-time AI CCTV surveillance** using YOLOv8 to automate and audit workplace productivity.
+
+---
+
+## 🌟 Overview & Core Modules
+
+**E-Kinerja** is a hybrid solution designed to streamline traditional human resource operations and introduce objective, automated presence auditing. The system is split into two primary functional components:
+
+### 1. Core Employee & Performance Management (Laravel 12)
+A complete system designed for organizations to manage administrative structures, daily tasks, and performance ratings:
+- **Hierarchical Structuring**: Maps organizational divisions (`Bidang`) and establishes Supervisor-Subordinate (`Atasan` and `Bawahan`) relationships for approval routings and performance evaluations.
+- **SKP Planning & Evaluation (Sasaran Kinerja Pegawai)**: Empowers employees to formulate performance targets, log achievements, submit targets, and undergo structured grading/rating cycles by their respective supervisors.
+- **Daily Activity Logging**: Employees log daily reports and task logs, which are verified and approved by supervisors.
+- **Official Attendance & Leave Handling**: Integrated check-in/out registers, sickness reporting, and permit application approvals.
+
+### 2. AI CCTV Real-Time Monitoring (Python + YOLOv8)
+A privacy-focused, automation-driven auditing system that runs alongside official attendance records:
+- **Interactive Workspace Mapping**: Supervisors define custom rectangular boundaries (represented as resolution-independent coordinate percentages) representing each employee's desk inside the camera frame.
+- **Object Detection**: The AI microservice continuously parses incoming video feeds using **YOLOv8** to track human silhouettes (`person` class).
+- **Presence Evaluation**: If a person's centroid matches a defined zone, they are marked as **At Desk** (`di_meja`) and their stay duration (`durasi_stay`) is accumulated in real-time. If they step away or leave their workspace, the status changes to **Out of Office** (`keluar_ruangan`) after a brief timeout.
+- **Unified Reports**: All data is seamlessly synced to a shared database, allowing Laravel to display detailed daily presence logs and average workspace stay times.
+
+---
+
+## 🚀 Key Features
+
+### 👤 Employee & HR Management
+- 👥 **Manager-Employee Hierarchy**: Automated approval routing where supervisors verify tasks, leaves, and performance targets of their direct subordinates.
+- 🎯 **SKP Targets & Progress**: Draft, submit, and track work targets. Employees can upload completion evidence, and supervisors assign final ratings and feedback.
+- 📝 **Daily Task Verification**: Fast logging of daily activities, categorizing tasks, and a dedicated verification panel for supervisors.
+- 📅 **Leave & Permit Requests**: Direct online submissions for medical leave (`izin/sakit`) and general permits with file attachments.
+
+### 🧠 AI Surveillance & CCTV Analytics
+- 📊 **Dynamic Dashboard Analytics**: Real-time stats on employee presence (Active, Away) and average daily desk presence duration.
+- 📐 **Interactive Camera Zone Editor**: Live HTML canvas to draw, color-code, and label custom employee workspaces directly on the camera feed.
+- 🎮 **AI Simulation Mode**: Test the surveillance pipeline instantly with simulated employee silhouettes and dynamic presence fluctuations.
+- 🔒 **Unified MySQL Logging**: Direct logging of AI events into shared tables, allowing instant reactivity in the web frontend.
 
 ---
 
