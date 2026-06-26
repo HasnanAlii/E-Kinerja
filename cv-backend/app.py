@@ -207,10 +207,10 @@ def get_stats():
     today = datetime.date.today()
     now = datetime.datetime.now()
     try:
-        # Hitung pegawai yang saat ini terdeteksi di meja (bukan dari Kehadiran)
-        total_hadir = db.query(CctvMonitoringLog).filter(
-            CctvMonitoringLog.tanggal == today,
-            CctvMonitoringLog.status_terakhir == 'di_meja'
+        # Hitung pegawai yang hadir dari data absen resmi
+        total_hadir = db.query(Kehadiran).filter(
+            Kehadiran.tanggal == today,
+            Kehadiran.jenis == 'hadir'
         ).count()
 
         total_keluar = db.query(CctvMonitoringLog).filter(

@@ -1,188 +1,191 @@
-# E-Kinerja — Sistem Manajemen Kinerja Pegawai
+# E-Kinerja — Employee Performance & Real-Time AI Monitoring System
 
-Aplikasi manajemen kinerja dan kehadiran pegawai berbasis web, dilengkapi dengan fitur **pengawasan CCTV AI real-time** menggunakan YOLOv8 untuk monitoring kehadiran di ruang kerja.
-
----
-
-## Arsitektur Sistem
-
-Sistem ini terdiri dari **dua komponen** yang harus berjalan bersamaan:
-
-| Komponen | Teknologi | Port |
-|---|---|---|
-| Aplikasi Web Utama | Laravel 12 + Vite (Alpine.js) | `8000` |
-| Layanan AI Monitoring CCTV | Python Flask + YOLOv8 | `5000` |
+A modern employee performance and attendance management web application integrated with **real-time AI CCTV surveillance** using YOLOv8 to monitor and track workspace presence.
 
 ---
 
-## Prasyarat
+## 🏗️ System Architecture
 
-Pastikan semua software berikut sudah terinstal:
+The project consists of two decoupled components that run concurrently:
 
-| Software | Versi Minimum |
-|---|---|
-| PHP | `>= 8.2` |
-| Composer | `>= 2.x` |
-| Node.js | `>= 18.x` |
-| npm | `>= 9.x` |
-| Python | `>= 3.10` |
-| MySQL | `>= 8.0` |
+| Component | Stack | Default Port | Description |
+|---|---|---|---|
+| **Web Portal (Core Application)** | Laravel 12 + Vite (Alpine.js) + TailwindCSS | `8000` | Administrative dashboard, attendance reports, user management, and video monitoring layout |
+| **CV Backend (AI Engine)** | Python (Flask) + Ultralytics YOLOv8 + OpenCV | `5000` | Object detection pipeline, camera zone processing, live stream processing, and DB logs generator |
 
 ---
 
-## Instalasi
+## 📋 System Requirements
 
-### 1. Clone Repositori
+Ensure the following environments and dependencies are installed on your host system:
 
-```bash
-git clone <url-repository>
-cd E-Kinerja
-```
-
-### 2. Install Dependensi PHP
-
-```bash
-composer install
-```
-
-### 3. Buat & Konfigurasi File Environment
-
-```bash
-cp .env.example .env
-```
-
-Edit file `.env`, sesuaikan konfigurasi database:
-
-```env
-APP_NAME="E-Kinerja"
-APP_URL=http://localhost:8000
-
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=e_kinerja
-DB_USERNAME=root
-DB_PASSWORD=           # isi password MySQL Anda
-```
-
-Buat database di MySQL terlebih dahulu:
-
-```sql
-CREATE DATABASE e_kinerja CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
-### 4. Generate Application Key
-
-```bash
-php artisan key:generate
-```
-
-### 5. Migrasi & Seeder Database (Laravel)
-
-```bash
-php artisan migrate --seed
-```
-
-Seeder akan membuat akun default berikut:
-
-| Role | Email | Password |
-|---|---|---|
-| Admin | `admin@gmail.com` | `password` |
-| Pegawai | `pegawai@gmail.com` | `password` |
-
-### 6. Install Dependensi Frontend
-
-```bash
-npm install
-```
+| Dependency | Minimum Version | Recommended Version | Purpose |
+|---|---|---|---|
+| **PHP** | `>= 8.2` | `8.2.x` / `8.3.x` | Laravel Framework |
+| **Composer** | `>= 2.0` | `2.6.x` | PHP package manager |
+| **Node.js** | `>= 18.0` | `20.x (LTS)` | Frontend asset compilation |
+| **npm** | `>= 9.0` | `10.x` | Node package manager |
+| **Python** | `>= 3.10` | `3.10.x` / `3.11.x` | AI pipeline / Flask Backend |
+| **MySQL / MariaDB** | `>= 8.0` | `8.0+` / `10.4+` | Relational database storage |
 
 ---
 
-## Setup CV Backend (Python)
+## 🛠️ Step-by-Step Installation
 
-### 1. Buat Virtual Environment
+### Phase 1: Web Portal Setup (Laravel)
 
-```bash
-cd cv-backend
-python3 -m venv venv
-```
+1. **Clone the Repository**
+   ```bash
+   git clone <repository-url>
+   cd E-Kinerja
+   ```
 
-### 2. Aktifkan Virtual Environment
+2. **Install PHP Dependencies**
+   ```bash
+   composer install
+   ```
 
-```bash
-# Linux / macOS
-source venv/bin/activate
+3. **Configure Environment Variables**
+   Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+   Open the `.env` file and configure your database details:
+   ```env
+   APP_NAME="E-Kinerja"
+   APP_URL=http://localhost:8000
 
-# Windows
-venv\Scripts\activate
-```
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=e_kinerja
+   DB_USERNAME=root
+   DB_PASSWORD=your_secure_password
+   ```
 
-### 3. Install Dependensi Python
+4. **Initialize Database**
+   Create a new database inside MySQL:
+   ```sql
+   CREATE DATABASE e_kinerja CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   ```
 
-```bash
-pip install -r requirements.txt
-```
+5. **Generate Application Encryption Key**
+   ```bash
+   php artisan key:generate
+   ```
 
-> **Catatan:** Proses ini akan mengunduh PyTorch dan Ultralytics YOLOv8 (~2 GB). Pastikan koneksi internet stabil.
+6. **Run Database Migrations & Seeds**
+   ```bash
+   php artisan migrate --seed
+   ```
+   *Note: This command seeds the database with default accounts:*
+   * **Admin Role:** `admin@gmail.com` | Password: `password`
+   * **Employee Role:** `pegawai@gmail.com` | Password: `password`
 
-### 4. Jalankan Migrasi Tabel CCTV
-
-Setelah `php artisan migrate --seed` selesai, jalankan skrip ini dari **root direktori proyek**:
-
-```bash
-./cv-backend/venv/bin/python cv-backend/migrations/run_migrations.py
-```
-
-> ⚠️ **Penting:** Langkah ini **harus diulangi** setiap kali Anda menjalankan `php artisan migrate:fresh`, karena tabel CCTV (`cctv_monitoring_logs`, `deteksi_aktivitas`, `zona_kameras`) dikelola oleh skrip Python ini — bukan oleh migrasi Laravel.
+7. **Install Frontend Dependencies**
+   ```bash
+   npm install
+   ```
 
 ---
 
-## Menjalankan Aplikasi
+### Phase 2: CV Backend Setup (Python)
 
-Jalankan ketiga perintah berikut di **terminal terpisah** secara bersamaan:
+The Python service manages video frame processing, zone mapping, and records CCTV presence logs directly into the shared database.
 
-**Terminal 1 — Laravel:**
+1. **Navigate to the Backend Directory**
+   ```bash
+   cd cv-backend
+   ```
+
+2. **Initialize a Virtual Environment**
+   Using a virtual environment prevents version conflicts with your global python libraries:
+   ```bash
+   python3 -m venv venv
+   ```
+
+3. **Activate the Virtual Environment**
+   * **Linux / macOS:**
+     ```bash
+     source venv/bin/activate
+     ```
+   * **Windows (PowerShell):**
+     ```powershell
+     venv\Scripts\Activate.ps1
+     ```
+   * **Windows (CMD):**
+     ```cmd
+     venv\Scripts\activate.bat
+     ```
+
+4. **Install Python Dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+   > ℹ️ **Note:** This installation processes PyTorch and YOLOv8 weights which may range up to **2 GB**. Ensure a stable internet connection.
+
+5. **Run CCTV Table Migrations**
+   Go back to the **project root directory** (or run from root) to execute database migrations for the Python service tables (`cctv_monitoring_logs`, `deteksi_aktivitas`, `zona_kameras`):
+   ```bash
+   # From project root:
+   ./cv-backend/venv/bin/python cv-backend/migrations/run_migrations.py
+   ```
+   > ⚠️ **Warning:** If you refresh or reset your Laravel database (`php artisan migrate:fresh`), you **must** rerun this Python script to recreate the custom AI surveillance tables, as Laravel's native migrations do not manage them.
+
+---
+
+## 🚀 Running the Application
+
+To run the complete workspace, execute the following commands in **three separate terminal sessions** from the project root:
+
+### 📺 Terminal 1: Laravel Web Server
 ```bash
 php artisan serve
 ```
+*Served at `http://localhost:8000`*
 
-**Terminal 2 — Frontend (Vite):**
+### 🎨 Terminal 2: Vite Dev Server (Frontend Assets)
 ```bash
 npm run dev
 ```
+*Compiles resources in real-time*
 
-**Terminal 3 — CV Backend (Python):**
-```bash
-./cv-backend/venv/bin/python cv-backend/app.py
-```
-
-Akses aplikasi di `http://localhost:8000`
-
----
-
-## Fitur Monitoring CCTV
-
-1. Login sebagai **Atasan**
-2. Buka menu **Manajemen Kehadiran**
-3. Klik **Atur Zona** untuk mendefinisikan posisi duduk setiap pegawai di frame kamera
-4. Aktifkan **Mulai Kamera** untuk memulai pengawasan AI secara live
-
-> **Catatan:** Sistem monitoring CCTV bersifat **read-only** terhadap data absensi resmi. Kamera hanya mencatat log deteksi (`cctv_monitoring_logs`) dan **tidak mengubah** data absensi pegawai (check-in / check-out).
+### 🧠 Terminal 3: CV Backend (AI Microservice)
+* **Linux / macOS:**
+  ```bash
+  ./cv-backend/venv/bin/python cv-backend/app.py
+  ```
+* **Windows:**
+  ```cmd
+  venv\Scripts\python cv-backend\app.py
+  ```
+*Served at `http://localhost:5000` (or the port defined in your environment)*
 
 ---
 
-## Troubleshooting
+## 🔍 CCTV Monitoring Workflow
 
-| Masalah | Solusi |
-|---|---|
-| Layar kamera hitam | Pastikan CV Backend (`app.py`) sedang berjalan di port `5000` |
-| Error koneksi DB pada Python | CV Backend membaca `.env` Laravel secara otomatis — periksa konfigurasi `DB_*` di `.env` |
-| Tabel `cctv_monitoring_logs` tidak ditemukan | Jalankan ulang `./cv-backend/venv/bin/python cv-backend/migrations/run_migrations.py` |
-| Error `AttributeError: 'Conv' object has no attribute 'bn'` | Error kompatibilitas Python 3.14+ dengan PyTorch — sudah ditangani oleh patch di `ultralytics/nn/tasks.py` |
-| Port 5000 sudah digunakan | Jalankan dengan `PORT=5001 ./cv-backend/venv/bin/python cv-backend/app.py` |
+1. Authenticate as a user with the **Supervisor / Manager** (Atasan) role.
+2. Navigate to the **Attendance Management** (Manajemen Kehadiran) section in the dashboard.
+3. Access **Configure Zone** (Atur Zona) to draw and map specific seating/workspace regions for each employee within the camera frame.
+4. Click **Start Camera** (Mulai Kamera) to initiate the live stream feed and trigger real-time presence verification.
+
+> 📝 **Note:** The AI CCTV system is **read-only** regarding official check-in/out records. It populates tracking logs (`cctv_monitoring_logs`) for active office hours presence tracking, but does **not** overwrite official check-in/check-out events.
 
 ---
 
-## Lisensi
+## 🛠️ Troubleshooting
 
-Proyek ini dilisensikan di bawah [MIT License](https://opensource.org/licenses/MIT).
+| Issue / Error | Root Cause | Solution |
+|---|---|---|
+| **Camera Feed displays a Black Screen** | The Flask service is inactive, or unreachable on Port `5000`. | Verify the Python backend is running. Check browser dev tools (F12) for CORS or connection errors. |
+| **Python Database Connection Failures** | Incorrect credential configurations. | The CV Backend reads the root Laravel `.env` automatically. Verify the `DB_*` keys are correct. |
+| **Table `cctv_monitoring_logs` missing error** | Tables were dropped or not initialized after Laravel migrations. | Run `./cv-backend/venv/bin/python cv-backend/migrations/run_migrations.py`. |
+| **`AttributeError: 'Conv' object has no attribute 'bn'`** | PyTorch version compatibility discrepancy with newer Python runtimes (e.g., Python 3.14+). | Handled by a patch in `ultralytics/nn/tasks.py`. Use the recommended Python version (`3.10.x` or `3.11.x`). |
+| **Port `5000` already in use** | A local application (e.g. macOS AirPlay Receiver) is using port 5000. | Start Flask with a different port: `PORT=5001 ./cv-backend/venv/bin/python cv-backend/app.py` |
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
