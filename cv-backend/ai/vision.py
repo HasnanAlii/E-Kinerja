@@ -93,11 +93,20 @@ def _update_monitoring(db, pegawai_id, present, current_time, today):
             db.add(cctv_log)
             db.flush()
         else:
-            td = (current_time - cctv_log.last_seen).total_seconds()
-            if td < 60:   # only update if not a long gap (reconnect scenario)
-                # Calculate total duration from session start — exact and drift-free
-                total_secs = int((current_time - cctv_log.waktu_mulai).total_seconds())
-                cctv_log.durasi_stay = max(cctv_log.durasi_stay, total_secs)
+            # Guard: last_seen bisa None setelah stop-monitoring mereset sesi
+            if cctv_log.last_seen is None:
+                # Resume setelah jeda: backdate waktu_mulai agar durasi lanjut dari
+                # nilai sebelumnya, bukan mulai dari 0.
+                # Contoh: durasi_stay=243s → waktu_mulai = now - 243s
+                # Sehingga (now - waktu_mulai) = 243 dan langsung bertambah.
+                prev_dur = cctv_log.durasi_stay or 0
+                cctv_log.waktu_mulai = current_time - datetime.timedelta(seconds=prev_dur)
+            else:
+                td = (current_time - cctv_log.last_seen).total_seconds()
+                if td < 60:   # only update if not a long gap (reconnect scenario)
+                    # Calculate total duration from session start — exact and drift-free
+                    total_secs = int((current_time - cctv_log.waktu_mulai).total_seconds())
+                    cctv_log.durasi_stay = max(cctv_log.durasi_stay, total_secs)
             cctv_log.status_terakhir = 'di_meja'
             cctv_log.waktu_selesai = current_time
             cctv_log.last_seen = current_time
@@ -105,9 +114,13 @@ def _update_monitoring(db, pegawai_id, present, current_time, today):
 
     else:
         if cctv_log:
-            td = (current_time - cctv_log.last_seen).total_seconds()
-            if td > 10:
+            # Guard: last_seen bisa None setelah stop-monitoring
+            if cctv_log.last_seen is None:
                 cctv_log.status_terakhir = 'keluar_ruangan'
+            else:
+                td = (current_time - cctv_log.last_seen).total_seconds()
+                if td > 10:
+                    cctv_log.status_terakhir = 'keluar_ruangan'
 
 
 # ─── MAIN: ZONE-BASED DETECTION ──────────────────────────────────────────────

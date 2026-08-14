@@ -428,7 +428,7 @@
     <div x-data="zonaSetupApp()" x-init="initZona()" @open-zona-modal.window="openModal()">
         <div x-show="open" x-transition class="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" style="display:none" @click="closeModal()"></div>
         <div x-show="open" x-transition class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display:none">
-            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-[95vw] h-[95vh] overflow-hidden flex flex-col">
                 <div class="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white flex items-center justify-between">
                     <div>
                         <h3 class="text-lg font-bold">Konfigurasi Zona Posisi Duduk</h3>

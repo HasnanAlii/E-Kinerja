@@ -20,7 +20,7 @@ class KehadiranController extends Controller
             ->orderBy('tanggal', 'desc')
             ->paginate(10);
 
-        return view('pegawai.kehadiran.index', compact('data'));
+        return view('pegawai.kehadiran.index', compact('data', 'pegawai'));
     }
 
 

@@ -122,6 +122,21 @@ function monitoringApp() {
             this.$refs.videoElement.srcObject = null;
             this.$refs.annotatedImg.src = '';
             this.liveCount = 0; this.isCameraOpen = false;
+
+            // Reset status CCTV di backend agar kembali ke 'belum_terdeteksi'
+            fetch('http://localhost:5000/api/stop-monitoring', { method: 'POST' })
+                .then(r => r.json())
+                .then(() => {
+                    // Hapus cache durasi lokal agar tidak stale
+                    this.durationMap = {};
+                    // Paksa refresh log segera
+                    this.fetchLogs();
+                })
+                .catch(() => {
+                    // Tetap reset lokal meskipun request gagal
+                    this.durationMap = {};
+                    this.fetchLogs();
+                });
         }
     };
 }

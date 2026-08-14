@@ -1,0 +1,366 @@
+================================================================
+DOKUMEN RUMUS & LOGIKA SISTEM PENGAWASAN PEGAWAI (CCTV AI)
+E-Kinerja — Fitur Monitoring Kehadiran Berbasis Kamera
+================================================================
+File referensi:
+  - cv-backend/ai/vision.py
+  - cv-backend/app.py
+================================================================
+
+
+================================================================
+BAB 1: PEMBAGIAN ZONA (ZONE DIVISION)
+================================================================
+
+Zona adalah area persegi panjang di dalam frame kamera yang
+diasosiasikan dengan posisi duduk seorang pegawai.
+
+---------------------------------------------------------------
+1.1 Sistem Koordinat Zona (Percentage-Based)
+---------------------------------------------------------------
+Zona tidak disimpan dalam piksel absolut, melainkan dalam
+PERSENTASE terhadap dimensi frame kamera (0% – 100%).
+Tujuannya agar zona tetap akurat walaupun resolusi kamera
+atau ukuran tampilan berubah.
+
+  Koordinat zona:
+    x1_pct = batas kiri   (% dari lebar frame)
+    y1_pct = batas atas   (% dari tinggi frame)
+    x2_pct = batas kanan  (% dari lebar frame)
+    y2_pct = batas bawah  (% dari tinggi frame)
+
+  Konversi ke piksel saat rendering:
+    x1_px = (x1_pct / 100) * lebar_frame
+    y1_px = (y1_pct / 100) * tinggi_frame
+    x2_px = (x2_pct / 100) * lebar_frame
+    y2_px = (y2_pct / 100) * tinggi_frame
+
+  Contoh:
+    x1_pct=10, y1_pct=5, x2_pct=45, y2_pct=90
+    Pada frame 640x480 piksel:
+      x1 = 10/100 * 640 = 64 px
+      y1 =  5/100 * 480 = 24 px
+      x2 = 45/100 * 640 = 288 px
+      y2 = 90/100 * 480 = 432 px
+
+---------------------------------------------------------------
+1.2 Aturan Zona
+---------------------------------------------------------------
+  - Setiap pegawai hanya boleh memiliki SATU zona (UNIQUE per pegawai_id)
+  - Zona didefinisikan secara manual oleh Atasan melalui
+    antarmuka kanvas drag-and-drop pada halaman "Atur Zona"
+  - Zona disimpan di tabel: zona_kameras
+  - Minimum ukuran zona yang diterima:
+      Lebar zona  > 3% lebar frame
+      Tinggi zona > 3% tinggi frame
+    (zona terlalu kecil ditolak oleh frontend)
+
+---------------------------------------------------------------
+1.3 Cara Konfigurasi Zona (Alur UI)
+---------------------------------------------------------------
+  1. Atasan membuka modal "Atur Zona"
+  2. Pilih nama pegawai dari daftar
+  3. Klik dan seret (drag) pada kanvas untuk menggambar kotak
+  4. Klik "Simpan Zona" → data dikirim ke API POST /api/zones
+  5. Backend menyimpan koordinat persentase ke tabel zona_kameras
+
+
+================================================================
+BAB 2: DETEKSI OBJEK (YOLOV8 OBJECT DETECTION)
+================================================================
+
+---------------------------------------------------------------
+2.1 Model AI yang Digunakan
+---------------------------------------------------------------
+  Model  : YOLOv8n (nano) — ringan, cocok untuk real-time
+  Library: Ultralytics (ultralytics >= 8.2.0)
+  Kelas  : class [0] = "person" (hanya manusia yang dideteksi)
+  Mode   : model.track() dengan persist=True
+           (menggunakan tracking ID antar frame)
+
+---------------------------------------------------------------
+2.2 Pipeline Pemrosesan Frame
+---------------------------------------------------------------
+  Setiap 500ms, frontend mengirim 1 frame kamera ke endpoint:
+    POST /api/process-frame
+    Body: { image: <base64 JPEG>, simulate: bool }
+
+  Alur di backend:
+    1. Decode base64 → numpy array → OpenCV frame
+    2. Jalankan YOLOv8: results = model.track(frame, classes=[0])
+    3. Untuk setiap bounding box yang terdeteksi:
+       a. Hitung titik tengah (center point) objek:
+            cx = (x1_box + x2_box) / 2
+            cy = (y1_box + y2_box) / 2
+       b. Konversi ke persentase:
+            cx_pct = (cx / lebar_frame) * 100
+            cy_pct = (cy / tinggi_frame) * 100
+       c. Cocokkan dengan zona yang ada (lihat Bab 3)
+    4. Update database berdasarkan hasil cocok
+
+---------------------------------------------------------------
+2.3 Confidence Score
+---------------------------------------------------------------
+  Setiap deteksi menghasilkan nilai confidence (0.0 – 1.0).
+  Nilai ini disimpan di tabel deteksi_aktivitas.confidence.
+
+  Interpretasi:
+    0.0       = tidak terdeteksi / simulasi keluar
+    0.5 – 0.7 = terdeteksi dengan kepastian sedang
+    0.8 – 1.0 = terdeteksi dengan kepastian tinggi
+    0.99      = nilai tetap untuk mode simulasi (hadir)
+
+
+================================================================
+BAB 3: PENCOCOKAN ZONA (ZONE MATCHING)
+================================================================
+
+---------------------------------------------------------------
+3.1 Algoritma Point-in-Rectangle
+---------------------------------------------------------------
+  Untuk setiap titik tengah objek (cx_pct, cy_pct), sistem
+  memeriksa apakah titik tersebut berada di dalam zona:
+
+    cocok jika:
+      zona.x1_pct <= cx_pct <= zona.x2_pct
+      DAN
+      zona.y1_pct <= cy_pct <= zona.y2_pct
+
+  Zona pertama yang memenuhi syarat dikembalikan sebagai
+  zona yang cocok (first-match).
+
+  Jika tidak ada zona yang cocok:
+    → Orang dianggap "Tidak Dikenal" (tidak dipantau)
+    → Tidak ada update database untuk orang tersebut
+
+---------------------------------------------------------------
+3.2 Kasus Khusus
+---------------------------------------------------------------
+  a. Tumpang tindih zona:
+     Jika dua zona saling tumpang tindih, zona yang pertama
+     didefinisikan di database yang akan diprioritaskan.
+
+  b. Pegawai tanpa zona:
+     Pegawai yang belum dikonfigurasi zona-nya tidak akan
+     dipantau oleh sistem AI. Status mereka tetap
+     'belum_terdeteksi' sampai zona dibuat.
+
+  c. Orang asing di frame:
+     Jika terdeteksi seseorang yang titik tengahnya tidak
+     jatuh dalam zona manapun, ditampilkan sebagai
+     "Tidak dikenal #<track_id>" namun tidak disimpan ke DB.
+
+
+================================================================
+BAB 4: PERHITUNGAN DURASI DI MEJA
+================================================================
+
+---------------------------------------------------------------
+4.1 Metode Perhitungan (Session-Based, Drift-Free)
+---------------------------------------------------------------
+  Durasi dihitung berdasarkan selisih antara waktu deteksi
+  pertama (waktu_mulai) dan waktu deteksi terkini (current_time),
+  bukan penjumlahan per-frame (menghindari akumulasi error).
+
+  Rumus:
+    durasi_stay = max(
+      durasi_stay_sebelumnya,
+      (current_time - waktu_mulai).total_seconds()
+    )
+
+  Catatan:
+    - Fungsi max() digunakan agar durasi tidak berkurang
+      (misalnya jika ada jeda singkat dalam deteksi)
+    - waktu_mulai ditetapkan saat pertama kali pegawai
+      terdeteksi di zona pada hari tersebut
+    - durasi_stay disimpan dalam satuan DETIK (integer)
+
+---------------------------------------------------------------
+4.2 Kondisi Update Durasi
+---------------------------------------------------------------
+  Durasi hanya diperbarui jika:
+    td = (current_time - last_seen).total_seconds()
+    td < 60 detik
+
+  Tujuan: menghindari "lompatan durasi" ketika kamera
+  terputus lama kemudian tersambung kembali (reconnect).
+  Jika jeda > 60 detik, durasi tidak ditambah.
+
+---------------------------------------------------------------
+4.3 Live Duration di Frontend (Client-Side Ticking)
+---------------------------------------------------------------
+  Agar tampilan durasi terlihat bergerak real-time tanpa
+  harus polling API setiap detik, frontend menggunakan
+  mekanisme client-side ticking:
+
+  Penyimpanan state (durationMap per pegawai):
+    {
+      base     : durasi_stay_seconds (dari API terakhir),
+      baseTime : timestamp saat data API diterima (Unix detik),
+      status   : 'di_meja' | 'keluar_ruangan' | 'belum_terdeteksi'
+    }
+
+  Rumus tampilan live (dipanggil setiap detik):
+    if status == 'di_meja':
+      elapsed = now() - baseTime
+      total   = base + elapsed
+    else:
+      total = base   ← DIBEKUKAN (tidak bertambah)
+
+  Format tampilan:
+    total >= 3600 : "X Jam Y Menit"
+    total >= 60   : "Y Menit"
+    total > 0     : "< 1 Menit"
+    total == 0    : "—"
+
+---------------------------------------------------------------
+4.4 Sinkronisasi & Koreksi Drift
+---------------------------------------------------------------
+  Setiap 5 detik, frontend meminta data terbaru dari API.
+  Jika terdapat selisih lebih dari 5 detik antara estimasi
+  frontend dan nilai dari server:
+
+    myEstimate = base + (now - baseTime)   [jika di_meja]
+    |apiValue - myEstimate| > 5 detik
+
+  Maka frontend melakukan re-anchor:
+    base     = apiValue
+    baseTime = now()
+
+  Sehingga akurasi terjaga tanpa terlalu sering memanggil API.
+
+
+================================================================
+BAB 5: MANAJEMEN STATUS PEGAWAI
+================================================================
+
+---------------------------------------------------------------
+5.1 Status yang Digunakan
+---------------------------------------------------------------
+  Status           | Arti
+  -----------------+------------------------------------------
+  di_meja          | Pegawai terdeteksi aktif di zona meja
+  keluar_ruangan   | Pegawai tidak terdeteksi > 10 detik
+  belum_terdeteksi | Belum pernah terdeteksi hari ini (default)
+
+---------------------------------------------------------------
+5.2 Transisi Status
+---------------------------------------------------------------
+  HADIR di zona → status = 'di_meja'
+                  (setiap frame yang cocok)
+
+  TIDAK HADIR di zona selama > 10 detik
+                → status = 'keluar_ruangan'
+
+  Logika:
+    if present:
+      cctv_log.status_terakhir = 'di_meja'
+    else:
+      if (current_time - last_seen) > 10 detik:
+        cctv_log.status_terakhir = 'keluar_ruangan'
+      # Jika < 10 detik tidak terdeteksi → status TIDAK berubah
+      # (toleransi oklusi / badan tertutup sebentar)
+
+---------------------------------------------------------------
+5.3 Satu Record Per Pegawai Per Hari
+---------------------------------------------------------------
+  Tabel cctv_monitoring_logs menyimpan 1 record per pegawai
+  per hari (filter: pegawai_id + tanggal).
+  Jika record belum ada → dibuat baru.
+  Jika sudah ada → diupdate (waktu_selesai, durasi, status).
+
+
+================================================================
+BAB 6: STATISTIK DASHBOARD
+================================================================
+
+---------------------------------------------------------------
+6.1 Total Pegawai Hadir
+---------------------------------------------------------------
+  Sumber: Tabel kehadirans (absen resmi)
+
+  Rumus:
+    COUNT(*) FROM kehadirans
+    WHERE tanggal = hari_ini
+    AND jenis = 'hadir'
+
+  Catatan: Nilai ini mencerminkan pegawai yang sudah melakukan
+  absen masuk secara manual. BUKAN dari deteksi CCTV.
+
+---------------------------------------------------------------
+6.2 Terdeteksi Keluar Ruangan
+---------------------------------------------------------------
+  Sumber: Tabel cctv_monitoring_logs
+
+  Rumus:
+    COUNT(*) FROM cctv_monitoring_logs
+    WHERE tanggal = hari_ini
+    AND status_terakhir = 'keluar_ruangan'
+
+---------------------------------------------------------------
+6.3 Rata-rata Stay di Meja
+---------------------------------------------------------------
+  Sumber: Tabel cctv_monitoring_logs (dengan koreksi live)
+
+  Algoritma:
+    Untuk setiap log hari ini:
+      dur = durasi_stay (detik dari DB)
+      Jika status = 'di_meja' DAN last_seen ada:
+        elapsed = (now - last_seen).total_seconds()
+        Jika elapsed < 60 detik:
+          dur = dur + elapsed   ← koreksi live
+      Tambahkan dur ke daftar
+
+    avg = JUMLAH(semua dur) / JUMLAH(semua record)
+
+  Format output:
+    f"{int(avg // 3600)}j {int((avg % 3600) // 60)}m"
+
+  Contoh: avg = 3780 detik → "1j 3m"
+
+
+================================================================
+BAB 7: MODE SIMULASI
+================================================================
+
+  Mode simulasi aktif ketika webcam tidak tersedia atau
+  pengguna ingin menguji sistem tanpa kamera nyata.
+  (Frontend mengirim: { simulate: true })
+
+  Perilaku simulasi:
+    - Semua pegawai yang memiliki zona dianggap HADIR,
+      kecuali satu slot yang dirotasi setiap 8 detik.
+
+  Rumus slot yang "absen" (rotasi):
+    absent_slot = floor(detik_sekarang / 8) mod jumlah_zona
+
+  Sehingga setiap 8 detik, slot pegawai yang "tidak hadir"
+  berpindah ke pegawai berikutnya secara bergilir.
+  Ini menampilkan perilaku dinamis untuk demonstrasi.
+
+  Confidence dalam simulasi:
+    Hadir  → confidence = 0.99
+    Absen  → confidence = 0.00
+
+
+================================================================
+BAB 8: CATATAN PENTING (BATASAN SISTEM)
+================================================================
+
+  1. Sistem CCTV bersifat READ-ONLY terhadap data absensi resmi.
+     Kamera tidak mengubah tabel kehadirans (check_in/check_out).
+
+  2. Akurasi deteksi bergantung pada:
+     - Kualitas frame kamera (resolusi, pencahayaan)
+     - Ketepatan penggambaran zona oleh Atasan
+     - Posisi duduk pegawai yang konsisten
+
+  3. Jika pegawai berpindah tempat duduk maka zona perlu
+     dikonfigurasi ulang oleh Atasan.
+
+  4. Tabel CCTV (cctv_monitoring_logs, deteksi_aktivitas,
+     zona_kameras) dikelola oleh Python SQLAlchemy, bukan
+     Laravel Migrations. Wajib dijalankan ulang setelah:
+       php artisan migrate:fresh
+
+================================================================

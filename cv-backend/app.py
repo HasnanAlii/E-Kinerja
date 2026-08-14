@@ -286,6 +286,146 @@ def get_log_deteksi():
         db.close()
 
 
+# ─── EFEKTIVITAS KERJA PER HARI ──────────────────────────────────────────────
+@app.route('/api/efektivitas/<int:pegawai_id>/<string:tanggal>', methods=['GET'])
+def get_efektivitas(pegawai_id, tanggal):
+    """
+    Return work effectiveness stats for a specific employee on a specific date.
+    tanggal format: YYYY-MM-DD
+    """
+    db = get_db()
+    try:
+        # Parse date
+        try:
+            target_date = datetime.date.fromisoformat(tanggal)
+        except ValueError:
+            return jsonify({"error": "Format tanggal tidak valid, gunakan YYYY-MM-DD"}), 400
+
+        # Get employee info
+        pegawai = db.query(PegawaiDetail).filter(PegawaiDetail.id == pegawai_id).first()
+        if not pegawai:
+            return jsonify({"error": "Pegawai tidak ditemukan"}), 404
+
+        # Get CCTV monitoring log for that day
+        log = db.query(CctvMonitoringLog).filter(
+            CctvMonitoringLog.pegawai_id == pegawai_id,
+            CctvMonitoringLog.tanggal == target_date
+        ).first()
+
+        # Get Kehadiran (check-in/out from Laravel)
+        kehadiran = db.query(Kehadiran).filter(
+            Kehadiran.pegawai_id == pegawai_id,
+            Kehadiran.tanggal == target_date
+        ).first()
+
+        # Calculate effective work duration
+        durasi_stay = log.durasi_stay if log else 0
+        waktu_mulai = log.waktu_mulai if log else None
+        waktu_selesai = log.waktu_selesai if log else None
+        status_terakhir = log.status_terakhir if log else 'belum_terdeteksi'
+
+        # Format duration
+        h = durasi_stay // 3600
+        m = (durasi_stay % 3600) // 60
+        s = durasi_stay % 60
+        if h > 0:
+            dur_str = f"{h} Jam {m} Menit"
+        elif m > 0:
+            dur_str = f"{m} Menit {s} Detik"
+        else:
+            dur_str = f"{s} Detik" if s > 0 else "0 Menit"
+
+        # Work schedule: assume 8 hours (28800 seconds) = standard workday
+        STANDAR_KERJA_DETIK = 8 * 3600  # 8 jam
+        efektivitas_pct = min(100, round((durasi_stay / STANDAR_KERJA_DETIK) * 100, 1)) if durasi_stay > 0 else 0
+
+        # Check-in / out from Kehadiran
+        check_in_str = kehadiran.check_in.strftime("%H:%M") if kehadiran and kehadiran.check_in else None
+        check_out_str = kehadiran.check_out.strftime("%H:%M") if kehadiran and kehadiran.check_out else None
+
+        # Calculate total presence duration (check_in to check_out)
+        durasi_hadir_str = "-"
+        if kehadiran and kehadiran.check_in and kehadiran.check_out:
+            from datetime import datetime as dt, timedelta
+            dummy = datetime.date(2000, 1, 1)
+            t_in  = dt.combine(dummy, kehadiran.check_in)
+            t_out = dt.combine(dummy, kehadiran.check_out)
+            diff  = t_out - t_in
+            if diff.total_seconds() > 0:
+                total_h = int(diff.total_seconds() // 3600)
+                total_m = int((diff.total_seconds() % 3600) // 60)
+                durasi_hadir_str = f"{total_h} Jam {total_m} Menit"
+
+        # Zone info
+        zone = db.query(ZonaKamera).filter(ZonaKamera.pegawai_id == pegawai_id).first()
+
+        status_label = {
+            'di_meja': 'Di Meja Kerja',
+            'keluar_ruangan': 'Keluar Ruangan',
+            'belum_terdeteksi': 'Belum Terdeteksi'
+        }.get(status_terakhir, status_terakhir)
+
+        return jsonify({
+            "pegawai_id": pegawai_id,
+            "nama": pegawai.user.name if pegawai.user else "-",
+            "jabatan": pegawai.jabatan or "-",
+            "tanggal": tanggal,
+            "tanggal_label": target_date.strftime("%-d %B %Y"),
+            "check_in": check_in_str,
+            "check_out": check_out_str,
+            "durasi_hadir": durasi_hadir_str,
+            "durasi_di_meja_detik": durasi_stay,
+            "durasi_di_meja": dur_str,
+            "efektivitas_persen": efektivitas_pct,
+            "standar_jam_kerja": "8 Jam",
+            "status_terakhir": status_label,
+            "status_raw": status_terakhir,
+            "zona_label": zone.label if zone else "-",
+            "waktu_mulai_deteksi": waktu_mulai.strftime("%H:%M:%S") if waktu_mulai else None,
+            "waktu_selesai_deteksi": waktu_selesai.strftime("%H:%M:%S") if waktu_selesai else None,
+            "ai_detected": log is not None,
+        })
+    finally:
+        db.close()
+
+
+# ─── STOP MONITORING ─────────────────────────────────────────────────────────
+@app.route('/api/stop-monitoring', methods=['POST'])
+def stop_monitoring():
+    """
+    Called when the supervisor stops the camera/surveillance session.
+    Resets the CCTV status of all employees that are currently marked as
+    'di_meja' back to 'belum_terdeteksi' and clears last_seen so that the
+    live-duration ticker on the frontend freezes correctly.
+    """
+    db = get_db()
+    today = datetime.date.today()
+    try:
+        logs = db.query(CctvMonitoringLog).filter(
+            CctvMonitoringLog.tanggal == today
+        ).all()
+
+        reset_count = 0
+        for log in logs:
+            if log.status_terakhir in ('di_meja', 'keluar_ruangan'):
+                log.status_terakhir = 'belum_terdeteksi'
+                log.last_seen = None      # stop the live ticker
+                reset_count += 1
+
+        db.commit()
+        return jsonify({
+            "success": True,
+            "message": f"Pengawasan dihentikan. {reset_count} status pegawai direset.",
+            "reset_count": reset_count
+        })
+    except Exception as e:
+        db.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        db.close()
+
+
 if __name__ == '__main__':
     port = int(os.getenv("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
+

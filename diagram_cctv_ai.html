@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagram Sistem Pengawasan Pegawai (CCTV AI)</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Mermaid.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #0f172a; /* slate-900 */
+            color: #e2e8f0; /* slate-200 */
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .mermaid-container {
+            background-color: #1e293b; /* slate-800 */
+            border: 1px solid #334155; /* slate-700 */
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Center mermaid output */
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+        
+        .description-box {
+            background-color: #0f172a; /* slate-900 */
+            border-left: 4px solid #3b82f6; /* blue-500 */
+            padding: 1.25rem;
+            border-radius: 0.375rem;
+            margin-top: 1rem;
+            color: #cbd5e1; /* slate-300 */
+            font-size: 0.95rem;
+            line-height: 1.6;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .description-box strong {
+            color: #f8fafc; /* slate-50 */
+        }
+        
+        .description-box code {
+            background-color: #1e293b;
+            color: #fb7185; /* rose-400 */
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+        
+        h2 {
+            color: #f8fafc; /* slate-50 */
+            border-bottom: 1px solid #334155; /* slate-700 */
+            padding-bottom: 0.75rem;
+        }
+        
+        /* Tabel style untuk Diagram 9 */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 1rem;
+            background-color: #1e293b;
+            border-radius: 0.375rem;
+            overflow: hidden;
+        }
+        th, td {
+            border: 1px solid #334155;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-weight: 600;
+        }
+    </style>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({ 
+                startOnLoad: true,
+                theme: 'dark',
+                securityLevel: 'loose',
+                fontFamily: 'Inter, sans-serif'
+            });
+        });
+    </script>
+</head>
+<body class="p-4 md:p-8 lg:p-12">
+    <div class="max-w-6xl mx-auto">
+        
+        <header class="mb-12 text-center border-b border-slate-800 pb-8">
+            <h1 class="text-4xl font-bold text-white mb-3">Diagram Sistem Pengawasan Pegawai (CCTV AI)</h1>
+            <p class="text-xl text-blue-400 font-medium">E-Kinerja — Logika & Perhitungan Monitoring Kehadiran</p>
+        </header>
+
+        <!-- Diagram 1 -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-semibold mb-6">Diagram 1: Arsitektur Sistem (Overview)</h2>
+            <div class="mermaid-container">
+                <div class="mermaid">
+graph TD
+    A["👤 Atasan\n(Browser)"] -->|"Kirim frame\nsetiap 500ms"| B["POST /api/process-frame\n(Flask Python)"]
+    A -->|"Polling setiap 5s"| C["GET /api/stats\n/api/log-deteksi"]
+    
+    B --> D["🤖 YOLOv8n\n(Deteksi Person)"]
+    D --> E["Zone Matching\n(Point-in-Rectangle)"]
+    E --> F[("MySQL\ncctv_monitoring_logs\ndeteksi_aktivitas\nzona_kameras")]
+    
+    C --> F
+    F -->|"JSON response"| A
+
+    G["👤 Pegawai"] -->|"Absen manual\n(check_in)"| H["POST kehadiran\n(Laravel)"]
+    H --> I[("MySQL\nkehadirans")]
+    I -->|"total_hadir"| C
+                </div>
+            </div>
+            <div class="description-box">
+                <strong>Keterangan:</strong><br>
+                Diagram ini menggambarkan alur data keseluruhan sistem E-Kinerja.<br>
+                Terdapat dua jalur data yang terpisah:<br><br>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li><strong>Jalur CCTV (kiri):</strong> Browser Atasan mengirimkan frame kamera setiap 500ms ke layanan Python Flask. Frame diproses oleh YOLOv8 untuk mendeteksi keberadaan pegawai di zona meja mereka. Hasil deteksi disimpan ke tiga tabel MySQL yang dikelola Python (<code>cctv_monitoring_logs</code>, <code>deteksi_aktivitas</code>, <code>zona_kameras</code>).</li>
+                    <li><strong>Jalur Absensi Resmi (kanan):</strong> Pegawai melakukan absen masuk secara manual melalui Laravel, yang mencatat data ke tabel <code>kehadirans</code>. Data ini menjadi sumber "Total Pegawai Hadir" di dashboard.</li>
+                </ul><br>
+                Kedua jalur <strong>tidak saling menulis</strong> satu sama lain — kamera tidak mengubah data absensi resmi, dan absensi resmi tidak mempengaruhi log CCTV.
+            </div>
+        </section>
+
+        <!-- Diagram 2 -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-semibold mb-6">Diagram 2: Sistem Koordinat Zona (Percentage-Based)</h2>
+            <div class="mermaid-container">
+                <div class="mermaid">
+graph LR
+    subgraph Frame["📷 Frame Kamera (640 x 480 px)"]
+        direction TB
+        TL["(0%, 0%)"] --- TR["(100%, 0%)"]
+        TL --- BL["(0%, 100%)"]
+        TR --- BR["(100%, 100%)"]
+        
+        subgraph ZonaA["Zona Meja A\nx1=10% y1=5%\nx2=45% y2=90%"]
+            PA["👤 Pegawai A"]
+        end
+        
+        subgraph ZonaB["Zona Meja B\nx1=55% y1=5%\nx2=90% y2=90%"]
+            PB["👤 Pegawai B"]
+        end
+    end
+
+    subgraph Rumus["Konversi ke Piksel"]
+        R1["x1_px = x1_pct / 100 × W"]
+        R2["y1_px = y1_pct / 100 × H"]
+        R3["x2_px = x2_pct / 100 × W"]
+        R4["y2_px = y2_pct / 100 × H"]
+    end
+                </div>
+            </div>
+            <div class="description-box">
+                <strong>Keterangan:</strong><br>
+                Diagram ini menjelaskan bagaimana posisi zona meja pegawai disimpan dan direpresentasikan dalam sistem.<br><br>
+                Zona <strong>tidak disimpan dalam piksel absolut</strong>, melainkan dalam <strong>persentase</strong> terhadap lebar (W) dan tinggi (H) frame kamera (0–100%). Keunggulannya:<br>
+                <ul class="list-disc pl-6 space-y-1 mt-2 mb-2">
+                    <li>Zona tetap akurat meskipun resolusi kamera atau ukuran tampilan berubah.</li>
+                    <li>Zona yang digambar pada monitor 1920px akan tetap valid jika diputar pada kamera 640px.</li>
+                </ul>
+                <br>
+                <strong>Contoh konversi</strong> untuk frame 640×480:<br>
+                - <code>x1_pct=10</code> → <code>x1_px = 10/100 × 640 = 64px</code><br>
+                - <code>y2_pct=90</code> → <code>y2_px = 90/100 × 480 = 432px</code>
+            </div>
+        </section>
+
+        <!-- Diagram 3 -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-semibold mb-6">Diagram 3: Pipeline Pemrosesan Frame (Per 500ms)</h2>
+            <div class="mermaid-container">
+                <div class="mermaid">
+flowchart TD
+    A(["▶ Frame diterima dari browser\n(base64 JPEG)"]) --> B["Decode base64\n→ numpy array → OpenCV"]
+    B --> C{"simulate\n= true?"}
+    C -->|Ya| D["Mode Simulasi\n(tanpa kamera nyata)"]
+    C -->|Tidak| E["🤖 YOLOv8n\nmodel.track(frame, classes=0)"]
+
+    E --> F["Loop setiap\nbounding box"]
+    F --> G["Hitung titik tengah:\ncx = (x1+x2)/2\ncy = (y1+y2)/2"]
+    G --> H["Konversi ke %:\ncx_pct = cx/W × 100\ncy_pct = cy/H × 100"]
+    H --> I{"Cocok dengan\nzona mana?"}
+
+    I -->|"Cocok"| J["Tandai pegawai_id\nsebagai HADIR"]
+    I -->|"Tidak cocok"| K["Orang asing\n(tidak dipantau)"]
+
+    J --> L["Simpan DeteksiAktivitas\n+ Update CctvMonitoringLog"]
+    D --> L
+
+    L --> M["db.commit()"]
+    M --> N(["◀ Return: annotated frame\n+ detected_count"])
+                </div>
+            </div>
+            <div class="description-box">
+                <strong>Keterangan:</strong><br>
+                Diagram ini menggambarkan seluruh proses yang terjadi setiap kali frontend mengirimkan satu frame kamera (setiap 500ms) ke endpoint <code>POST /api/process-frame</code>.<br><br>
+                Langkah-langkah utama:<br>
+                <ol class="list-decimal pl-6 space-y-1 mt-2">
+                    <li><strong>Decode</strong> — Frame diterima dalam format base64 JPEG dan dikonversi ke format matriks citra OpenCV.</li>
+                    <li><strong>Pemilihan mode</strong> — Jika <code>simulate=true</code> (kamera tidak tersedia), langsung ke mode simulasi. Jika tidak, frame diproses oleh YOLOv8.</li>
+                    <li><strong>Deteksi & tracking</strong> — YOLOv8 mendeteksi semua objek kelas "person" (manusia) di frame dan memberikan bounding box beserta tracking ID unik.</li>
+                    <li><strong>Pencocokan zona</strong> — Untuk setiap objek terdeteksi, titik tengahnya dicocokkan dengan zona yang terdaftar.</li>
+                    <li><strong>Penyimpanan</strong> — Hasil cocok disimpan ke database; orang yang tidak cocok zona diabaikan.</li>
+                    <li><strong>Return</strong> — Frame yang sudah dianotasi (dengan kotak deteksi & label) dikirimkan kembali ke browser.</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Diagram 4 -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-semibold mb-6">Diagram 4: Algoritma Pencocokan Zona (Zone Matching)</h2>
+            <div class="mermaid-container">
+                <div class="mermaid">
+flowchart TD
+    A(["cx_pct, cy_pct\n(titik tengah objek)"]) --> B["Ambil semua zona\ndari zona_kameras"]
+    B --> C["Periksa zona ke-i"]
+    C --> D{"zona.x1_pct ≤ cx_pct\n≤ zona.x2_pct\nDAN\nzona.y1_pct ≤ cy_pct\n≤ zona.y2_pct"}
+    D -->|"✅ Cocok"| E["Return zona ini\n(first-match)"]
+    D -->|"❌ Tidak cocok"| F{"Masih ada\nzona berikutnya?"}
+    F -->|"Ya"| C
+    F -->|"Tidak"| G["Return None\n(orang asing / tidak dikenali)"]
+                </div>
+            </div>
+            <div class="description-box">
+                <strong>Keterangan:</strong><br>
+                Diagram ini menjelaskan cara sistem menentukan apakah seseorang yang terdeteksi di frame berada di zona meja milik pegawai tertentu.<br><br>
+                Algoritma yang digunakan adalah <strong>Point-in-Rectangle</strong>: sistem memeriksa apakah titik tengah (center point) dari bounding box orang yang terdeteksi jatuh di dalam persegi panjang zona yang sudah dikonfigurasi.<br><br>
+                <ul class="list-disc pl-6 space-y-1 mt-2">
+                    <li><strong>Jika cocok:</strong> Orang tersebut diidentifikasi sebagai pegawai pemilik zona, dan statusnya dicatat sebagai <code>di_meja</code>.</li>
+                    <li><strong>Jika tidak cocok dengan zona manapun:</strong> Orang tersebut dianggap "tidak dikenal" — hanya ditampilkan di frame tapi tidak disimpan ke database.</li>
+                    <li><strong>Jika dua zona tumpang tindih:</strong> Zona yang lebih dulu ditemukan di database yang diprioritaskan (<strong>first-match</strong>).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Diagram 5 -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-semibold mb-6">Diagram 5: Perhitungan Durasi di Meja</h2>
+            <div class="mermaid-container">
+                <div class="mermaid">
+flowchart TD
+    A(["Pegawai terdeteksi\ndi zona (present=True)"]) --> B{"Record hari ini\nsudah ada di DB?"}
+
+    B -->|"Belum"| C["Buat record baru:\nwaktu_mulai = now\ndurasi_stay = 0\nstatus = di_meja\nlast_seen = now"]
+
+    B -->|"Sudah ada"| D["Hitung jeda:\ntd = now − last_seen"]
+    D --> E{"td < 60\ndetik?"}
+
+    E -->|"✅ Ya\n(sesi aktif)"| F["Hitung total sejak awal:\ntotal_secs =\nnow − waktu_mulai"]
+    F --> G["durasi_stay =\nmax(durasi_sekarang, total_secs)"]
+    G --> H["Update:\nstatus = di_meja\nlast_seen = now\nwaktu_selesai = now"]
+
+    E -->|"❌ Tidak\n(jeda terlalu lama)"| H
+
+    C --> I(["Simpan ke DB"])
+    H --> I
+
+    subgraph Rumus["📐 Rumus Inti (Drift-Free)"]
+        R["durasi_stay =\nmax(durasi_stay_lama,\n(now − waktu_mulai).total_seconds())"]
+    end
+                </div>
+            </div>
+            <div class="description-box">
+                <strong>Keterangan:</strong><br>
+                Diagram ini menunjukkan bagaimana sistem menghitung dan menyimpan durasi pegawai berada di meja kerjanya.<br><br>
+                Metode yang digunakan adalah <strong>Session-Based, Drift-Free</strong>:<br>
+                <ul class="list-disc pl-6 space-y-1 mt-2">
+                    <li>Durasi dihitung dari <code>waktu_mulai</code> (pertama kali terdeteksi hari ini) hingga <code>now</code>, bukan dengan menjumlahkan per-frame.</li>
+                    <li>Fungsi <code>max()</code> memastikan durasi tidak pernah berkurang (misalnya jika ada oklusi sesaat).</li>
+                    <li><strong>Kondisi <code>td < 60 detik</code></strong> mencegah "lompatan durasi" saat kamera terputus lama lalu tersambung kembali — jika jeda > 60 detik, durasi tidak diperbarui untuk sesi itu.</li>
+                </ul><br>
+                Hasilnya adalah nilai <code>durasi_stay</code> dalam satuan <strong>detik</strong> yang akurat dan bebas drift.
+            </div>
+        </section>
+
+        <!-- Diagram 6 -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-semibold mb-6">Diagram 6: Live Ticking di Frontend (Client-Side)</h2>
+            <div class="mermaid-container">
+                <div class="mermaid">
+flowchart TD
+    A(["API response diterima\n(setiap 5 detik)"]) --> B["Simpan ke durationMap:\nbase = durasi_stay_seconds\nbaseTime = now()\nstatus = status_raw"]
+
+    B --> C["Timer tick\nsetiap 1 detik"]
+    C --> D{"status\n== 'di_meja'?"}
+
+    D -->|"✅ Ya\n(aktif)"| E["elapsed = now() − baseTime\ntotal = base + elapsed"]
+    D -->|"❌ Tidak\n(keluar/belum)"| F["total = base\n(DIBEKUKAN, tidak bertambah)"]
+
+    E --> G["Tampilkan:\n≥3600s → 'X Jam Y Menit'\n≥60s   → 'Y Menit'\n>0s    → '< 1 Menit'\n=0s    → '—'"]
+    F --> G
+
+    subgraph Drift["🔄 Koreksi Drift (setiap kali data API masuk)"]
+        K["myEstimate = base + (now − baseTime)"]
+        K --> L{"|apiValue − myEstimate|\n> 5 detik?"}
+        L -->|"Ya → re-anchor"| M["base = apiValue\nbaseTime = now()"]
+        L -->|"Tidak"| N["Lanjutkan ticking"]
+    end
+                </div>
+            </div>
+            <div class="description-box">
+                <strong>Keterangan:</strong><br>
+                Diagram ini menjelaskan mekanisme tampilan durasi yang bergerak secara real-time di antarmuka frontend tanpa harus memanggil API setiap detik.<br><br>
+                <strong>Prinsip kerja:</strong><br>
+                <ul class="list-disc pl-6 space-y-1 mt-2 mb-2">
+                    <li>Setiap 5 detik, frontend meminta data terbaru dari server (<code>durasi_stay_seconds</code>).</li>
+                    <li>Data disimpan sebagai <code>base</code> + <code>baseTime</code> (waktu data diterima).</li>
+                    <li>Setiap 1 detik, tampilan dihitung dari: <code>total = base + (now − baseTime)</code>.</li>
+                    <li>Jika pegawai <strong>tidak di meja</strong>, penghitung <strong>dibekukan</strong> — durasi tidak bertambah.</li>
+                </ul>
+                <strong>Koreksi Drift:</strong><br>
+                Jika estimasi frontend menyimpang > 5 detik dari nilai server, dilakukan re-anchor untuk menjaga akurasi tampilan selaras dengan data aktual database.
+            </div>
+        </section>
+
+        <!-- Diagram 7 -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-semibold mb-6">Diagram 7: Transisi Status Pegawai</h2>
+            <div class="mermaid-container">
+                <div class="mermaid">
+stateDiagram-v2
+    [*] --> belum_terdeteksi : Awal hari / belum ada record CCTV
+
+    belum_terdeteksi --> di_meja : Terdeteksi masuk ke zona meja
+
+    di_meja --> di_meja : Terdeteksi lagi (tiap frame, td < 60s)
+    di_meja --> keluar_ruangan : Tidak terdeteksi selama > 10 detik
+
+    keluar_ruangan --> di_meja : Terdeteksi kembali di zona
+
+    note right of di_meja
+        - durasi_stay terus bertambah
+        - last_seen diperbarui tiap frame
+        - waktu_selesai diperbarui
+    end note
+
+    note right of keluar_ruangan
+        - durasi_stay DIBEKUKAN
+        - Status berubah hanya jika
+          td > 10 detik (toleransi oklusi)
+    end note
+
+    note right of belum_terdeteksi
+        - Status default saat hari baru
+        - Atau pegawai belum memiliki zona
+    end note
+                </div>
+            </div>
+            <div class="description-box">
+                <strong>Keterangan:</strong><br>
+                Diagram ini menggambarkan semua kemungkinan status pegawai dalam sistem CCTV dan kondisi yang memicu perpindahan status.<br><br>
+                <strong>Tiga status yang tersedia:</strong><br>
+                <ul class="list-disc pl-6 space-y-2 mt-2 mb-2">
+                    <li><code>belum_terdeteksi</code>: Pegawai belum pernah terlihat di zona hari ini, atau belum memiliki zona yang dikonfigurasi</li>
+                    <li><code>di_meja</code>: Pegawai aktif terdeteksi berada di zona meja kerjanya</li>
+                    <li><code>keluar_ruangan</code>: Pegawai tidak terdeteksi lebih dari 10 detik — dianggap meninggalkan area</li>
+                </ul>
+                <strong>Toleransi 10 detik</strong> sengaja dirancang untuk menghindari perubahan status yang terlalu sensitif (misalnya saat badan pegawai tertutup sebentar oleh objek lain / oklusi).
+            </div>
+        </section>
+
+        <!-- Diagram 8 -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-semibold mb-6">Diagram 8: Perhitungan Statistik Dashboard</h2>
+            <div class="mermaid-container">
+                <div class="mermaid">
+flowchart LR
+    subgraph DB["🗄️ Sumber Data"]
+        K["Tabel: kehadirans\n(absen resmi Laravel)"]
+        CL["Tabel: cctv_monitoring_logs\n(log CCTV hari ini)"]
+    end
+
+    subgraph Stats["📊 Kartu Statistik Dashboard"]
+        S1["🔵 Total Pegawai Hadir\n─────────────────\nCOUNT(*)\nFROM kehadirans\nWHERE jenis = 'hadir'\nAND tanggal = hari_ini"]
+
+        S2["🟠 Terdeteksi Keluar\n─────────────────\nCOUNT(*)\nFROM cctv_monitoring_logs\nWHERE status_terakhir\n= 'keluar_ruangan'\nAND tanggal = hari_ini"]
+
+        S3["🟢 Rata-rata Stay\n─────────────────\nUntuk setiap log:\n  dur = durasi_stay\n  Jika di_meja & elapsed < 60s:\n    dur += elapsed\nAvg = Σdur / N"]
+    end
+
+    K --> S1
+    CL --> S2
+    CL --> S3
+                </div>
+            </div>
+            <div class="description-box">
+                <strong>Keterangan:</strong><br>
+                Diagram ini menjelaskan dari mana setiap angka di tiga kartu statistik dashboard diambil dan bagaimana dihitung.<br><br>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li><strong>Total Pegawai Hadir (Biru):</strong> Bersumber dari tabel <code>kehadirans</code> Laravel — hanya pegawai yang telah melakukan absen masuk resmi (<code>jenis='hadir'</code>) yang dihitung. <strong>Tidak</strong> terpengaruh oleh deteksi kamera.</li>
+                    <li><strong>Terdeteksi Keluar Ruangan (Oranye):</strong> Bersumber dari log CCTV — menghitung berapa pegawai yang saat ini berstatus <code>keluar_ruangan</code> hari ini.</li>
+                    <li><strong>Rata-rata Stay di Meja (Hijau):</strong> Menggunakan koreksi live — untuk pegawai yang masih berstatus <code>di_meja</code> dan baru saja terdeteksi (< 60 detik lalu), sistem menambahkan waktu yang telah berlalu sejak <code>last_seen</code> ke <code>durasi_stay</code> sebelum dirata-rata. Ini membuat nilai rata-rata konsisten dengan tampilan durasi di tabel pegawai.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Diagram 9 -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-semibold mb-6">Diagram 9: Mode Simulasi — Rotasi Slot Absen</h2>
+            <div class="mermaid-container">
+                <div class="mermaid">
+flowchart TD
+    A(["simulate = true\n(kamera tidak tersedia)"]) --> B["Ambil semua zona\n(N zona terkonfigurasi)"]
+    B --> C{"N > 1\nzona?"}
+    C -->|"Ya"| D["Hitung slot absen:\nabsent_slot =\nfloor(detik_sekarang / 8) mod N"]
+    C -->|"Tidak (N=1)"| E["absent_slot = -1\n(selalu hadir)"]
+    D --> F["Loop setiap zona ke-i"]
+    E --> F
+    F --> G{"i == absent_slot?"}
+    G -->|"Ya → ABSEN"| H["present = False\nGambar tanda 'keluar'\nconfidence = 0.0"]
+    G -->|"Tidak → HADIR"| I["present = True\nGambar siluet pegawai\nconfidence = 0.99"]
+    H --> J["_update_monitoring(present=False)"]
+    I --> J
+    J --> K{"Zona\nberikutnya?"}
+    K -->|"Ya"| F
+    K -->|"Tidak"| L(["db.commit()\nReturn annotated frame"])
+
+    subgraph Contoh["📌 Contoh: 3 Zona, detik = 20"]
+        EX["absent_slot = floor(20/8) mod 3\n= 2 mod 3 = 2\n→ Zona ke-3 dianggap absen"]
+    end
+                </div>
+            </div>
+            <div class="description-box">
+                <strong>Keterangan:</strong><br>
+                Diagram ini menjelaskan bagaimana sistem berperilaku ketika tidak ada kamera nyata yang tersedia (mode simulasi).<br><br>
+                <strong>Tujuan mode simulasi:</strong><br>
+                Memungkinkan Atasan melihat tampilan dashboard yang hidup dan dinamis untuk keperluan demo atau pengujian sistem tanpa harus menyiapkan kamera dan pencahayaan.<br><br>
+                <strong>Mekanisme rotasi:</strong><br>
+                Setiap 8 detik, satu zona secara bergilir dianggap "kosong/absen". Rumus <code>floor(detik / 8) mod N</code> memastikan rotasi terjadi secara merata dan dapat diprediksi.<br>
+                
+                <table class="mt-4">
+                    <thead>
+                        <tr>
+                            <th>Detik ke-</th>
+                            <th>floor(detik/8)</th>
+                            <th>mod 3</th>
+                            <th>Slot absen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0–7</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>Zona 1</td>
+                        </tr>
+                        <tr>
+                            <td>8–15</td>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>Zona 2</td>
+                        </tr>
+                        <tr>
+                            <td>16–23</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>Zona 3</td>
+                        </tr>
+                        <tr>
+                            <td>24–31</td>
+                            <td>3</td>
+                            <td>0</td>
+                            <td>Zona 1 (ulang)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Diagram 10 -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-semibold mb-6">Diagram 10: Alur Konfigurasi Zona (UI Flow)</h2>
+            <div class="mermaid-container">
+                <div class="mermaid">
+sequenceDiagram
+    actor Atasan
+    participant UI as Frontend (Alpine.js)
+    participant API as CV Backend (Flask :5000)
+    participant DB as MySQL
+
+    Atasan->>UI: Klik tombol "Atur Zona"
+    UI->>API: GET /api/zones
+    API->>DB: SELECT zona_kameras + pegawai_details
+    DB-->>API: Data zona & pegawai
+    API-->>UI: { zones: [...], unzoned: [...] }
+    UI->>UI: Render kanvas grid + daftar pegawai
+
+    Atasan->>UI: Klik nama pegawai (pilih target)
+    Atasan->>UI: Klik & seret pada kanvas\n(gambar kotak zona)
+    UI->>UI: Hitung koordinat persentase:\nx1_pct = (startX / W) × 100\ny1_pct = (startY / H) × 100\nx2_pct = (endX / W) × 100\ny2_pct = (endY / H) × 100
+
+    Atasan->>UI: Klik "Simpan Zona"
+    UI->>API: POST /api/zones\n{ pegawai_id, x1_pct, y1_pct,\n  x2_pct, y2_pct, label }
+    API->>DB: INSERT / UPDATE zona_kameras\n(UPSERT per pegawai_id)
+    DB-->>API: OK
+    API-->>UI: { success: true, message: "Zona disimpan" }
+    UI->>UI: Refresh kanvas\n(render semua zona terbaru)
+    UI-->>Atasan: Tampilkan notifikasi sukses ✓
+                </div>
+            </div>
+            <div class="description-box">
+                <strong>Keterangan:</strong><br>
+                Diagram ini menggambarkan interaksi lengkap antara Atasan, antarmuka frontend (Alpine.js), layanan Python Flask, dan database MySQL saat mengkonfigurasi zona meja pegawai.<br><br>
+                <strong>Alur utama:</strong><br>
+                <ol class="list-decimal pl-6 space-y-1 mt-2">
+                    <li><strong>Memuat data</strong> — Saat modal dibuka, sistem mengambil daftar semua pegawai dan zona yang sudah ada.</li>
+                    <li><strong>Pemilihan pegawai</strong> — Atasan memilih pegawai mana yang zonanya ingin diatur atau diubah.</li>
+                    <li><strong>Menggambar zona</strong> — Atasan menyeret kursor di atas kanvas yang merepresentasikan area kamera. Koordinat dihitung secara real-time dalam persentase.</li>
+                    <li><strong>Penyimpanan</strong> — Data dikirim ke API. Jika pegawai sudah memiliki zona sebelumnya, zona lama akan di-<strong>update</strong> (bukan duplikasi). Jika belum ada, zona baru dibuat.</li>
+                    <li><strong>Konfirmasi</strong> — Kanvas diperbarui otomatis untuk menampilkan semua zona terkini.</li>
+                </ol>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>
