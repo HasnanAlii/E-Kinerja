@@ -21,7 +21,9 @@
                 {{ ucfirst(Auth::user()->roles->first()->name ?? 'User') }}
             </span>
 
-            <div x-data="notificationComponent()" class="relative">
+            {{-- DISABLED --}}
+@if(false)
+<div x-data="notificationComponent()" class="relative">
 
                 <button @click="toggleNotif()" class="relative focus:outline-none mt-2">
                     <i data-feather="bell" class="w-6 h-6 text-gray-600"></i>
@@ -45,6 +47,7 @@
                         <template x-if="notifications.length === 0">
                             <div class="px-4 py-3 text-center text-gray-500 text-sm">
                                 Tidak ada notifikasi
+
                             </div>
                         </template>
 
@@ -58,6 +61,8 @@
                     </div>
                 </div>
             </div>
+
+            @endif
 
             <div class="relative" x-data="{ open: false }">
 

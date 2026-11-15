@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>E-Kinerja Dinas Arsip & Perpustakaan Cianjur</title>
+    <title>Monitoring Kehadiran Karyawan Pou Yuen</title>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/logo.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('assets/logo.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/logo.svg') }}">
+    <link rel="apple-touch-icon" href="{{ asset('assets/logo.svg') }}">
 
 
     <!-- Font -->
@@ -26,10 +26,10 @@
 
             <div class="flex items-center gap-2">
                 <span class="p-2 ">
-                    <img src="{{ asset('assets/logo.png') }}" alt="Logo Dinas Arsip & Perpustakaan" class="w-20 object-contain">
+                    <img src="{{ asset('assets/logo.svg') }}" alt="Logo Pou Yuen" class="w-20 object-contain">
                 </span>
                 <h1 class="text-lg font-semibold text-gray-900">
-                    E-Kinerja Dinas Arsip & Perpustakaan Cianjur
+                    Monitoring Kehadiran Karyawan Pou Yuen
                 </h1>
             </div>
 
@@ -57,13 +57,13 @@
             {{-- LEFT TEXT --}}
             <div>
                 <h2 class="text-4xl font-extrabold text-gray-900 leading-tight mb-6">
-                    Sistem E-Kinerja <span class="text-indigo-600">Terintegrasi</span><br>
-                    Untuk Dinas Arsip & Perpustakaan Kabupaten Cianjur
+                    Sistem Monitoring <span class="text-indigo-600">Kehadiran Karyawan</span><br>
+                    PT Pou Yuen
                 </h2>
 
                 <p class="text-lg text-gray-600 leading-relaxed mb-8">
-                    Platform digital untuk memantau kinerja, aktivitas harian, kehadiran,
-                    serta pengajuan izin / sakit pegawai secara realtime dan lebih transparan.
+                    Platform digital untuk memantau kehadiran harian dan bulanan, pengajuan izin, sakit, dan cuti,
+                    serta laporan PDF/Excel karyawan secara realtime dan transparan.
                 </p>
 
                 <div class="flex gap-4">
@@ -99,16 +99,16 @@
         <div class="max-w-7xl mx-auto px-6">
 
             <h3 class="text-3xl font-bold text-gray-900 text-center mb-12">
-                Fitur E-Kinerja 
+                Fitur Monitoring Kehadiran 
                 {{-- Dinas Arsip & Perpustakaan --}}
             </h3>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
-                <div class="bg-gray-50 p-6 rounded-xl shadow-sm border">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                {{-- DISABLED <div class="bg-gray-50 p-6 rounded-xl shadow-sm border">
                     <i data-feather="check-circle" class="w-10 h-10 text-indigo-600 mb-4"></i>
                     <h4 class="font-semibold text-lg text-gray-900 mb-2">Aktivitas Harian</h4>
                     <p class="text-gray-600">Catat, laporkan, dan pantau aktivitas harian pegawai secara efisien.</p>
-                </div>
+                </div> --}}
 
                 <div class="bg-gray-50 p-6 rounded-xl shadow-sm border">
                     <i data-feather="clock" class="w-10 h-10 text-indigo-600 mb-4"></i>
@@ -122,11 +122,11 @@
                     <p class="text-gray-600">Ajukan izin atau sakit dengan lampiran file secara digital.</p>
                 </div>
 
-                <div class="bg-gray-50 p-6 rounded-xl shadow-sm border">
+                {{-- DISABLED <div class="bg-gray-50 p-6 rounded-xl shadow-sm border">
                     <i data-feather="star" class="w-10 h-10 text-indigo-600 mb-4"></i>
                     <h4 class="font-semibold text-lg text-gray-900 mb-2">Penilaian Performa Pegawai</h4>
                     <p class="text-gray-600">Pantau dan nilai kinerja pegawai secara objektif dan terstruktur.</p>
-                </div>
+                </div> --}}
 
             </div>
         </div>
@@ -134,8 +134,7 @@
 
     {{-- FOOTER --}}
     <footer class="py-6 text-center text-gray-600 text-sm">
-        © {{ date('Y') }} Dinas Arsip & Perpustakaan Kabupaten Cianjur —
-        Sistem E-Kinerja Terintegrasi.
+        © {{ date('Y') }} PT Pou Yuen — Sistem Monitoring Kehadiran Karyawan.
     </footer>
 
     <script>

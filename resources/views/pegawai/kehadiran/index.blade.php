@@ -55,25 +55,7 @@
                     <p class="text-base text-gray-500">Dokumentasi lengkap mengenai kehadiran harian Anda.</p>
                 </div>
             </div>
-            <div class="flex gap-4  justify-end">
-                <form action="{{ route('pegawai.kehadiran.checkin') }}" method="POST">
-                    @csrf
-                    <button type="submit" 
-                            class="inline-flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-indigo-700 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-base">
-                        <i data-feather="log-in" class="w-5 h-5 mr-2 -ml-1"></i>
-                        Absen Masuk
-                    </button>
-                </form>
-
-                <form action="{{ route('pegawai.kehadiran.checkout') }}" method="POST">
-                    @csrf
-                    <button type="submit" 
-                            class="inline-flex items-center bg-green-600 text-white px-4 py-2 rounded-lg shadow-sm hover:bg-green-700 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-base">
-                        <i data-feather="log-out" class="w-5 h-5 mr-2 -ml-1"></i>
-                        Absen Pulang
-                    </button>
-                </form>
-            </div>
+            <div class="text-sm text-gray-500 text-right">Kehadiran dicatat otomatis oleh sistem monitoring kamera.</div>
         </div>
 
                 <div class=" bg-white border-b border-gray-200">

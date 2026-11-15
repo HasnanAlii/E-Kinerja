@@ -84,6 +84,19 @@ def _update_monitoring(db, pegawai_id, present, current_time, today):
     ).first()
 
     if present:
+        # Kehadiran otomatis: check_in = pertama terdeteksi, check_out = terakhir terdeteksi
+        keh = db.query(Kehadiran).filter(
+            Kehadiran.pegawai_id == pegawai_id, Kehadiran.tanggal == today
+        ).first()
+        if not keh:
+            db.add(Kehadiran(pegawai_id=pegawai_id, tanggal=today, jenis='hadir',
+                             check_in=current_time.time(), check_out=current_time.time()))
+        elif keh.jenis in (None, 'hadir', 'alpha'):
+            keh.jenis = 'hadir'
+            if keh.check_in is None:
+                keh.check_in = current_time.time()
+            keh.check_out = current_time.time()
+
         if not cctv_log:
             cctv_log = CctvMonitoringLog(
                 pegawai_id=pegawai_id, tanggal=today,

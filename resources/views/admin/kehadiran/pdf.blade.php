@@ -58,8 +58,11 @@
         <td width="200">: {{ $pegawai->nip ?? '-' }}</td>
     </tr>
     <tr>
-        <td><strong>Jabatan</strong></td>
+        {{-- DISABLED: jabatan --}}
+    @if(false)
+<td><strong>Jabatan</strong></td>
         <td>: {{ $pegawai->jabatan ?? '-' }}</td>
+    @endif
 
         <td><strong>Unit Kerja</strong></td>
         <td>: {{ $pegawai->bidang->nama_bidang ?? '-' }}</td>

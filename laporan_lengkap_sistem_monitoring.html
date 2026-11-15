@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Lengkap Sistem & Cara Kerja: Sistem Monitoring Kehadiran dan Aktivitas Pegawai (E-Kinerja)</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Mermaid.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+
+    <!-- KaTeX for Mathematical Formulas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false}
+            ]
+        });"></script>
+
+    <!-- Google Fonts: Crimson Pro & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f1f5f9;
+            color: #1e293b;
+            font-family: 'Inter', sans-serif;
+            line-height: 1.75;
+        }
+        .academic-serif {
+            font-family: 'Crimson Pro', Georgia, serif;
+        }
+        .paper-container {
+            background: #ffffff;
+            box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+            border: 1px solid #e2e8f0;
+        }
+        .section-heading {
+            border-bottom: 2px solid #0f172a;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.25rem;
+        }
+        .formula-box {
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-left: 4px solid #1e40af;
+            border-radius: 0.5rem;
+            padding: 1.25rem 1.5rem;
+            margin: 1.25rem 0;
+            overflow-x: auto;
+        }
+        .mermaid-box {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+        .figure-caption {
+            font-size: 0.875rem;
+            color: #475569;
+            text-align: center;
+            margin-top: 0.65rem;
+            font-style: italic;
+        }
+        table.academic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.925rem;
+        }
+        table.academic-table th {
+            border-top: 2px solid #0f172a;
+            border-bottom: 1px solid #0f172a;
+            background-color: #f8fafc;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        table.academic-table td {
+            border-bottom: 1px solid #cbd5e1;
+            padding: 0.75rem 1rem;
+            vertical-align: top;
+        }
+        table.academic-table tr:last-child td {
+            border-bottom: 2px solid #0f172a;
+        }
+        .step-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 9999px;
+            background-color: #1e3a8a;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-right: 0.5rem;
+            flex-shrink: 0;
+        }
+        @media print {
+            body {
+                background-color: #ffffff;
+            }
+            .paper-container {
+                box-shadow: none;
+                border: none;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: 'neutral',
+                securityLevel: 'loose',
+                fontFamily: 'Inter, sans-serif'
+            });
+        });
+    </script>
+</head>
+<body class="py-8 px-4 sm:px-6 lg:px-8">
+
+    <!-- Top Action Bar (Hidden on Print) -->
+    <div class="max-w-5xl mx-auto mb-6 flex flex-wrap justify-between items-center gap-4 no-print">
+        <div class="flex items-center gap-2 text-sm text-slate-600">
+            <span class="px-2.5 py-1 bg-indigo-100 text-indigo-900 font-semibold rounded-md">Laporan Lengkap Sistem</span>
+            <span>Fokus: Sistem Pemantauan Kehadiran, Aktivitas &amp; Efektivitas Kerja (AI CCTV)</span>
+        </div>
+        <button onclick="window.print()" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium rounded-lg shadow transition">
+            🖨️ Cetak / Simpan PDF
+        </button>
+    </div>
+
+    <!-- Main Academic Paper Container -->
+    <main class="max-w-5xl mx-auto paper-container rounded-xl p-8 md:p-14 lg:p-16">
+
+        <!-- Title Header -->
+        <header class="text-center border-b-2 border-slate-900 pb-8 mb-10">
+            <p class="text-xs font-bold uppercase tracking-widest text-indigo-800 mb-3">
+                Dokumentasi Komprehensif Arsitektur &amp; Cara Kerja Sistem
+            </p>
+            <h1 class="academic-serif text-3xl md:text-4xl font-bold text-slate-900 leading-tight mb-4">
+                Rancang Bangun dan Mekanisme Kerja Sistem Pemantauan Kehadiran serta Aktivitas Kerja Pegawai Terintegrasi Visi Komputer (CNN &amp; YOLOv8)
+            </h1>
+            <p class="text-base text-slate-600 font-medium">
+                Kajian Menyeluruh Alur Operasional, Algoritma Pengawasan Real-Time, dan Evaluasi Efektivitas Jam Kerja pada Sistem E-Kinerja
+            </p>
+        </header>
+
+        <!-- Ringkasan Eksekutif / Abstrak -->
+        <section class="bg-slate-50 border border-slate-200 rounded-lg p-6 mb-10">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-900 mb-2">Ringkasan Sistem (Abstrak)</h2>
+            <p class="academic-serif text-lg text-slate-800 text-justify leading-relaxed">
+                Sistem Pemantauan E-Kinerja merupakan sistem informasi manajemen kehadiran dan pengawasan aktivitas pegawai yang menggabungkan dua pendekatan pemantauan secara simultan (<em>Dual-Track Monitoring</em>): (1) <strong>Pemantauan Administratif</strong> melalui pencatatan waktu kehadiran (<em>check-in</em> dan <em>check-out</em>), manajemen perizinan/cuti, serta pelaporan aktivitas harian pegawai, dan (2) <strong>Pemantauan Visual Otomatis Berbasis Kecerdasan Buatan (AI CCTV)</strong> menggunakan algoritma <em>Convolutional Neural Network</em> (CNN) pada model <strong>YOLOv8</strong> yang dipadukan dengan lokalisasi geometri zona meja kerja (<em>Zone-Based Spatial Matching</em>). Dengan mengintegrasikan kedua jalur ini, sistem tidak hanya mencatat apakah seorang pegawai hadir di kantor, tetapi juga mengukur secara kuantitatif berapa lama pegawai tersebut benar-benar berada dan beraktivitas di meja kerjanya, menghitung persentase efektivitas jam kerja harian terhadap standar waktu kerja 8 jam, serta menyajikan analitik pengawasan secara <em>real-time</em> bagi pimpinan.
+            </p>
+        </section>
+
+        <!-- Daftar Isi Cepat -->
+        <nav class="bg-white border border-slate-200 rounded-lg p-5 mb-12 no-print">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Daftar Isi Pembahasan</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm font-medium text-indigo-900">
+                <a href="#bab-1" class="hover:underline">1. Konsep Dasar &amp; Arsitektur Dual-Track Monitoring</a>
+                <a href="#bab-2" class="hover:underline">2. Peran Pengguna &amp; Alur Kehadiran / Aktivitas Harian</a>
+                <a href="#bab-3" class="hover:underline">3. Cara Kerja Pengawasan Kamera AI (6 Tahap Utama)</a>
+                <a href="#bab-4" class="hover:underline">4. Perhitungan Durasi, Toleransi Oklusi &amp; Sinkronisasi Real-Time</a>
+                <a href="#bab-5" class="hover:underline">5. Evaluasi Efektivitas Kerja &amp; Statistik Dashboard</a>
+                <a href="#bab-6" class="hover:underline">6. Mode Simulasi &amp; Struktur Basis Data Monitoring</a>
+            </div>
+        </nav>
+
+        <!-- =================================================================== -->
+        <!-- BAB 1: KONSEP DASAR & ARSITEKTUR DUAL-TRACK MONITORING              -->
+        <!-- =================================================================== -->
+        <section id="bab-1" class="mb-14">
+            <h2 class="text-xl font-bold text-slate-900 section-heading">
+                1. Konsep Dasar dan Arsitektur <em>Dual-Track Monitoring</em>
+            </h2>
+            <p class="text-justify mb-4">
+                Permasalahan klasik dalam sistem presensi kepegawaian adalah adanya kesenjangan antara <strong>kehadiran administratif</strong> (tercatat melakukan absen masuk dan pulang) dengan <strong>kehadiran produktif</strong> (keberadaan aktual pegawai di ruang kerja selama jam operasional). Untuk menjembatani kesenjangan tersebut, sistem ini dirancang dengan paradigma <strong>Pemantauan Dua Jalur (<em>Dual-Track Monitoring</em>)</strong> yang bekerja secara berdampingan namun tetap menjaga integritas data masing-masing:
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                <div class="bg-indigo-50/60 border border-indigo-200 rounded-lg p-5">
+                    <h3 class="font-bold text-indigo-950 mb-2">Jalur 1: Pemantauan Administratif Resmi</h3>
+                    <p class="text-sm text-slate-700 text-justify mb-2">
+                        Mencakup pencatatan kehadiran mandiri oleh pegawai saat tiba dan pulang kerja, pengajuan izin/sakit/cuti dengan bukti surat keterangan, serta pencatatan jurnal aktivitas tugas harian yang diverifikasi oleh atasan langsung.
+                    </p>
+                    <p class="text-xs font-semibold text-indigo-800">
+                        Output Utama: Status Kehadiran Resmi &amp; Total Jam Hadir Kantor ($t_{\text{pulang}} - t_{\text{masuk}}$).
+                    </p>
+                </div>
+                <div class="bg-emerald-50/60 border border-emerald-200 rounded-lg p-5">
+                    <h3 class="font-bold text-emerald-950 mb-2">Jalur 2: Pemantauan Visual AI CCTV (Otomatis)</h3>
+                    <p class="text-sm text-slate-700 text-justify mb-2">
+                        Menggunakan kamera pengawas ruangan yang memproses citra setiap $500\text{ ms}$ dengan jaringan saraf tiruan CNN-YOLOv8 untuk mendeteksi keberadaan fisik pegawai di zona meja kerjanya masing-masing secara kontinu.
+                    </p>
+                    <p class="text-xs font-semibold text-emerald-800">
+                        Output Utama: Status Keberadaan di Meja, Akumulasi Durasi Stay ($D_{\text{stay}}$), &amp; Persentase Efektivitas Kerja ($\eta$).
+                    </p>
+                </div>
+            </div>
+
+            <div class="mermaid-box">
+                <div class="mermaid">
+flowchart TD
+    subgraph Aktor["Entitas Pengguna Sistem"]
+        P["👤 Pegawai"]
+        A["👔 Atasan / Pengawas"]
+        ADM["🛡️ Administrator"]
+    end
+
+    subgraph Jalur1["Jalur 1: Pemantauan Administratif"]
+        direction TB
+        J1A["Presensi Masuk & Pulang\n(Check-In / Check-Out)"]
+        J1B["Pengajuan Izin / Sakit / Cuti\n& Bukti Lampiran"]
+        J1C["Pencatatan Log Aktivitas Harian\n& Verifikasi Atasan"]
+    end
+
+    subgraph Jalur2["Jalur 2: Pemantauan Visual Cerdas (AI CCTV)"]
+        direction TB
+        J2A["Pemetaan Koordinat Zona Meja\n(Persentase 0% - 100%)"]
+        J2B["Akuisisi Citra Kamera Berkala\n(Interval 500 milidetik)"]
+        J2C["Ekstraksi Fitur CNN & Deteksi Objek\nManusia dengan YOLOv8n"]
+        J2D["Pencocokan Titik Pusat Objek\nke Zona Meja (Point-in-Rectangle)"]
+    end
+
+    subgraph PusatData["Pusat Data & Analitik Terpadu"]
+        DB[("Basis Data Terintegrasi\nData Kehadiran, Log Aktivitas,\nZona Kamera & Durasi CCTV")]
+        EVAL["Evaluasi Efektivitas Kerja Harian (η)\n& Statistik Pengawasan Real-Time"]
+    end
+
+    P --> J1A & J1B & J1C
+    A --> J1C
+    A --> J2A & J2B
+    J2B --> J2C --> J2D
+    ADM --> DB
+
+    J1A & J1B & J1C --> DB
+    J2A & J2D --> DB
+    DB --> EVAL
+    EVAL --> P & A & ADM
+                </div>
+                <p class="figure-caption">
+                    Gambar 1. Arsitektur konseptual <em>Dual-Track Monitoring</em> yang menyatukan pemantauan administratif dan pengawasan visual AI CCTV.
+                </p>
+            </div>
+
+            <p class="text-sm text-slate-600 text-justify">
+                <strong>Prinsip Independensi Audit:</strong> Sistem pengawasan kamera (Jalur 2) bersifat <em>read-only</em> terhadap tabel absensi resmi (Jalur 1). Artinya, deteksi kamera tidak mengubah jam absen masuk/pulang pegawai secara sepihak, melainkan menyediakan <strong>data pembanding (audit objektif)</strong> bagi pimpinan untuk melihat proporsi waktu efektif di meja kerja dibandingkan total waktu kehadiran di kantor.
+            </p>
+        </section>
+
+        <!-- =================================================================== -->
+        <!-- BAB 2: PERAN PENGGUNA & ALUR KEHADIRAN / AKTIVITAS HARIAN            -->
+        <!-- =================================================================== -->
+        <section id="bab-2" class="mb-14">
+            <h2 class="text-xl font-bold text-slate-900 section-heading">
+                2. Peran Pengguna dan Alur Pemantauan Administratif
+            </h2>
+
+            <h3 class="font-bold text-slate-800 mt-4 mb-2">2.1 Struktur Hak Akses dan Peran Pengguna</h3>
+            <p class="text-justify mb-4">
+                Sistem menerapkan pengendalian akses berbasis peran (<em>Role-Based Access Control</em>) yang membagi pengguna ke dalam tiga tingkatan otoritas sesuai struktur hierarki organisasi (unit kerja/bidang):
+            </p>
+
+            <table class="academic-table">
+                <thead>
+                    <tr>
+                        <th style="width: 20%;">Peran (Role)</th>
+                        <th style="width: 35%;">Cakupan Tanggung Jawab</th>
+                        <th>Fungsi Utama dalam Sistem Monitoring</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1. Administrator</strong></td>
+                        <td>Pengelolaan master data organisasi dan pemantauan makro seluruh bidang.</td>
+                        <td>
+                            Mengelola data unit kerja (Bidang), akun pengguna, relasi hierarki Atasan–Bawahan, memantau seluruh log aktivitas pegawai, dan mencetak laporan rekapitulasi kehadiran tingkat instansi.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>2. Atasan (Pengawas)</strong></td>
+                        <td>Pengawasan langsung terhadap pegawai bawahan di bidangnya.</td>
+                        <td>
+                            Mengonfigurasi zona meja kamera CCTV, menjalankan pengawasan kamera <em>real-time</em>, memantau durasi berada di meja kerja, menyetujui/menolak pengajuan izin/sakit, memverifikasi laporan aktivitas harian, serta mengevaluasi kedisiplinan dan produktivitas bawahan.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>3. Pegawai</strong></td>
+                        <td>Pelaksanaan tugas harian dan pelaporan kehadiran mandiri.</td>
+                        <td>
+                            Melakukan presensi masuk (<em>check-in</em>) dan pulang (<em>check-out</em>), mengajukan permohonan izin/sakit/cuti, mencatat log aktivitas pekerjaan harian beserta bukti dukung, serta melihat capaian indeks efektivitas kerja hariannya yang terekam oleh AI CCTV.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="font-bold text-slate-800 mt-6 mb-2">2.2 Mekanisme Pencatatan Kehadiran Resmi dan Perizinan</h3>
+            <p class="text-justify mb-3">
+                Setiap hari kerja, pencatatan kehadiran resmi pegawai diklasifikasikan ke dalam lima status: <strong>Hadir</strong>, <strong>Izin</strong>, <strong>Sakit</strong>, <strong>Cuti</strong>, atau <strong>Alpha</strong>. Alur kerjanya adalah sebagai berikut:
+            </p>
+            <ol class="list-decimal pl-6 space-y-2 text-justify mb-4">
+                <li>
+                    <strong>Presensi Masuk (<em>Check-In</em>) &amp; Pulang (<em>Check-Out</em>):</strong> Pegawai merekam waktu kedatangan ($t_{\text{masuk}}$) dan waktu kepulangan ($t_{\text{pulang}}$). Dari kedua titik waktu tersebut, sistem menghitung total durasi kehadiran di kantor:
+                    $$\text{Durasi Hadir Kantor } (D_{\text{hadir}}) = t_{\text{pulang}} - t_{\text{masuk}}$$
+                </li>
+                <li>
+                    <strong>Pengajuan Izin, Sakit, atau Cuti:</strong> Apabila pegawai berhalangan hadir, pegawai mengajukan permohonan disertai rentang tanggal, keterangan alasan, dan unggahan berkas bukti (seperti surat keterangan dokter).
+                </li>
+                <li>
+                    <strong>Verifikasi Kehadiran oleh Atasan:</strong> Atasan memeriksa pengajuan tersebut dan memberikan keputusan <em>Setujui (Approve)</em> atau <em>Tolak (Reject)</em>. Jika disetujui, status kehadiran pada tanggal terkait diperbarui secara otomatis di dalam rekapitulasi kehadiran.
+                </li>
+            </ol>
+
+            <h3 class="font-bold text-slate-800 mt-6 mb-2">2.3 Mekanisme Pelaporan dan Verifikasi Aktivitas Harian</h3>
+            <p class="text-justify mb-3">
+                Selain kehadiran fisik, produktivitas harian dipantau melalui modul <strong>Aktivitas Harian</strong>. Pegawai mendokumentasikan setiap kegiatan kerja yang dilakukan dengan atribut: <em>Tanggal</em>, <em>Uraian Tugas</em>, <em>Waktu Pelaksanaan</em>, <em>Hasil Pekerjaan</em>, dan <em>Berkas Bukti (Foto/Dokumen)</em>. Setiap laporan aktivitas melewati siklus verifikasi oleh Atasan:
+            </p>
+            <ul class="list-disc pl-6 space-y-1 text-justify">
+                <li><strong>Menunggu Verifikasi (<em>Pending</em>):</strong> Status awal saat aktivitas baru dikirimkan oleh pegawai.</li>
+                <li><strong>Disetujui (<em>Approved</em>):</strong> Aktivitas dinilai valid dan sesuai dengan bukti hasil kerja.</li>
+                <li><strong>Revisi (<em>Revision</em>):</strong> Atasan memberikan catatan komentar perbaikan agar pegawai melengkapi laporan atau bukti pekerjaannya.</li>
+                <li><strong>Ditolak (<em>Rejected</em>):</strong> Aktivitas dinilai tidak relevan atau tidak memiliki bukti pelaksanaan yang sah.</li>
+            </ul>
+        </section>
+
+        <!-- =================================================================== -->
+        <!-- BAB 3: CARA KERJA PENGAWASAN KAMERA AI (6 TAHAP UTAMA)               -->
+        <!-- =================================================================== -->
+        <section id="bab-3" class="mb-14">
+            <h2 class="text-xl font-bold text-slate-900 section-heading">
+                3. Cara Kerja Sistem Pengawasan Kamera AI (End-to-End Pipeline)
+            </h2>
+            <p class="text-justify mb-6">
+                Inti inovasi dari sistem pemantauan ini terletak pada modul <strong>CCTV Monitoring Kinerja Real-Time</strong>. Berbeda dengan kamera pengawas pasif yang hanya merekam video, sistem ini memproses setiap tangkapan gambar secara aktif melalui enam tahapan berurutan:
+            </p>
+
+            <!-- Tahap 1 -->
+            <div class="mb-6">
+                <h3 class="font-bold text-slate-900 flex items-center mb-2">
+                    <span class="step-badge">1</span> Konfigurasi dan Kalibrasi Zona Meja Kerja (Pemetaan Spasial)
+                </h3>
+                <p class="text-justify pl-9 mb-2">
+                    Sebelum pengawasan dimulai, Atasan memetakan area posisi duduk masing-masing pegawai pada tampilan bidang pandang kamera menggunakan kanvas interaktif (<em>drag-and-drop rectangle</em>). Setiap pegawai memiliki tepat <strong>satu zona unik</strong> yang diberi label (misalnya <em>"Meja A: Budi"</em>) dan kode warna pembeda.
+                </p>
+                <p class="text-justify pl-9 mb-2">
+                    Agar posisi zona tidak bergeser ketika dibuka pada layar atau resolusi kamera yang berbeda (misalnya dari $1920 \times 1080$ piksel ke $640 \times 480$ piksel), koordinat batas kiri-atas $(x_1, y_1)$ dan kanan-bawah $(x_2, y_2)$ disimpan dalam bentuk <strong>persentase relatif $(0\% - 100\%)$</strong> terhadap lebar $(W)$ dan tinggi $(H)$ kanvas, dengan validasi ukuran minimum lebar dan tinggi zona $> 3\%$ dimensi citra:
+                </p>
+                <div class="formula-box ml-9">
+                    $$x_{1,\text{pct}} = \left(\frac{x_1}{W}\right) \times 100\%, \quad y_{1,\text{pct}} = \left(\frac{y_1}{H}\right) \times 100\%, \quad x_{2,\text{pct}} = \left(\frac{x_2}{W}\right) \times 100\%, \quad y_{2,\text{pct}} = \left(\frac{y_2}{H}\right) \times 100\%$$
+                </div>
+            </div>
+
+            <!-- Tahap 2 -->
+            <div class="mb-6">
+                <h3 class="font-bold text-slate-900 flex items-center mb-2">
+                    <span class="step-badge">2</span> Akuisisi Aliran Video dan Transmisi Citra Berkala
+                </h3>
+                <p class="text-justify pl-9">
+                    Ketika Atasan menekan tombol <strong>Mulai Pengawasan</strong>, sistem mengaktifkan sensor kamera dan menangkap 1 <em>frame</em> citra setiap <strong>500 milidetik</strong> (frekuensi pencuplikan $f = 2\text{ Hz}$). Pemilihan interval $500\text{ ms}$ dirancang secara optimal untuk memantau aktivitas statis di meja kerja: cukup rapat untuk mendeteksi perpindahan pegawai secara responsif, namun tetap menjaga beban komputasi dan lalu lintas jaringan tetap ringan. Citra dikodekan ke dalam format <em>Base64 JPEG</em> dan dikirimkan ke mesin pemroses kecerdasan buatan.
+                </p>
+            </div>
+
+            <!-- Tahap 3 -->
+            <div class="mb-6">
+                <h3 class="font-bold text-slate-900 flex items-center mb-2">
+                    <span class="step-badge">3</span> Ekstraksi Fitur Visual dengan CNN dan Deteksi Objek YOLOv8n
+                </h3>
+                <p class="text-justify pl-9 mb-2">
+                    Citra yang diterima didekode kembali menjadi matriks piksel tiga kanal warna (BGR) dan dimasukkan ke dalam model <strong>YOLOv8n (Nano)</strong>. Di dalam model ini, jaringan saraf tiruan <strong><em>Convolutional Neural Network</em> (CNN)</strong> bekerja melalui tiga lapisan arsitektural:
+                </p>
+                <ul class="list-disc pl-14 space-y-1 text-justify mb-2">
+                    <li><strong>CNN Backbone (CSPDarknet &amp; C2f):</strong> Mengekstraksi fitur tepi, tekstur, dan siluet morfologi tubuh manusia menggunakan operasi konvolusi 2D dan fungsi aktivasi <em>SiLU</em>.</li>
+                    <li><strong>CNN Neck (PAN-FPN):</strong> Menggabungkan peta fitur multi-skala agar pegawai yang duduk di barisan depan maupun belakang ruangan tetap terdeteksi secara akurat.</li>
+                    <li><strong>CNN Decoupled Head &amp; Multi-Object Tracking:</strong> Memprediksi koordinat kotak pembatas $(x_1, y_1, x_2, y_2)$, skor keyakinan deteksi ($c \in [0, 1]$), serta memberikan nomor identitas pelacakan objek lintas frame (<code>track_id</code>) khusus untuk indeks kelas manusia (<code>class = 0 / person</code>).</li>
+                </ul>
+            </div>
+
+            <!-- Tahap 4 -->
+            <div class="mb-6">
+                <h3 class="font-bold text-slate-900 flex items-center mb-2">
+                    <span class="step-badge">4</span> Perhitungan Titik Pusat (<em>Centroid</em>) dan Pencocokan Geometri Zona
+                </h3>
+                <p class="text-justify pl-9 mb-2">
+                    Untuk setiap kotak pembatas manusia $(x_1, y_1, x_2, y_2)$ yang ditemukan oleh CNN-YOLOv8, sistem menghitung titik tengah geometris tubuh objek dalam satuan persentase $(cx_{\text{pct}}, cy_{\text{pct}})$:
+                </p>
+                <div class="formula-box ml-9">
+                    $$cx_{\text{pct}} = \left(\frac{x_1 + x_2}{2 \cdot W}\right) \times 100\%, \qquad cy_{\text{pct}} = \left(\frac{y_1 + y_2}{2 \cdot H}\right) \times 100\%$$
+                </div>
+                <p class="text-justify pl-9">
+                    Titik pusat $(cx_{\text{pct}}, cy_{\text{pct}})$ kemudian diuji terhadap seluruh zona meja kerja menggunakan algoritma <strong><em>Point-in-Rectangle</em></strong>. Apabila titik pusat tersebut berada di dalam batas persegi panjang zona milik Pegawai ke-$k$ ($x_{1,k} \le cx_{\text{pct}} \le x_{2,k}$ dan $y_{1,k} \le cy_{\text{pct}} \le y_{2,k}$), maka objek tersebut teridentifikasi secara sah sebagai <strong>Pegawai ke-$k$</strong> yang sedang berada di mejanya. Sebaliknya, jika titik pusat berada di luar seluruh zona yang terdaftar, objek ditandai sebagai <em>"Tidak Dikenal #ID"</em> (misalnya tamu atau pegawai lain yang sedang berjalan di lorong) dan tidak dicatat ke dalam basis data.
+                </p>
+            </div>
+
+            <!-- Tahap 5 -->
+            <div class="mb-6">
+                <h3 class="font-bold text-slate-900 flex items-center mb-2">
+                    <span class="step-badge">5</span> Pencatatan Log Aktivitas dan Pembaruan Durasi Kehadiran di Meja
+                </h3>
+                <p class="text-justify pl-9">
+                    Setiap deteksi yang cocok dengan zona meja dicatat ke dalam tabel riwayat deteksi beserta waktu kejadian dan tingkat keyakinan (<em>confidence score</em>) model AI. Pada saat yang sama, sistem memperbarui tabel rekapitulasi harian CCTV untuk setiap pegawai yang memiliki zona: memperbarui status menjadi <code>di_meja</code> bagi pegawai yang terdeteksi, menghitung akumulasi durasi berada di meja kerja, atau mengubah status menjadi <code>keluar_ruangan</code> apabila pegawai telah meninggalkan zona mejanya melebihi batas waktu toleransi.
+                </p>
+            </div>
+
+            <!-- Tahap 6 -->
+            <div class="mb-6">
+                <h3 class="font-bold text-slate-900 flex items-center mb-2">
+                    <span class="step-badge">6</span> Visualisasi Anotasi Citra (<em>Annotated Stream</em>) ke Antarmuka Pengawas
+                </h3>
+                <p class="text-justify pl-9">
+                    Sebagai langkah penutup pada setiap siklus $500\text{ ms}$, sistem menggambar kotak hamparan (<em>overlay</em>) zona meja berwarna transparan beserta kotak deteksi berlabel nama pegawai dan persentase keyakinan AI (contoh: <code>Budi (92%)</code>) langsung di atas citra video. Citra yang telah dianotasi ini dikirimkan kembali ke layar pemantauan Atasan bersama dengan jumlah total orang yang terdeteksi secara langsung (<em>live count</em>).
+                </p>
+            </div>
+
+            <div class="mermaid-box">
+                <div class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Atasan as Pengawas / Atasan
+    participant UI as Antarmuka Pemantauan
+    participant AI as Mesin Visi Komputer (CNN-YOLOv8)
+    participant DB as Basis Data Monitoring
+
+    Atasan->>UI: 1. Konfigurasi Zona Meja Pegawai (Drag & Drop)
+    UI->>DB: Simpan koordinat zona persentase (x1%, y1%, x2%, y2%)
+    Atasan->>UI: 2. Klik "Mulai Pengawasan"
+    
+    loop Siklus Real-Time Setiap 500 milidetik
+        UI->>AI: Kirim Frame Citra Kamera
+        AI->>DB: Muat Konfigurasi Zona & Data Pegawai
+        AI->>AI: Ekstraksi Fitur CNN & Deteksi Manusia (YOLOv8n)
+        AI->>AI: Hitung Titik Pusat (cx%, cy%) & Uji Point-in-Rectangle
+        AI->>DB: Simpan Event Deteksi & Perbarui Durasi Stay Pegawai
+        AI-->>UI: Kembalikan Citra Teranotasi + Jumlah Terdeteksi
+        UI-->>Atasan: Tampilkan Video Live AI & Indikator Kehadiran
+    end
+
+    loop Siklus Sinkronisasi Setiap 5 detik
+        UI->>AI: Minta Statistik & Log Durasi Terbaru
+        AI->>DB: Hitung Rata-rata Stay, Total Hadir & Total Keluar
+        AI-->>UI: Data Durasi & Status Terbaru (Koreksi Drift)
+    end
+
+    Atasan->>UI: 3. Klik "Hentikan Pengawasan"
+    UI->>AI: Hentikan Sesi & Bekukan Penghitung Waktu
+    AI->>DB: Reset status aktif & simpan akumulasi durasi terakhir
+                </div>
+                <p class="figure-caption">
+                    Gambar 2. Diagram urutan interaksi (<em>Sequence Diagram</em>) siklus pengawasan kamera AI dari konfigurasi zona hingga penghentian sesi.
+                </p>
+            </div>
+        </section>
+
+        <!-- =================================================================== -->
+        <!-- BAB 4: PERHITUNGAN DURASI, TOLERANSI OKLUSI & SINKRONISASI REAL-TIME -->
+        <!-- =================================================================== -->
+        <section id="bab-4" class="mb-14">
+            <h2 class="text-xl font-bold text-slate-900 section-heading">
+                4. Algoritma Manajemen Status, Toleransi Oklusi, dan Perhitungan Durasi Kerja
+            </h2>
+
+            <h3 class="font-bold text-slate-800 mt-4 mb-2">4.1 Mesin Keadaan Hingga (<em>Finite State Machine</em>) Status Pegawai</h3>
+            <p class="text-justify mb-4">
+                Di dalam sistem pemantauan CCTV, setiap pegawai berada pada salah satu dari tiga status keadaan: <strong>Belum Terdeteksi</strong> (<code>belum_terdeteksi</code>), <strong>Di Meja Kerja</strong> (<code>di_meja</code>), atau <strong>Keluar Ruangan</strong> (<code>keluar_ruangan</code>). Untuk mencegah perubahan status yang terlalu sensitif akibat objek terhalang sesaat (oklusi visual), perpindahan dari status <em>Di Meja Kerja</em> ke <em>Keluar Ruangan</em> menerapkan waktu tunda (<em>hysteresis timeout</em>) selama <strong>10 detik</strong>:
+            </p>
+
+            <div class="mermaid-box">
+                <div class="mermaid">
+stateDiagram-v2
+    [*] --> Belum_Terdeteksi : Awal Hari Kerja / Pengawasan Dihentikan
+
+    Belum_Terdeteksi --> Di_Meja_Kerja : Terdeteksi berada di dalam Zona Meja
+
+    Di_Meja_Kerja --> Di_Meja_Kerja : Terdeteksi kembali (Δt < 60 detik)\nAtau tidak terlihat sesaat ≤ 10 detik (Toleransi Oklusi)
+    Di_Meja_Kerja --> Keluar_Ruangan : Tidak terdeteksi di Zona Meja selama > 10 detik
+
+    Keluar_Ruangan --> Di_Meja_Kerja : Terdeteksi kembali masuk ke Zona Meja
+    
+    Di_Meja_Kerja --> Belum_Terdeteksi : Pengawas menekan "Hentikan Pengawasan"\n(Durasi tersimpan, penghitung waktu dibekukan)
+    Keluar_Ruangan --> Belum_Terdeteksi : Pengawas menekan "Hentikan Pengawasan"
+                </div>
+                <p class="figure-caption">
+                    Gambar 3. Diagram transisi keadaan (<em>State Transition Diagram</em>) status keberadaan pegawai pada sistem pengawasan.
+                </p>
+            </div>
+
+            <h3 class="font-bold text-slate-800 mt-6 mb-2">4.2 Perhitungan Durasi Berbasis Sesi Bebas Penyimpangan (<em>Drift-Free Duration</em>)</h3>
+            <p class="text-justify mb-2">
+                Apabila durasi kerja dihitung dengan cara menjumlahkan $0,5\text{ detik}$ pada setiap frame yang masuk, maka keterlambatan jaringan atau fluktuasi beban prosesor akan menyebabkan akumulasi kesalahan waktu (<em>clock drift</em>). Untuk menjamin ketepatan waktu secara matematis, sistem menghitung durasi berada di meja ($D_{\text{stay}}$, dalam satuan detik) berdasarkan selisih waktu jam sistem saat ini ($t_{\text{sekarang}}$) terhadap titik waktu awal sesi ($t_{\text{mulai}}$):
+            </p>
+
+            <div class="formula-box">
+                $$\Delta t = t_{\text{sekarang}} - t_{\text{terakhir\_terlihat}}$$
+                $$D_{\text{stay}}(t_{\text{sekarang}}) = \begin{cases} 
+                \max \Big( D_{\text{stay}}(t_{\text{sebelumnya}}),\; t_{\text{sekarang}} - t_{\text{mulai}} \Big), & \text{jika } \Delta t < 60\text{ detik} \\[6pt]
+                D_{\text{stay}}(t_{\text{sebelumnya}}), & \text{jika } \Delta t \ge 60\text{ detik (Jeda Putus Koneksi)}
+                \end{cases}$$
+            </div>
+
+            <h4 class="font-semibold text-slate-800 mt-4 mb-1">Mekanisme Jeda dan Lanjut Sesi (<em>Pause &amp; Resume Backdating</em>):</h4>
+            <p class="text-justify mb-4">
+                Ketika pengawas menghentikan sesi kamera di tengah hari (misalnya pada jam istirahat) lalu menyalakannya kembali beberapa jam kemudian, sistem tidak mengatur ulang durasi kerja pegawai menjadi nol dan tidak pula menambahkan jam istirahat ke dalam durasi kerja. Sistem melakukan <strong>penyesuaian mundur waktu mulai (<em>backdating</em>)</strong> berdasarkan durasi yang telah tersimpan sebelumnya ($D_{\text{tersimpan}}$):
+            </p>
+            <div class="formula-box">
+                $$t_{\text{mulai\_baru}} = t_{\text{sekarang}} - D_{\text{tersimpan}}$$
+            </div>
+            <p class="text-sm text-slate-600 text-justify">
+                Sebagai contoh, jika seorang pegawai telah terdeteksi bekerja di meja selama $243\text{ detik}$ sebelum kamera dimatikan, maka saat kamera dinyalakan kembali dan pegawai tersebut terdeteksi, titik $t_{\text{mulai}}$ digeser mundur sejauh $243\text{ detik}$ dari waktu sekarang. Dengan demikian, pada detik berikutnya durasi langsung berlanjut ke $244\text{ detik}, 245\text{ detik}$, dan seterusnya secara mulus.
+            </p>
+
+            <h3 class="font-bold text-slate-800 mt-6 mb-2">4.3 Mekanisme Penghitung Waktu Langsung (<em>Client-Side Live Ticking</em>) &amp; Koreksi Drift</h3>
+            <p class="text-justify mb-2">
+                Agar angka durasi di tabel pemantauan terlihat berjalan setiap detik secara langsung tanpa membebani server dengan permintaan data setiap detik, antarmuka pengguna menerapkan algoritma <strong><em>Anchor-Based Live Ticking</em></strong>:
+            </p>
+            <ol class="list-decimal pl-6 space-y-1 text-justify">
+                <li>Setiap <strong>5 detik</strong>, antarmuka mengambil nilai durasi aktual dari server ($D_{\text{server}}$) dan mencatat waktu penerimaan lokal ($t_{\text{anchor}}$).</li>
+                <li>Setiap <strong>1 detik</strong>, tampilan waktu di layar dihitung dengan menambahkan waktu berjalan lokal apabila status pegawai adalah <code>di_meja</code>:
+                    $$D_{\text{tampil}}(t) = \begin{cases} D_{\text{anchor}} + (t - t_{\text{anchor}}), & \text{jika status} = \text{di\_meja} \\ D_{\text{anchor}}, & \text{jika status} \neq \text{di\_meja (Dibekukan)} \end{cases}$$
+                </li>
+                <li><strong>Koreksi Penyimpangan Otomatis (<em>Drift Correction</em>):</strong> Saat data baru masuk setiap 5 detik, sistem membandingkan estimasi tampilan lokal dengan nilai server. Apabila terdapat selisih $|D_{\text{server}} - D_{\text{tampil}}| > 5\text{ detik}$, maka nilai acuan ($D_{\text{anchor}}$) langsung disinkronkan ulang ke nilai server.</li>
+            </ol>
+        </section>
+
+        <!-- =================================================================== -->
+        <!-- BAB 5: EVALUASI EFEKTIVITAS KERJA & STATISTIK DASHBOARD             -->
+        <!-- =================================================================== -->
+        <section id="bab-5" class="mb-14">
+            <h2 class="text-xl font-bold text-slate-900 section-heading">
+                5. Evaluasi Efektivitas Jam Kerja Harian dan Analitik Dashboard
+            </h2>
+
+            <h3 class="font-bold text-slate-800 mt-4 mb-2">5.1 Perhitungan Indeks Efektivitas Kerja Harian Pegawai</h3>
+            <p class="text-justify mb-2">
+                Pada halaman kehadiran pegawai maupun laporan pengawasan, sistem menyatukan data dari <strong>Jalur Administratif</strong> dan <strong>Jalur AI CCTV</strong> untuk menghasilkan metrik <strong>Efektivitas Kerja Harian ($\eta$)</strong>. Menggunakan acuan standar jam kerja harian penuh selama <strong>8 Jam ($28.800\text{ detik}$)</strong>, persentase efektivitas dihitung dengan rumus:
+            </p>
+            <div class="formula-box">
+                $$\text{Standar Kerja Harian } (D_{\text{standar}}) = 8\text{ jam} \times 3.600\text{ detik/jam} = 28.800\text{ detik}$$
+                $$\text{Efektivitas Kerja } (\eta) = \min \left( 100\%,\; \text{round}\left( \frac{D_{\text{stay}}}{28.800} \times 100,\; 1 \right) \right)$$
+            </div>
+            <p class="text-justify mb-4">
+                Melalui tampilan detail efektivitas harian, sistem menyajikan empat parameter komparatif secara berdampingan untuk setiap tanggal kerja:
+            </p>
+            <ul class="list-disc pl-6 space-y-1 text-justify mb-6">
+                <li><strong>Absen Masuk ($t_{\text{masuk}}$):</strong> Waktu presensi kedatangan resmi pegawai.</li>
+                <li><strong>Absen Pulang ($t_{\text{pulang}}$):</strong> Waktu presensi kepulangan resmi pegawai.</li>
+                <li><strong>Total Hadir Kantor ($D_{\text{hadir}}$):</strong> Rentang waktu dari absen masuk hingga absen pulang.</li>
+                <li><strong>Durasi Aktif di Meja ($D_{\text{stay}}$) &amp; Persentase Efektivitas ($\eta$):</strong> Total waktu aktual pegawai terdeteksi berada di zona meja kerjanya oleh AI CCTV beserta tingkat efektivitasnya dalam skala $0\% - 100\%$.</li>
+            </ul>
+
+            <h3 class="font-bold text-slate-800 mt-6 mb-2">5.2 Rumus Tiga Indikator Statistik Utama pada Dashboard Pengawas</h3>
+            <p class="text-justify mb-4">
+                Pada bagian atas halaman pemantauan Atasan, sistem menampilkan tiga kartu indikator kinerja pengawasan yang diperbarui secara otomatis setiap 5 detik:
+            </p>
+
+            <table class="academic-table">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Indikator Statistik</th>
+                        <th style="width: 25%;">Sumber Tabel Data</th>
+                        <th>Formulasi Perhitungan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1. Total Pegawai Hadir</strong></td>
+                        <td>Tabel <code>kehadirans</code><br><span class="text-xs text-slate-500">(Presensi Resmi)</span></td>
+                        <td>
+                            Menghitung jumlah pegawai yang telah melakukan presensi masuk resmi dengan status hadir pada tanggal berjalan:
+                            $$N_{\text{hadir}} = \sum \mathbb{I}(\text{tanggal} = \text{hari\_ini} \;\wedge\; \text{jenis} = \text{'hadir'})$$
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>2. Terdeteksi Keluar Ruangan</strong></td>
+                        <td>Tabel <code>cctv_monitoring_logs</code><br><span class="text-xs text-slate-500">(Log AI CCTV)</span></td>
+                        <td>
+                            Menghitung jumlah pegawai terpantau yang saat ini meninggalkan zona mejanya selama lebih dari 10 detik:
+                            $$N_{\text{keluar}} = \sum \mathbb{I}(\text{tanggal} = \text{hari\_ini} \;\wedge\; \text{status\_terakhir} = \text{'keluar\_ruangan'})$$
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>3. Rata-rata Stay di Meja</strong></td>
+                        <td>Tabel <code>cctv_monitoring_logs</code><br><span class="text-xs text-slate-500">(Log AI CCTV + Koreksi Live)</span></td>
+                        <td>
+                            Menghitung rata-rata durasi berada di meja kerja seluruh pegawai yang terpantau pada hari tersebut ($K$ pegawai), ditambah koreksi waktu berjalan ($\Delta t_i$) bagi pegawai yang masih aktif di meja:
+                            $$\overline{D}_{\text{stay}} = \frac{1}{K} \sum_{i=1}^{K} \Big( D_{\text{stay},i} + \mathbb{I}(\text{status}_i = \text{'di\_meja'} \wedge \Delta t_i < 60)\cdot \Delta t_i \Big)$$
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- =================================================================== -->
+        <!-- BAB 6: MODE SIMULASI & STRUKTUR BASIS DATA MONITORING               -->
+        <!-- =================================================================== -->
+        <section id="bab-6" class="mb-10">
+            <h2 class="text-xl font-bold text-slate-900 section-heading">
+                6. Mode Simulasi Pengujian dan Struktur Basis Data Monitoring
+            </h2>
+
+            <h3 class="font-bold text-slate-800 mt-4 mb-2">6.1 Mekanisme Mode Simulasi Dinamis (Tanpa Kamera Fisik)</h3>
+            <p class="text-justify mb-2">
+                Untuk mendukung pengujian fungsionalitas dan demonstrasi sistem pada perangkat yang tidak terhubung dengan kamera pengawas fisik, sistem dilengkapi dengan <strong>Mode Simulasi Otomatis</strong>. Apabila sensor kamera tidak terdeteksi, sistem membangkitkan citra kanvas berpetak dan mensimulasikan siluet keberadaan pegawai di dalam setiap zona yang telah dikonfigurasi.
+            </p>
+            <p class="text-justify mb-2">
+                Agar simulasi mencerminkan kondisi ruang kerja yang dinamis (terdapat perpindahan status antara berada di meja dan keluar ruangan), sistem menggunakan fungsi rotasi deterministik berbasis detik waktu berjalan ($s \in [0, 59]$) dengan periode pergantian setiap <strong>8 detik</strong> untuk $N$ zona terdaftar ($N > 1$):
+            </p>
+            <div class="formula-box">
+                $$\text{Indeks Zona Keluar } (i_{\text{absen}}) = \left\lfloor \frac{s}{8} \right\rfloor \bmod N$$
+            </div>
+            <p class="text-sm text-slate-600 text-justify mb-6">
+                Setiap 8 detik, zona ke-$i_{\text{absen}}$ disimulasikan kosong (pegawai meninggalkan meja dengan skor keyakinan $0,00$), sedangkan zona lainnya disimulasikan terisi oleh pegawai (skor keyakinan $0,99$). Mekanisme ini menguji seluruh alur pembaruan basis data, toleransi oklusi, dan perhitungan durasi secara identik dengan mode kamera nyata.
+            </p>
+
+            <h3 class="font-bold text-slate-800 mt-6 mb-2">6.2 Struktur Entitas dan Relasi Basis Data Monitoring (ERD)</h3>
+            <p class="text-justify mb-4">
+                Seluruh data pemantauan disimpan di dalam satu basis data relasional MySQL yang diakses bersama oleh subsistem portal manajemen dan subsistem visi komputer. Hubungan antar-tabel dalam ekosistem monitoring digambarkan pada Diagram Relasi Entitas (<em>Entity-Relationship Diagram</em>) berikut:
+            </p>
+
+            <div class="mermaid-box">
+                <div class="mermaid">
+erDiagram
+    USERS ||--o| PEGAWAI_DETAILS : "memiliki profil"
+    BIDANG ||--o{ PEGAWAI_DETAILS : "menaungi unit"
+    ATASANS ||--o{ PEGAWAI_DETAILS : "mengawasi bawahan"
+
+    PEGAWAI_DETAILS ||--o{ KEHADIRANS : "mencatat presensi"
+    PEGAWAI_DETAILS ||--o{ IZIN_SAKITS : "mengajukan izin"
+    PEGAWAI_DETAILS ||--o{ AKTIVITAS : "melaporkan tugas"
+
+    PEGAWAI_DETAILS ||--o| ZONA_KAMERAS : "memiliki 1 zona meja"
+    PEGAWAI_DETAILS ||--o{ CCTV_MONITORING_LOGS : "terekam durasi harian"
+    PEGAWAI_DETAILS ||--o{ DETEKSI_AKTIVITAS : "terekam event frame"
+
+    PEGAWAI_DETAILS {
+        bigint id PK
+        bigint user_id FK
+        bigint bidang_id FK
+        bigint atasan_id FK
+        string nip
+        string jabatan
+        string status
+    }
+
+    KEHADIRANS {
+        bigint id PK
+        bigint pegawai_id FK
+        date tanggal
+        string jenis "hadir, izin, sakit, cuti, alpha"
+        time check_in
+        time check_out
+    }
+
+    IZIN_SAKITS {
+        bigint id PK
+        bigint pegawai_id FK
+        date tanggal_mulai
+        date tanggal_selesai
+        string jenis "izin, sakit, cuti"
+        string status "pending, approved, rejected"
+    }
+
+    AKTIVITAS {
+        bigint id PK
+        bigint pegawai_id FK
+        date tanggal
+        string uraian_tugas
+        string waktu_pelaksanaan
+        string hasil_pekerjaan
+        string status "pending, approved, revisi, rejected"
+    }
+
+    ZONA_KAMERAS {
+        bigint id PK
+        bigint pegawai_id FK "UNIQUE"
+        float x1_pct "Batas kiri (0-100%)"
+        float y1_pct "Batas atas (0-100%)"
+        float x2_pct "Batas kanan (0-100%)"
+        float y2_pct "Batas bawah (0-100%)"
+        string label "Nama zona meja"
+        string warna "Kode warna hex"
+    }
+
+    CCTV_MONITORING_LOGS {
+        bigint id PK
+        bigint pegawai_id FK
+        date tanggal
+        datetime waktu_mulai
+        datetime waktu_selesai
+        int durasi_stay "Total detik di meja"
+        string status_terakhir "di_meja, keluar_ruangan, belum_terdeteksi"
+        datetime last_seen
+    }
+
+    DETEKSI_AKTIVITAS {
+        bigint id PK
+        bigint pegawai_id FK
+        datetime waktu_deteksi
+        string hasil_deteksi
+        float confidence "Skor keyakinan CNN-YOLOv8 (0.0-1.0)"
+    }
+                </div>
+                <p class="figure-caption">
+                    Gambar 4. Diagram Relasi Entitas (<em>Entity-Relationship Diagram</em>) terfokus pada modul pemantauan kehadiran, aktivitas harian, dan pengawasan kamera AI.
+                </p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="mt-12 pt-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500">
+            <span>Sistem Informasi Manajemen Kinerja &amp; Pemantauan Kehadiran Cerdas (E-Kinerja)</span>
+            <span>Laporan Lengkap Sistem &amp; Cara Kerja Monitoring</span>
+        </footer>
+
+    </main>
+
+</body>
+</html>
+

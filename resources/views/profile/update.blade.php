@@ -146,10 +146,12 @@
                                                   :value="old('nip', $pegawai->nip)" />
                                 </x-profile.input-row>
 
-                                <x-profile.input-row id="pegawai_jabatan" label="Jabatan">
+                                @if(false) {{-- DISABLED: jabatan --}}
+<x-profile.input-row id="pegawai_jabatan" label="Jabatan">
                                     <x-text-input name="jabatan" type="text" class="w-full"
                                                   :value="old('jabatan', $pegawai->jabatan)" />
                                 </x-profile.input-row>
+@endif
 
                                 <x-profile.input-row id="pegawai_bidang" label="Bidang">
                                     <x-text-input disabled class="w-full bg-gray-100"

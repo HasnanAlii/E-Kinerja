@@ -40,7 +40,9 @@
                         <p class="text-lg font-semibold text-gray-900">
                             {{ $izin->pegawai->user->name }}
                         </p>
-                        <p class="text-sm text-gray-500">{{ $izin->pegawai->jabatan ?? '-' }}</p>
+                        @if(false) {{-- DISABLED: jabatan --}}
+<p class="text-sm text-gray-500">{{ $izin->pegawai->jabatan ?? '-' }}</p>
+@endif
                     </div>
                 </div>
 

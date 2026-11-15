@@ -16,14 +16,16 @@
                         <a href="{{ route('admin.pegawai.index') }}"
                            class="border-indigo-500 text-indigo-600 whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm flex items-center transition-colors">
                             <i data-feather="users" class="w-4 h-4 mr-2"></i>
-                            Daftar Pegawai
+                            Daftar Karyawan
                         </a>
                         {{-- Atasan --}}
-                        <a href="{{ route('admin.atasan.index') }}"
+                        @if(false) {{-- DISABLED: kelola atasan --}}
+<a href="{{ route('admin.atasan.index') }}"
                            class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm flex items-center transition-colors">
                             <i data-feather="user-check" class="w-4 h-4 mr-2"></i>
                             Daftar Atasan
                         </a>
+@endif
                     </nav>
                 </div>
             </div>
@@ -45,9 +47,9 @@
                 <i data-feather="users" class="w-6 h-6"></i>
             </div>
             <div>
-                <h3 class="text-lg font-bold text-gray-900 tracking-tight">Data Pegawai Non-PNS</h3>
+                <h3 class="text-lg font-bold text-gray-900 tracking-tight">Data Karyawan</h3>
                 <p class="text-sm text-gray-500 mt-0.5">
-                    Kelola data pegawai, penempatan & atasan.
+                    Kelola data karyawan.
                 </p>
             </div>
         </div>
@@ -57,29 +59,18 @@
             <form method="GET" class="w-full sm:w-auto">
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                        <i data-feather="filter" class="w-4 h-4"></i>
+                        <i data-feather="search" class="w-4 h-4"></i>
                     </div>
                     
-                    <select name="bidang_id" onchange="this.form.submit()"
-                        class="w-full sm:w-56 pl-10 pr-10 py-2.5 bg-white border border-gray-300 text-gray-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 cursor-pointer appearance-none hover:bg-gray-50 shadow-sm">
-                        <option value="">Semua Bidang</option>
-                        @foreach($bidang as $b)
-                            <option value="{{ $b->id }}" {{ request('bidang_id') == $b->id ? 'selected' : '' }}>
-                                {{ $b->nama_bidang }}
-                            </option>
-                        @endforeach
-                    </select>
-
-                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
-                        <i data-feather="chevron-down" class="w-4 h-4"></i>
-                    </div>
+                    <input type="text" name="cari" value="{{ request('cari') }}" placeholder="Cari nama karyawan..." onchange="this.form.submit()"
+                        class="w-full sm:w-56 pl-10 pr-3 py-2.5 bg-white border border-gray-300 text-gray-700 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 shadow-sm">
                 </div>
             </form>
 
             <a href="{{ route('admin.pegawai.create') }}"
                 class="inline-flex items-center justify-center bg-indigo-600 text-white px-5 py-2.5 rounded-xl shadow-md shadow-indigo-200 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-300 transition-all duration-200 transform hover:-translate-y-0.5 active:scale-95 font-medium text-sm">
                 <i data-feather="plus" class="w-4 h-4 mr-2"></i>
-                Tambah Pegawai
+                Tambah Karyawan
             </a>
 
         </div>
@@ -138,21 +129,25 @@
                         <h3 class="text-base font-bold text-gray-900 line-clamp-1" title="{{ $row->user->name }}">
                             {{ $row->user->name }}
                         </h3>
-                        <div class="flex items-center mt-1 text-indigo-600 text-xs font-medium uppercase tracking-wide">
+                        @if(false) {{-- DISABLED: jabatan --}}
+<div class="flex items-center mt-1 text-indigo-600 text-xs font-medium uppercase tracking-wide">
                             {{ $row->jabatan ?? 'Jabatan Tidak Tersedia' }}
                         </div>
+@endif
                     </div>
 
                     {{-- Detail List --}}
                     <div class="space-y-2 text-sm text-gray-600 flex-1">
 
-                        {{-- Bidang --}}
+                        {{-- DISABLED: Bidang --}}
+                        @if(false)
                         <div class="flex items-start p-2 bg-gray-50 rounded-lg">
                             <i data-feather="layers" class="w-4 h-4 text-gray-400 mr-2 mt-0.5"></i>
                             <span class="font-medium text-gray-700 text-xs">
                                 {{ $row->bidang->nama_bidang ?? '-' }}
                             </span>
                         </div>
+                        @endif
 
                         {{-- Email --}}
                         <div class="flex items-center px-2">

@@ -17,6 +17,10 @@ class PegawaiController extends Controller
     {
         $query = PegawaiDetail::with(['user', 'bidang', 'atasan', 'atasan.user'])->latest();
 
+        if ($request->filled('cari')) {
+            $query->whereHas('user', fn ($q) => $q->where('name', 'like', '%' . $request->cari . '%'));
+        }
+
         if ($request->filled('bidang_id')) {
             $query->where('bidang_id', $request->bidang_id);
         }

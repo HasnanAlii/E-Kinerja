@@ -4,7 +4,7 @@
             
             <div class="text-sm text-gray-600 text-center md:text-center mb-2 md:mb-0 justify-center">
                 &copy; {{ date('Y') }} 
-                <strong>E-Kinerja Dinas Arsip dan Perpustakaan</strong>.
+                <strong>Monitoring Kehadiran Karyawan Pou Yuen</strong>.
             </div>
             
       

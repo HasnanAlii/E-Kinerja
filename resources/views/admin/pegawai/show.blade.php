@@ -56,15 +56,17 @@
 
                             {{-- Nama & Jabatan --}}
                             <h3 class="text-xl font-bold text-gray-900">{{ $data->user->name }}</h3>
+                            @if(false) {{-- DISABLED: jabatan --}}
                             <p class="text-sm text-indigo-600 font-medium mt-1">{{ $data->jabatan ?? '— Belum set jabatan —' }}</p>
+                            @endif
                             
                             {{-- Badge Bidang --}}
-                            <div class="mt-3 flex justify-center">
+                            {{-- <div class="mt-3 flex justify-center">
                                 <span class="px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200 flex items-center">
                                     <i data-feather="briefcase" class="w-3 h-3 mr-1.5"></i>
                                     {{ $data->bidang->nama_bidang ?? '-' }}
                                 </span>
-                            </div>
+                            </div> --}}
 
                             {{-- Info Kontak Singkat --}}
                             <div class="mt-6 border-t border-gray-100 pt-4 space-y-3 text-left">
@@ -120,7 +122,7 @@
                     </div>
 
                     {{-- Widget Atasan --}}
-                    <div class="bg-white shadow-lg rounded-2xl p-6 border border-gray-100">
+                    {{-- <div class="bg-white shadow-lg rounded-2xl p-6 border border-gray-100">
                         <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Atasan Langsung</h4>
                         <div class="flex items-center">
                             <div class="bg-indigo-50 p-2 rounded-full mr-3">
@@ -131,7 +133,7 @@
                                 <p class="text-xs text-gray-500">{{ $data->atasan->jabatan ?? 'Atasan Unit' }}</p>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
 
                 </div>
 

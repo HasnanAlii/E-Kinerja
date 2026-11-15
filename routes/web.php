@@ -20,6 +20,7 @@ use App\Http\Controllers\Atasan\AtasanIzinSakitController;
 use App\Http\Controllers\Atasan\AtasanKehadiranController;
 use App\Http\Controllers\Admin\AdminAtasanController;
 use App\Http\Controllers\Atasan\SkpController as AtasanSkpController;
+use App\Http\Controllers\Atasan\AtasanMonitoringController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfilController;
@@ -99,6 +100,8 @@ Route::middleware(['auth', 'role:atasan'])->prefix('atasan')->name('atasan.')->g
     Route::post('/skp/{id}/status', [AtasanSkpController::class, 'updateStatus'])->name('skp.updateStatus');
     Route::post('/skp/{id}/nilai', [AtasanSkpController::class, 'nilai'])->name('skp.nilai');
 
+    Route::get('/monitoring', [AtasanMonitoringController::class, 'index'])->name('monitoring.index');
+
     Route::get('/kehadiran', [AtasanKehadiranController::class, 'index'])
         ->name('kehadiran.index');
 
@@ -145,13 +148,17 @@ Route::middleware(['auth', 'role:atasan'])->prefix('atasan')->name('atasan.')->g
     Route::get('laporan/export/excel', [LaporanController::class, 'exportExcel'])->name('laporan.export.excel');
 });
 
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-
+// Kelola karyawan: dapat diakses admin & atasan
+Route::middleware(['auth', 'role:admin|atasan'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('pegawai', PegawaiController::class);
+});
+
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
     Route::resource('bidang', BidangController::class);
 
-    Route::resource('atasan', AdminAtasanController::class);
+    // DISABLED: kelola atasan
+    // Route::resource('atasan', AdminAtasanController::class);
 
     Route::get('/kehadiran', [AtasanKehadiranController::class, 'indexx'])->name('kehadiran.index');
 

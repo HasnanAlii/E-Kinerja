@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Kinerja Dinas Arsip & Perpustakaan Cianjur</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/logo.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('assets/logo.png') }}">
+    <title>Monitoring Kehadiran Karyawan Pou Yuen</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('assets/logo.svg') }}">
+    <link rel="apple-touch-icon" href="{{ asset('assets/logo.svg') }}">
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])

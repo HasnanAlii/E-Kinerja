@@ -1,0 +1,274 @@
+================================================================================
+LAPORAN KAJIAN AKADEMIS & METODOLOGI SISTEM
+IMPLEMENTASI ALGORITMA CONVOLUTIONAL NEURAL NETWORK (CNN) DAN YOLOv8
+PADA SISTEM PEMANTAUAN KINERJA & KEHADIRAN PEGAWAI (E-KINERJA)
+================================================================================
+
+ABSTRAK
+--------------------------------------------------------------------------------
+Sistem E-Kinerja mengintegrasikan teknologi Visi Komputer (Computer Vision)
+dan Pembelajaran Mendalam (Deep Learning) untuk melakukan pemantauan kehadiran
+serta perhitungan efektivitas jam kerja pegawai secara objektif dan real-time.
+Metode utama yang digunakan adalah algoritma You Only Look Once versi ke-8
+(YOLOv8) varian Nano yang dibangun di atas arsitektur jaringan saraf tiruan
+Convolutional Neural Network (CNN), dikombinasikan dengan metode pemetaan
+geometri spasial berbasis zona (Zone-Based Spatial Localization). Dokumen ini
+menjelaskan landasan teoritis, posisi dan peran arsitektur CNN di dalam YOLOv8,
+tahapan pemrosesan citra, hingga formulasi matematis dalam menentukan status
+keberadaan serta tingkat efektivitas kerja pegawai.
+
+
+================================================================================
+BAB 1: HUBUNGAN KONSEPTUAL ANTARA CNN DAN YOLO PADA SISTEM
+================================================================================
+
+Dalam kajian kecerdasan buatan di bidang pengolahan citra digital, penting
+untuk memahami hubungan hierarkis antara Convolutional Neural Network (CNN)
+dan algoritma You Only Look Once (YOLO):
+
+1.1 Convolutional Neural Network (CNN) sebagai Fondasi Ekstraksi Fitur
+--------------------------------------------------------------------------------
+Convolutional Neural Network (CNN) adalah arsitektur jaringan saraf tiruan
+(Artificial Neural Network) yang dirancang khusus untuk memproses data berformat
+grid dua dimensi atau tiga dimensi seperti citra digital (lebar x tinggi x
+kanal warna RGB). Berbeda dengan jaringan saraf konvensional, CNN menggunakan
+operasi matematis "konvolusi" (convolution) melalui filter atau kernel matriks
+untuk mengekstraksi fitur visual secara bertingkat:
+  - Lapisan Konvolusi Awal (Shallow Layers): Mengekstraksi fitur tingkat rendah
+    seperti garis tepi (edges), sudut, tekstur, dan gradasi warna.
+  - Lapisan Konvolusi Tengah (Middle Layers): Menggabungkan tepi dan tekstur
+    menjadi pola bentuk bagian objek (seperti kontur bahu, lengan, atau kepala).
+  - Lapisan Konvolusi Dalam (Deep Layers): Mengekstraksi representasi semantik
+    tingkat tinggi berupa siluet utuh objek manusia.
+
+1.2 YOLO sebagai Kerangka Kerja Deteksi Objek Satu Tahap Berbasis CNN
+--------------------------------------------------------------------------------
+YOLO (You Only Look Once) adalah metode deteksi objek satu tahap (One-Stage
+Object Detector) yang menggunakan CNN sebagai tulang punggung utamanya. Jika
+CNN tradisional hanya menjawab pertanyaan "Gambar apa ini?" (Klasifikasi Citra),
+maka arsitektur CNN di dalam YOLO membingkai masalah deteksi objek sebagai
+masalah regresi tunggal untuk menjawab dua pertanyaan sekaligus dalam satu kali
+lewat (single forward pass):
+  1. "Objek apa yang ada di dalam citra?" (Classification / Klasifikasi Kelas)
+  2. "Di mana posisi koordinat objek tersebut?" (Bounding Box Regression)
+
+1.3 Posisi Penggunaan CNN dan YOLO pada Sistem E-Kinerja
+--------------------------------------------------------------------------------
+Pada penelitian dan pengembangan sistem E-Kinerja ini, CNN dan YOLO tidak
+bekerja sebagai dua komponen terpisah, melainkan terintegrasi secara utuh
+di dalam model YOLOv8n (YOLOv8 Nano):
+  - Peran CNN: Bekerja pada jaringan internal YOLOv8 (Backbone CSPDarknet,
+    Neck PANet, dan Decoupled Head) untuk melakukan ekstraksi fitur citra dari
+    tangkapan kamera pengawas (CCTV) dan mengenali pola morfologi tubuh manusia.
+  - Peran YOLO: Memprediksi kotak pembatas (bounding box) objek kelas manusia
+    ("person"), memberikan nilai tingkat keyakinan (confidence score), dan
+    melakukan pelacakan objek lintas frame (multi-object tracking).
+  - Peran Algoritma Geometri Spasial (Point-in-Rectangle): Mengidentifikasi
+    identitas spesifik pegawai berdasarkan pencocokan titik pusat (centroid)
+    kotak deteksi YOLO terhadap koordinat zona meja kerja masing-masing pegawai.
+
+
+================================================================================
+BAB 2: ARSITEKTUR JARINGAN CNN DI DALAM MODEL YOLOv8
+================================================================================
+
+Model yang diimplementasikan adalah YOLOv8n (Nano), yang dirancang agar memiliki
+komputasi ringan dan latensi rendah sehingga mampu berjalan secara real-time.
+Secara struktural, arsitektur CNN pada YOLOv8 terdiri atas tiga bagian utama:
+
+2.1 Backbone (Tulang Punggung Ekstraksi Fitur - Modified CSPDarknet53)
+--------------------------------------------------------------------------------
+Backbone bertugas mengekstraksi fitur visual dari citra masukan berukuran
+W x H x 3 (piksel). Komponen penyusunnya meliputi:
+  a. Blok CBS (Conv2D + BatchNorm + SiLU):
+     Setiap lapisan konvolusi menerapkan filter 2 dimensi diikuti oleh Batch
+     Normalization untuk menstabilkan distribusi aktivasi, serta fungsi aktivasi
+     non-linier SiLU (Sigmoid Linear Unit):
+       SiLU(x) = x * sigmoid(x) = x / (1 + e^(-x))
+  b. Modul C2f (Cross-Stage Partial Bottleneck with 2 Convolutions):
+     Menggantikan modul C3 pada versi terdahulu untuk menggabungkan fitur
+     kontekstual tingkat tinggi dengan informasi gradien yang lebih kaya,
+     sehingga meningkatkan akurasi deteksi pada objek manusia yang sebagian
+     tubuhnya tertutup meja kerja.
+  c. Modul SPPF (Spatial Pyramid Pooling - Fast):
+     Mengumpulkan fitur citra pada berbagai skala menggunakan lapisan Max-Pooling
+     berurutan untuk memperluas bidang pandang reseptif (receptive field).
+
+2.2 Neck (Leher Penggabung Fitur Multi-Skala - PAN-FPN)
+--------------------------------------------------------------------------------
+Neck menggunakan kombinasi Feature Pyramid Network (FPN) dan Path Aggregation
+Network (PAN). Bagian ini menggabungkan peta fitur (feature maps) dari lapisan
+dalam yang kaya informasi semantik dengan lapisan dangkal yang kaya informasi
+posisi spasial. Hal ini memungkinkan sistem mendeteksi pegawai baik yang duduk
+dekat dengan lensa kamera (ukuran piksel besar) maupun yang duduk di bagian
+belakang ruangan (ukuran piksel kecil).
+
+2.3 Head (Kepala Prediksi Tanpa Jangkar - Anchor-Free Decoupled Head)
+--------------------------------------------------------------------------------
+YOLOv8 menggunakan desain Decoupled Head (kepala terpisah) yang memisahkan
+jalur konvolusi untuk klasifikasi dan regresi kotak pembatas:
+  a. Cabang Klasifikasi (Classification Branch):
+     Menggunakan fungsi Binary Cross-Entropy (BCE) Loss untuk menghitung
+     probabilitas keberadaan objek kelas "person" (manusia, indeks kelas = 0
+     pada dataset MS COCO).
+  b. Cabang Regresi Kotak Pembatas (Bounding Box Regression Branch):
+     Menggunakan Distribution Focal Loss (DFL) dan Complete IoU (CIoU) Loss
+     untuk memprediksi empat koordinat batas objek: (x1, y1, x2, y2).
+
+
+================================================================================
+BAB 3: METODOLOGI DETEKSI DAN LOKALISASI SPASIAL PEGAWAI
+================================================================================
+
+Tahapan metodologi pemrosesan citra pada sistem pengawasan pegawai berjalan
+secara sekuensial pada setiap interval akuisisi citra (setiap 500 milidetik):
+
+3.1 Tahap 1: Akuisisi dan Pra-pemrosesan Citra (Image Preprocessing)
+--------------------------------------------------------------------------------
+Citra video dari kamera pengawas diakuisisi secara periodik dan dikonversi ke
+dalam representasi matriks numerik tiga kanal warna (Blue, Green, Red) dengan
+dimensi lebar (W) dan tinggi (H). Citra kemudian dinormalisasi nilainya dari
+rentang [0, 255] menjadi bilangan titik mengambang (floating point) [0.0, 1.0]
+sebelum dimasukkan ke dalam jaringan CNN YOLOv8.
+
+3.2 Tahap 2: Inferensi CNN YOLOv8 dan Penyaringan Kelas (Class Filtering)
+--------------------------------------------------------------------------------
+Jaringan CNN memproses frame citra dan menghasilkan sekumpulan kandidat objek.
+Sistem menerapkan penyaringan kelas (class filtering) hanya pada indeks kelas 0
+("person") serta menerapkan Non-Maximum Suppression (NMS) untuk mengeliminasi
+kotak pembatas ganda yang saling tumpang tindih pada satu objek manusia yang
+sama. Setiap objek manusia ke-i yang valid direpresentasikan sebagai vektor:
+
+  D_i = (x1_i, y1_i, x2_i, y2_i, c_i, id_i)
+
+Di mana:
+  - (x1_i, y1_i) : Koordinat piksel sudut kiri atas kotak pembatas
+  - (x2_i, y2_i) : Koordinat piksel sudut kanan bawah kotak pembatas
+  - c_i          : Tingkat keyakinan deteksi (Confidence Score, 0.0 <= c_i <= 1.0)
+  - id_i         : Identitas pelacakan objek lintas frame (Tracking ID)
+
+3.3 Tahap 3: Normalisasi Koordinat dan Penentuan Titik Pusat (Centroid)
+--------------------------------------------------------------------------------
+Agar sistem bersifat independen terhadap perubahan resolusi kamera (resolution-
+independent), seluruh koordinat spasial ditransformasikan dari satuan piksel
+absolut ke dalam satuan persentase relatif (0% hingga 100%).
+
+Titik pusat massa (centroid) dari kotak pembatas objek manusia dihitung dengan
+persamaan:
+
+  cx_px = (x1 + x2) / 2
+  cy_px = (y1 + y2) / 2
+
+Transformasi ke koordinat persentase relatif terhadap dimensi citra (W x H):
+
+  cx_pct = (cx_px / W) * 100% = ((x1 + x2) / (2 * W)) * 100%
+  cy_pct = (cy_px / H) * 100% = ((y1 + y2) / (2 * H)) * 100%
+
+3.4 Tahap 4: Algoritma Pencocokan Zona (Point-in-Rectangle Spatial Matching)
+--------------------------------------------------------------------------------
+Setiap pegawai ke-k memiliki satu area zona meja kerja (Z_k) yang telah
+dipetakan pada bidang citra kamera dengan batas-batas persentase:
+
+  Z_k = [x1_zona(k), y1_zona(k), x2_zona(k), y2_zona(k)]
+
+Sebuah objek manusia yang terdeteksi oleh CNN YOLOv8 dengan titik pusat
+(cx_pct, cy_pct) dinyatakan sebagai Pegawai ke-k apabila memenuhi syarat
+geometris Point-in-Rectangle berikut:
+
+  (x1_zona(k) <= cx_pct <= x2_zona(k))  DAN  (y1_zona(k) <= cy_pct <= y2_zona(k))
+
+Apabila kondisi di atas terpenuhi, maka status keberadaan Pegawai ke-k pada
+frame waktu t dinyatakan HADIR DI MEJA (Present = True). Sebaliknya, apabila
+titik pusat objek berada di luar seluruh zona yang terdaftar, objek tersebut
+diklasifikasikan sebagai entitas luar (non-target) dan tidak dicatat ke dalam
+log kinerja pegawai.
+
+
+================================================================================
+BAB 4: FORMULASI MATEMATIS PERHITUNGAN DURASI DAN EFEKTIVITAS KERJA
+================================================================================
+
+4.1 Pemodelan Status Keberadaan dan Toleransi Oklusi Visual
+--------------------------------------------------------------------------------
+Dalam kondisi lingkungan kerja nyata, deteksi visual berbasis CNN dapat
+mengalami gangguan sesaat (oklusi), misalnya ketika pegawai menunduk mengambil
+dokumen atau terhalang oleh orang lain yang melintas. Untuk mencegah fluktuasi
+status yang tidak valid (false negative), sistem menerapkan ambang batas waktu
+toleransi (T_toleransi = 10 detik).
+
+Jika t_now adalah waktu saat ini dan t_last adalah waktu terakhir pegawai
+terdeteksi di dalam zona mejanya, maka selisih waktu ketidakhadiran (Delta_t)
+adalah:
+
+  Delta_t = t_now - t_last
+
+Fungsi penentuan status keberadaan pegawai S(t) didefinisikan sebagai:
+
+           | "Di Meja Kerja",     jika Present = True
+  S(t) =   | "Di Meja Kerja",     jika Present = False dan Delta_t <= 10 detik
+           | "Keluar Ruangan",    jika Present = False dan Delta_t > 10 detik
+
+4.2 Akumulasi Durasi Kerja Bebas Penyimpangan (Drift-Free Session Duration)
+--------------------------------------------------------------------------------
+Perhitungan durasi keberadaan pegawai di meja kerja (D_stay, dalam satuan detik)
+menggunakan pendekatan selisih waktu berbasis sesi terhadap waktu awal deteksi
+(t_mulai) dengan batas pengaman jeda koneksi (T_gap = 60 detik):
+
+  Jika Present = True dan Delta_t < 60 detik:
+    D_stay(t_now) = max( D_stay(t_sebelumnya),  (t_now - t_mulai) )
+
+Apabila pengawasan sempat dihentikan sementara dan dilanjutkan kembali pada
+hari yang sama, waktu mulai disesuaikan secara proporsional (backdating):
+
+  t_mulai_baru = t_now - D_stay_tersimpan
+
+Metode ini menjamin bahwa nilai akumulasi durasi kerja bersifat monoton naik
+(tidak pernah berkurang akibat gangguan deteksi sesaat) dan bebas dari akumulasi
+kesalahan pembulatan per-frame (drift-free).
+
+4.3 Perhitungan Indeks Efektivitas Jam Kerja Harian
+--------------------------------------------------------------------------------
+Untuk mengukur produktivitas kehadiran pegawai di meja kerja secara kuantitatif,
+sistem membandingkan total durasi berada di meja (D_stay) yang terverifikasi
+oleh AI CCTV terhadap standar durasi jam kerja harian penuh (D_standar = 8 jam
+= 28.800 detik):
+
+  Efektivitas (%) = min( 100%,  (D_stay / 28.800) * 100% )
+
+Selain itu, rata-rata durasi keberadaan seluruh pegawai pada hari berjalan
+(D_rata_rata) dihitung dengan persamaan:
+
+  D_rata_rata = (1 / N) * Sigma_{k=1..N} ( D_stay(k) + Delta_t_aktif(k) )
+
+Di mana N adalah jumlah pegawai yang tercatat pada log pemantauan hari tersebut,
+dan Delta_t_aktif(k) adalah koreksi waktu berjalan bagi pegawai yang masih
+berstatus aktif di meja kerja.
+
+
+================================================================================
+BAB 5: KESIMPULAN KAJIAN SISTEM
+================================================================================
+
+1. Peran CNN (Convolutional Neural Network):
+   Berfungsi sebagai mesin ekstraksi fitur spasial dan morfologi visual di dalam
+   arsitektur YOLOv8n (melalui rangkaian lapisan konvolusi Backbone CSPDarknet,
+   Neck PAN-FPN, dan Decoupled Head) untuk mengenali objek manusia dari citra
+   kamera pengawas secara real-time.
+
+2. Peran YOLO (You Only Look Once - YOLOv8n):
+   Berfungsi sebagai pendeteksi dan pelacak objek satu tahap (one-stage detector
+   & tracker) yang menghasilkan koordinat kotak pembatas (bounding box) manusia
+   beserta tingkat keyakinan (confidence score) pada setiap frame.
+
+3. Keunggulan Pendekatan Hibrida (CNN YOLOv8 + Zone-Based Matching):
+   Menggabungkan deteksi tubuh manusia berbasis CNN YOLOv8 dengan algoritma
+   geometri Point-in-Rectangle memberikan solusi yang:
+   - Lebih hemat komputasi dibandingkan pengenalan biometrik wajah resolusi
+     tinggi pada kamera sudut lebar (CCTV ruangan).
+   - Tetap dapat mendeteksi keberadaan pegawai meskipun posisi wajah tidak
+     menghadap langsung ke arah kamera (misalnya menatap layar komputer atau
+     menunduk menulis di meja kerja).
+   - Menjaga independensi antara data absensi administratif resmi (check-in /
+     check-out) dan data audit pengawasan aktivitas di meja kerja.
+================================================================================
+

@@ -25,8 +25,10 @@ class KehadiranController extends Controller
 
 
 
+    /** DISABLED: absensi diatur otomatis oleh sistem monitoring kamera */
     public function checkIn()
     {
+        abort(403, 'Absensi diatur otomatis oleh sistem monitoring.');
         $pegawai = Auth::user()->detail;
 
         // Cek apakah sudah absen masuk hari ini
@@ -50,6 +52,7 @@ class KehadiranController extends Controller
 
     public function checkOut()
     {
+        abort(403, 'Absensi diatur otomatis oleh sistem monitoring.');
         $pegawai = Auth::user()->detail;
 
         $data = Kehadiran::where('pegawai_id', $pegawai->id)

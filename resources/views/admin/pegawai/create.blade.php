@@ -214,7 +214,8 @@
                                 </select>
                             </div>
 
-                            {{-- Jabatan --}}
+                            @if(false) {{-- DISABLED: jabatan --}}
+{{-- Jabatan --}}
                             <div>
                                 <label class="font-medium text-gray-700">
                                     Jabatan <span class="text-red-600">*</span>
@@ -222,6 +223,7 @@
                                 <input type="text" name="jabatan" required value="{{ old('jabatan') }}"
                                        class="mt-1 w-full rounded-md border-gray-300">
                             </div>
+@endif
 
                             {{-- NIP (opsional) --}}
                             <div>

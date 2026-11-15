@@ -20,10 +20,12 @@
                     <input type="text" name="nip" value="{{ $pegawai->nip }}" class="w-full border p-2 rounded">
                 </div>
 
-                <div class="mb-3">
+                @if(false) {{-- DISABLED: jabatan --}}
+<div class="mb-3">
                     <label>Jabatan</label>
                     <input type="text" name="jabatan" value="{{ $pegawai->jabatan }}" class="w-full border p-2 rounded">
                 </div>
+@endif
 
                 <div class="mb-3">
                     <label>Foto</label>

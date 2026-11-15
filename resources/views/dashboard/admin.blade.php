@@ -202,7 +202,7 @@
                         </div>
 
                         <div class="px-6 py-4 bg-gray-50 border-t text-center text-xs text-gray-400">
-                            Sistem Kinerja v1.0
+                            Monitoring Kehadiran v1.0
                         </div>
                     </div>
                 </div>

@@ -29,8 +29,8 @@ class AtasanKehadiranController extends Controller
         }
 
         // Filter pegawai
-        if ($request->filled('pegawai_id')) {
-            $query->where('pegawai_id', $request->pegawai_id);
+        if ($request->filled('cari')) {
+            $query->whereHas('pegawai.user', fn ($q) => $q->where('name', 'like', '%' . $request->cari . '%'));
         }
 
         // Filter tanggal
@@ -161,7 +161,7 @@ class AtasanKehadiranController extends Controller
 
 public function cetakKehadiran(Request $request)
 {
-    $pegawaiId = $request->pegawai_id;
+    $pegawaiId = $request->pegawai_id ?: PegawaiDetail::whereHas('user', fn ($q) => $q->where('name', 'like', '%' . $request->cari . '%'))->value('id');
 
     $pegawai = PegawaiDetail::with(['user','bidang'])->findOrFail($pegawaiId);
 

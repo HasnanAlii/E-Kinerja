@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kajian Akademis: Implementasi Algoritma CNN & YOLOv8 pada Sistem E-Kinerja</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Mermaid.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+
+    <!-- KaTeX for Academic Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '$$', right: '$$', display: true},
+                {left: '$', right: '$', display: false}
+            ]
+        });"></script>
+
+    <!-- Google Fonts: Crimson Pro (Academic Serif) & Inter (Clean Sans) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            font-family: 'Inter', sans-serif;
+            line-height: 1.75;
+        }
+        .academic-serif {
+            font-family: 'Crimson Pro', Georgia, serif;
+        }
+        .paper-container {
+            background: #ffffff;
+            box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+            border: 1px solid #e2e8f0;
+        }
+        .section-heading {
+            border-bottom: 2px solid #0f172a;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.25rem;
+        }
+        .formula-box {
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-left: 4px solid #1e40af;
+            border-radius: 0.5rem;
+            padding: 1.25rem 1.5rem;
+            margin: 1.25rem 0;
+            overflow-x: auto;
+        }
+        .mermaid-box {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+        .figure-caption {
+            font-size: 0.875rem;
+            color: #475569;
+            text-align: center;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        table.academic-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.925rem;
+        }
+        table.academic-table th {
+            border-top: 2px solid #0f172a;
+            border-bottom: 1px solid #0f172a;
+            background-color: #f8fafc;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        table.academic-table td {
+            border-bottom: 1px solid #cbd5e1;
+            padding: 0.75rem 1rem;
+            vertical-align: top;
+        }
+        table.academic-table tr:last-child td {
+            border-bottom: 2px solid #0f172a;
+        }
+        @media print {
+            body {
+                background-color: #ffffff;
+            }
+            .paper-container {
+                box-shadow: none;
+                border: none;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: 'neutral',
+                securityLevel: 'loose',
+                fontFamily: 'Inter, sans-serif'
+            });
+        });
+    </script>
+</head>
+<body class="py-8 px-4 sm:px-6 lg:px-8">
+
+    <!-- Top Action Bar (Hidden on Print) -->
+    <div class="max-w-5xl mx-auto mb-6 flex justify-between items-center no-print">
+        <div class="flex items-center gap-2 text-sm text-slate-600">
+            <span class="px-2.5 py-1 bg-blue-100 text-blue-800 font-semibold rounded-md">Dokumen Akademis</span>
+            <span>Kajian Metodologi Visi Komputer & Pembelajaran Mendalam</span>
+        </div>
+        <button onclick="window.print()" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium rounded-lg shadow transition">
+            🖨️ Cetak / Simpan PDF
+        </button>
+    </div>
+
+    <!-- Main Academic Paper Container -->
+    <main class="max-w-5xl mx-auto paper-container rounded-xl p-8 md:p-14 lg:p-16">
+
+        <!-- Title Header -->
+        <header class="text-center border-b-2 border-slate-900 pb-8 mb-10">
+            <p class="text-xs font-bold uppercase tracking-widest text-blue-800 mb-3">
+                Laporan Kajian Ilmiah & Metodologi Sistem
+            </p>
+            <h1 class="academic-serif text-3xl md:text-4xl font-bold text-slate-900 leading-tight mb-4">
+                Implementasi Algoritma <em>Convolutional Neural Network</em> (CNN) dan <em>You Only Look Once</em> (YOLOv8) untuk Pemantauan Kehadiran serta Evaluasi Efektivitas Kerja Pegawai Berbasis Zona Spasial
+            </h1>
+            <p class="text-base text-slate-600 font-medium">
+                Studi Kasus: Sistem Informasi Manajemen Kinerja Pegawai Terintegrasi Visi Komputer (E-Kinerja)
+            </p>
+        </header>
+
+        <!-- Abstract -->
+        <section class="bg-slate-50 border border-slate-200 rounded-lg p-6 mb-12">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-900 mb-2">Abstrak</h2>
+            <p class="academic-serif text-lg text-slate-800 text-justify leading-relaxed">
+                Pengukuran kehadiran dan produktivitas kerja konvensional umumnya hanya mengandalkan pencatatan waktu masuk (<em>check-in</em>) dan waktu pulang (<em>check-out</em>), sehingga belum mampu merepresentasikan durasi kehadiran efektif pegawai di tempat kerja secara objektif. Kajian ini memaparkan penerapan metode Visi Komputer (<em>Computer Vision</em>) menggunakan algoritma deteksi objek <strong>YOLOv8 (<em>You Only Look Once</em> versi ke-8)</strong> yang dibangun di atas arsitektur jaringan saraf tiruan <strong><em>Convolutional Neural Network</em> (CNN)</strong>. Jaringan CNN berperan dalam mengekstraksi fitur spasial dan morfologi visual tubuh manusia dari citra kamera pengawas (CCTV), sedangkan kerangka kerja YOLOv8 memprediksi lokalisasi kotak pembatas (<em>bounding box</em>) objek manusia secara <em>real-time</em>. Untuk mengidentifikasi pegawai tanpa bergantung pada sudut hadap wajah ke kamera, hasil deteksi CNN-YOLOv8 diintegrasikan dengan metode geometri <strong><em>Point-in-Rectangle Spatial Zone Matching</em></strong> yang mencocokkan titik pusat objek (<em>centroid</em>) terhadap koordinat area meja kerja masing-masing pegawai. Hasil pengujian logika menunjukkan bahwa pendekatan ini mampu mengakumulasi durasi kerja efektif secara akurat, tahan terhadap oklusi visual sesaat, dan menyajikan indeks efektivitas kerja harian secara terukur.
+            </p>
+            <div class="mt-4 pt-3 border-t border-slate-200 text-xs text-slate-600">
+                <strong>Kata Kunci:</strong> <em>Convolutional Neural Network</em> (CNN), YOLOv8, Deteksi Objek, Pemetaan Zona Spasial, Pengawasan Kehadiran, Efektivitas Kerja.
+            </div>
+        </section>
+
+        <!-- BAB 1 -->
+        <section class="mb-12">
+            <h2 class="text-xl font-bold text-slate-900 section-heading">
+                1. Pendahuluan dan Hubungan Konseptual CNN dengan YOLO
+            </h2>
+            <p class="text-justify mb-4">
+                Dalam ranah kecerdasan buatan (<em>Artificial Intelligence</em>) khususnya bidang pengolahan citra digital dan visi komputer, sering muncul pertanyaan mendasar mengenai letak penggunaan <strong><em>Convolutional Neural Network</em> (CNN)</strong> dan <strong>YOLO (<em>You Only Look Once</em>)</strong> di dalam suatu sistem pemantauan cerdas. Secara teoritis dan arsitektural, keduanya bukanlah dua algoritma yang berdiri terpisah, melainkan memiliki hubungan hierarkis di mana <strong>CNN merupakan fondasi jaringan saraf tiruan yang membentuk inti dari algoritma YOLO</strong>.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                <div class="bg-blue-50/60 border border-blue-200 rounded-lg p-5">
+                    <h3 class="font-bold text-blue-950 mb-2">1.1 Peran <em>Convolutional Neural Network</em> (CNN)</h3>
+                    <p class="text-sm text-slate-700 text-justify">
+                        CNN bertugas sebagai <strong>mesin ekstraksi fitur visual (<em>Visual Feature Extractor</em>)</strong>. Ketika citra kamera masuk ke dalam sistem, lapisan-lapisan konvolusi pada CNN memindai piksel citra menggunakan matriks filter (<em>kernel</em>) untuk mengenali karakteristik visual secara bertingkat: mulai dari garis tepi (<em>edges</em>), tekstur pakaian, kontur kepala dan bahu, hingga membentuk representasi utuh objek manusia.
+                    </p>
+                </div>
+                <div class="bg-emerald-50/60 border border-emerald-200 rounded-lg p-5">
+                    <h3 class="font-bold text-emerald-950 mb-2">1.2 Peran Algoritma YOLOv8</h3>
+                    <p class="text-sm text-slate-700 text-justify">
+                        YOLOv8 adalah <strong>arsitektur deteksi objek satu tahap (<em>One-Stage Object Detector</em>) berbasis CNN</strong>. Berbeda dengan CNN klasifikasi biasa yang hanya menebak satu label untuk seluruh gambar, YOLOv8 membagi citra ke dalam petak-petak spasial dan menggunakan lapisan konvolusi akhirnya untuk memprediksi lokasi koordinat kotak pembatas (<em>bounding box</em>) sekaligus probabilitas kelas objek manusia dalam satu tahapan komputasi.
+                    </p>
+                </div>
+            </div>
+
+            <div class="mermaid-box">
+                <div class="mermaid">
+flowchart LR
+    subgraph Input["1. Akuisisi Citra"]
+        A["Citra Kamera Pengawas\n(Matriks Piksel RGB)"]
+    end
+
+    subgraph CNN_YOLO["2. Model YOLOv8 (Berbasis Jaringan Saraf Tiruan CNN)"]
+        direction LR
+        B["CNN Backbone\n(Ekstraksi Fitur Tepi,\nTekstur & Bentuk Tubuh)"] --> C["CNN Neck (PAN-FPN)\n(Penggabungan Fitur\nMulti-Skala)"]
+        C --> D["CNN Decoupled Head\n(Regresi Kotak Pembatas\n& Klasifikasi Manusia)"]
+    end
+
+    subgraph Spatial["3. Analisis Spasial & Kinerja"]
+        E["Algoritma Point-in-Rectangle\n(Pencocokan Titik Pusat\nke Zona Meja Kerja)"] --> F["Perhitungan Durasi &\nIndeks Efektivitas Kerja"]
+    end
+
+    A --> B
+    D --> E
+                </div>
+                <p class="figure-caption">
+                    Gambar 1. Diagram blok hubungan antara ekstraksi fitur CNN, deteksi objek YOLOv8, dan lokalisasi zona spasial pada sistem E-Kinerja.
+                </p>
+            </div>
+        </section>
+
+        <!-- BAB 2 -->
+        <section class="mb-12">
+            <h2 class="text-xl font-bold text-slate-900 section-heading">
+                2. Arsitektur Jaringan CNN di Dalam Model YOLOv8
+            </h2>
+            <p class="text-justify mb-4">
+                Sistem ini mengimplementasikan model <strong>YOLOv8 varian Nano (YOLOv8n)</strong> yang dipilih karena efisiensi parameter dan kecepatan inferensinya yang tinggi pada pemrosesan aliran video secara <em>real-time</em>. Di dalam model YOLOv8n, pemrosesan <em>Convolutional Neural Network</em> (CNN) terbagi ke dalam tiga komponen struktural utama:
+            </p>
+
+            <table class="academic-table">
+                <thead>
+                    <tr>
+                        <th style="width: 22%;">Komponen Arsitektur</th>
+                        <th style="width: 28%;">Struktur Lapisan CNN</th>
+                        <th>Fungsi Akademis dalam Pemrosesan Citra</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1. <em>Backbone</em></strong><br><span class="text-xs text-slate-500">(Tulang Punggung)</span></td>
+                        <td>
+                            <em>Modified CSPDarknet53</em>,<br>
+                            Blok <code>Conv</code> (Conv2D + BatchNorm + SiLU),<br>
+                            Modul <code>C2f</code>, dan <code>SPPF</code>
+                        </td>
+                        <td class="text-justify">
+                            Melakukan operasi konvolusi bertingkat pada matriks citra masukan untuk menghasilkan peta fitur (<em>feature maps</em>). Penggunaan modul <em>Cross-Stage Partial</em> (<code>C2f</code>) memperkaya aliran gradien sehingga jaringan CNN tetap mampu mengenali postur manusia meskipun sebagian tubuh bagian bawah tertutup oleh meja kerja.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>2. <em>Neck</em></strong><br><span class="text-xs text-slate-500">(Leher Jaringan)</span></td>
+                        <td>
+                            <em>Path Aggregation Network</em> (PAN) &amp;<br>
+                            <em>Feature Pyramid Network</em> (FPN)
+                        </td>
+                        <td class="text-justify">
+                            Menggabungkan peta fitur beresolusi rendah (kaya makna semantik) dengan peta fitur beresolusi tinggi (kaya ketepatan posisi spasial). Hal ini memastikan objek pegawai yang berada jauh dari kamera (berukuran kecil) maupun dekat dengan kamera (berukuran besar) dapat terdeteksi secara seimbang.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>3. <em>Head</em></strong><br><span class="text-xs text-slate-500">(Kepala Prediksi)</span></td>
+                        <td>
+                            <em>Anchor-Free Decoupled Head</em><br>
+                            (Cabang Konvolusi Klasifikasi &amp; Regresi Terpisah)
+                        </td>
+                        <td class="text-justify">
+                            Menggunakan dua jalur konvolusi terpisah untuk: (1) menghitung skor probabilitas kelas objek manusia (kelas <code>person</code>) menggunakan <em>Binary Cross-Entropy Loss</em>, dan (2) memprediksi posisi koordinat kotak pembatas $(x_1, y_1, x_2, y_2)$ menggunakan <em>Complete IoU (CIoU) Loss</em>.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3 class="font-bold text-slate-800 mt-6 mb-2">2.1 Operasi Matematis Konvolusi dan Fungsi Aktivasi</h3>
+            <p class="text-justify mb-2">
+                Pada setiap blok dasar konvolusi di dalam jaringan CNN YOLOv8, citra masukan atau peta fitur $I$ dikonvolusikan dengan kernel matriks $K$ berukuran $m \times n$, diikuti oleh normalisasi <em>batch</em> dan fungsi aktivasi non-linier <strong>SiLU (<em>Sigmoid Linear Unit</em>)</strong>:
+            </p>
+            <div class="formula-box">
+                $$F(i, j) = (I * K)(i, j) = \sum_{p=0}^{m-1} \sum_{q=0}^{n-1} I(i + p, j + q) \cdot K(p, q) + b$$
+                $$\text{SiLU}(x) = x \cdot \sigma(x) = \frac{x}{1 + e^{-x}}$$
+            </div>
+            <p class="text-sm text-slate-600 text-justify">
+                Di mana $F(i,j)$ adalah nilai piksel pada peta fitur keluaran, $b$ adalah nilai bias, dan $\sigma(x)$ adalah fungsi sigmoid. Fungsi aktivasi SiLU yang halus dan terdiferensiasi di seluruh titik membantu lapisan-lapisan CNN mengenali pola visual yang kompleks pada pencahayaan ruangan kerja yang bervariasi.
+            </p>
+        </section>
+
+        <!-- BAB 3 -->
+        <section class="mb-12">
+            <h2 class="text-xl font-bold text-slate-900 section-heading">
+                3. Metodologi Deteksi Objek dan Identifikasi Berbasis Zona Spasial
+            </h2>
+            <p class="text-justify mb-4">
+                Salah satu permasalahan utama dalam pengawasan ruang kerja menggunakan kamera sudut lebar (CCTV) adalah posisi wajah pegawai yang sering kali menunduk, menyamping, atau menghadap layar monitor, sehingga metode pengenalan biometrik wajah (<em>Face Recognition</em>) cenderung mengalami penurunan akurasi. Untuk mengatasi keterbatasan tersebut, sistem ini menerapkan pendekatan hibrida yang menggabungkan <strong>Deteksi Manusia Berbasis CNN-YOLOv8</strong> dengan <strong>Pemetaan Geometri Zona Meja Kerja (<em>Zone-Based Spatial Matching</em>)</strong>.
+            </p>
+
+            <div class="mermaid-box">
+                <div class="mermaid">
+flowchart TD
+    A(["Akuisisi Citra Kamera\nInterval Δt = 500 ms"]) --> B["Dekode Citra Digital ke Matriks Numerik\nDimensi Lebar (W) × Tinggi (H)"]
+    B --> C["Inferensi Jaringan CNN YOLOv8n\nPenyaringan Kelas: Indeks 0 (Manusia / Person)"]
+    C --> D["Ekstraksi Vektor Kotak Pembatas:\n(x₁, y₁, x₂, y₂) dan Skor Keyakinan (c)"]
+    D --> E["Perhitungan Titik Pusat Objek (Centroid)\ndan Normalisasi ke Skala Persentase (cx_pct, cy_pct)"]
+    E --> F{"Uji Geometri Point-in-Rectangle:\nApakah (cx_pct, cy_pct) berada\ndi dalam Zona Meja Pegawai k?"}
+    F -->|"Ya (Memenuhi Syarat)"| G["Identifikasi Terverifikasi:\nObjek = Pegawai Pemilik Zona k"]
+    F -->|"Tidak (Di Luar Zona)"| H["Klasifikasi Non-Target:\nEntitas Luar / Tidak Dipantau"]
+    G --> I["Pembaruan Status Keberadaan,\nAkumulasi Durasi & Log Aktivitas"]
+                </div>
+                <p class="figure-caption">
+                    Gambar 2. Diagram alir metodologi deteksi objek CNN-YOLOv8 dan algoritma pencocokan zona meja kerja.
+                </p>
+            </div>
+
+            <h3 class="font-bold text-slate-800 mt-6 mb-2">3.1 Normalisasi Koordinat Resolusi-Independen</h3>
+            <p class="text-justify mb-2">
+                Agar konfigurasi zona meja kerja tidak mengalami pergeseran ketika terjadi perubahan resolusi perangkat kamera maupun ukuran layar tampilan, seluruh koordinat batas zona disimpan dalam skala persentase relatif $(0\% - 100\%)$ terhadap lebar $(W)$ dan tinggi $(H)$ citra. Untuk setiap kotak pembatas manusia $(x_1, y_1, x_2, y_2)$ yang dihasilkan oleh model CNN YOLOv8, titik pusat geometrisnya (<em>centroid</em>) dihitung dan dinormalisasi menggunakan persamaan:
+            </p>
+            <div class="formula-box">
+                $$cx_{\text{pct}} = \left( \frac{x_1 + x_2}{2 \cdot W} \right) \times 100\%, \qquad cy_{\text{pct}} = \left( \frac{y_1 + y_2}{2 \cdot H} \right) \times 100\%$$
+            </div>
+
+            <h3 class="font-bold text-slate-800 mt-6 mb-2">3.2 Algoritma Pencocokan Spasial <em>Point-in-Rectangle</em></h3>
+            <p class="text-justify mb-2">
+                Misalkan terdapat $M$ orang pegawai yang masing-masing memiliki area zona meja kerja terdefinisi $Z_k = [x_{1,k},\, y_{1,k},\, x_{2,k},\, y_{2,k}]$ dalam satuan persentase. Fungsi pencocokan identitas spasial $\Phi(cx_{\text{pct}}, cy_{\text{pct}})$ menentukan bahwa objek manusia yang terdeteksi merupakan <strong>Pegawai ke-$k$</strong> apabila titik pusatnya berada di dalam interval tertutup persegi panjang zona $Z_k$:
+            </p>
+            <div class="formula-box">
+                $$\Phi(cx_{\text{pct}}, cy_{\text{pct}}) = k \iff \Big( x_{1,k} \le cx_{\text{pct}} \le x_{2,k} \Big) \;\wedge\; \Big( y_{1,k} \le cy_{\text{pct}} \le y_{2,k} \Big)$$
+            </div>
+            <p class="text-sm text-slate-600 text-justify">
+                Apabila tidak ada zona $Z_k$ yang memenuhi kondisi konjungsi logika $(\wedge)$ di atas, maka objek manusia yang terdeteksi dikategorikan sebagai pengunjung atau orang yang sekadar melintas di lorong ruangan, sehingga tidak mempengaruhi pencatatan waktu kerja pegawai.
+            </p>
+        </section>
+
+        <!-- BAB 4 -->
+        <section class="mb-12">
+            <h2 class="text-xl font-bold text-slate-900 section-heading">
+                4. Formulasi Matematis Durasi Kehadiran dan Efektivitas Kerja
+            </h2>
+
+            <h3 class="font-bold text-slate-800 mt-4 mb-2">4.1 Pemodelan Transisi Status dan Toleransi Oklusi Visual</h3>
+            <p class="text-justify mb-2">
+                Dalam pengamatan kamera secara kontinu, terdapat kemungkinan terjadinya <strong>oklusi visual sementara</strong> (misalnya tubuh pegawai tertutup oleh rekan kerja yang lewat di depan kamera) yang menyebabkan model CNN tidak mendeteksi objek selama beberapa siklus frame. Untuk menghindari kesalahan perubahan status (<em>false transition</em>), sistem menerapkan ambang batas toleransi waktu $\tau_{\text{oklusi}} = 10\text{ detik}$.
+            </p>
+            <p class="text-justify mb-2">
+                Dengan mendefinisikan $\Delta t = t_{\text{sekarang}} - t_{\text{terakhir\_terlihat}}$, fungsi status keberadaan pegawai $S_k(t)$ dirumuskan sebagai berikut:
+            </p>
+            <div class="formula-box">
+                $$S_k(t) = \begin{cases} 
+                \text{Di Meja Kerja}, & \text{jika terdeteksi di dalam zona } Z_k \\[6pt]
+                \text{Di Meja Kerja (Toleransi Oklusi)}, & \text{jika tidak terdeteksi dan } \Delta t \le 10\text{ detik} \\[6pt]
+                \text{Keluar Ruangan}, & \text{jika tidak terdeteksi dan } \Delta t > 10\text{ detik}
+                \end{cases}$$
+            </div>
+
+            <h3 class="font-bold text-slate-800 mt-6 mb-2">4.2 Perhitungan Durasi Kerja Bebas Penyimpangan (<em>Drift-Free Accumulation</em>)</h3>
+            <p class="text-justify mb-2">
+                Penjumlahan durasi berbasis per-frame rentan mengalami penyimpangan waktu (<em>time drift</em>) apabila kecepatan pemrosesan jaringan berfluktuasi. Oleh karena itu, sistem menghitung total durasi berada di meja ($D_{\text{stay}}$, dalam satuan detik) berdasarkan selisih waktu absolut terhadap waktu awal sesi deteksi ($t_{\text{mulai}}$) dengan syarat jeda antar-deteksi tidak melebihi batas putus koneksi ($\Delta t < 60\text{ detik}$):
+            </p>
+            <div class="formula-box">
+                $$D_{\text{stay}}(t_{\text{sekarang}}) = \max \Big( D_{\text{stay}}(t_{\text{sebelumnya}}),\; t_{\text{sekarang}} - t_{\text{mulai}} \Big)$$
+            </div>
+            <p class="text-sm text-slate-600 text-justify">
+                Apabila sesi pemantauan dihentikan sementara dan dilanjutkan kembali pada hari yang sama, titik acuan waktu mulai disesuaikan secara proporsional menggunakan persamaan $t_{\text{mulai\_baru}} = t_{\text{sekarang}} - D_{\text{stay\_tersimpan}}$, sehingga akumulasi waktu berjalan secara kontinu dari durasi terakhir yang telah dicapai.
+            </p>
+
+            <h3 class="font-bold text-slate-800 mt-6 mb-2">4.3 Indeks Efektivitas Kerja Harian</h3>
+            <p class="text-justify mb-2">
+                Untuk mengevaluasi tingkat pemanfaatan jam kerja pegawai di meja kerja secara kuantitatif, sistem membandingkan durasi kehadiran aktif yang terverifikasi oleh kamera pengawas ($D_{\text{stay}}$) terhadap standar jam kerja efektif harian ($D_{\text{standar}} = 8\text{ jam} = 28.800\text{ detik}$):
+            </p>
+            <div class="formula-box">
+                $$\text{Indeks Efektivitas Kerja } (\eta) = \min \left( 100\%,\; \frac{D_{\text{stay}}}{28.800} \times 100\% \right)$$
+            </div>
+        </section>
+
+        <!-- BAB 5 -->
+        <section class="mb-6">
+            <h2 class="text-xl font-bold text-slate-900 section-heading">
+                5. Pembahasan dan Kesimpulan
+            </h2>
+            <p class="text-justify mb-4">
+                Berdasarkan kajian arsitektur dan metodologi yang diterapkan pada sistem E-Kinerja, dapat ditarik beberapa kesimpulan ilmiah sebagai berikut:
+            </p>
+            <ol class="list-decimal pl-6 space-y-3 text-justify">
+                <li>
+                    <strong>Integrasi Fungsional CNN dan YOLOv8:</strong> Algoritma <em>Convolutional Neural Network</em> (CNN) bekerja sebagai komponen inti di dalam arsitektur <strong>YOLOv8n</strong> untuk mengekstraksi fitur spasial citra dan mendeteksi keberadaan objek manusia beserta tingkat keyakinannya (<em>confidence score</em>) secara <em>real-time</em>.
+                </li>
+                <li>
+                    <strong>Efektivitas Lokalisasi Berbasis Zona Spasial:</strong> Penggabungan hasil deteksi objek CNN-YOLOv8 dengan algoritma geometri <em>Point-in-Rectangle</em> memungkinkan sistem mengenali pegawai di meja kerjanya masing-masing tanpa mengharuskan wajah pegawai menghadap langsung ke kamera pengawas, sekaligus menjaga efisiensi beban komputasi.
+                </li>
+                <li>
+                    <strong>Pemisahan Fungsi Audit dan Administratif:</strong> Sistem memisahkan pencatatan kehadiran administratif (<em>check-in</em> dan <em>check-out</em>) dari pengawasan aktivitas visual berbasis AI. Dengan demikian, hasil deteksi CNN-YOLOv8 berfungsi sebagai instrumen evaluasi objektif bagi pimpinan dalam mengukur durasi kerja efektif dan kedisiplinan pegawai di ruang kerja.
+                </li>
+            </ol>
+        </section>
+
+        <!-- Footer -->
+        <footer class="mt-12 pt-6 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500">
+            <span>Sistem Informasi Manajemen Kinerja &amp; Pemantauan Kehadiran Cerdas (E-Kinerja)</span>
+            <span>Dokumentasi Metodologi Akademis — CNN &amp; YOLOv8</span>
+        </footer>
+
+    </main>
+
+</body>
+</html>
+

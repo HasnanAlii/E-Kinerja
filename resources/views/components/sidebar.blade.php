@@ -15,7 +15,7 @@ $user = Auth::user();
         class="w-64 bg-white shadow-md min-h-screen p-4 hidden md:block"
         x-transition>
         
-        <h2 class="text-xl font-bold mb-6 text-center">E-Kinerja</h2>
+        <h2 class="text-xl font-bold mb-6 text-center">Monitoring Pou Yuen</h2>
 
         {{-- MENU ADMIN --}}
         @role('admin')
@@ -23,7 +23,7 @@ $user = Auth::user();
 
             <a href="{{ route('admin.pegawai.index') }}"
                 class="block p-2 rounded hover:bg-gray-100">
-                👤 Manajemen Pegawai
+                👤 Data Karyawan
             </a>
 
             <a href="{{ route('admin.bidang.index') }}"

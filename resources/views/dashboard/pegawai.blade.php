@@ -173,7 +173,7 @@
                                 <i data-feather="zap" class="w-5 h-5 text-yellow-300"></i>
                                 Menu Pintasan
                             </h3>
-                            <p class="text-blue-100 text-xs mt-1">Aksi cepat untuk aktivitas harian.</p>
+                            <p class="text-blue-100 text-xs mt-1">Aksi cepat untuk kehadiran.</p>
                         </div>
 
 
@@ -196,7 +196,8 @@
 
 
                             {{-- Tambah Aktivitas --}}
-                            <a href="{{ route('pegawai.aktivitas.create') }}"
+                            @if(false) {{-- DISABLED --}}
+<a href="{{ route('pegawai.aktivitas.create') }}"
                             class="group flex items-center p-4 bg-white border border-gray-200 rounded-xl 
                                    shadow-sm hover:shadow-md hover:border-indigo-500 hover:ring-1 hover:ring-indigo-500 transition">
 
@@ -209,6 +210,8 @@
                                     <p class="text-xs text-gray-500">Tambah aktivitas kerja harian.</p>
                                 </div>
                             </a>
+@endif
+
 
 
                             {{-- Riwayat Kehadiran --}}
@@ -226,7 +229,8 @@
                                 </div>
                             </a>
                                     {{-- Tombol Unduh Laporan --}}
-                      <a href="{{ route('pegawai.penilaian.download') }}"
+                      @if(false) {{-- DISABLED --}}
+<a href="{{ route('pegawai.penilaian.download') }}"
                         class="group flex items-center p-4 bg-white border border-gray-200 rounded-xl shadow-sm 
                             hover:shadow-md hover:border-indigo-500 hover:ring-1 hover:ring-indigo-500 transition-all duration-200">
 
@@ -240,11 +244,13 @@
                             </div>
 
                         </a>
+@endif
+
                         </div>
 
 
                         <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
-                            <p class="text-xs text-center text-gray-400">Sistem Kinerja v1.0</p>
+                            <p class="text-xs text-center text-gray-400">Monitoring Kehadiran v1.0</p>
                         </div>
 
                     </div>

@@ -5,7 +5,7 @@
                     Selamat Datang Kembali
                 </h2>
                 <p class="text-sm text-gray-500 mt-2">
-                    Masuk ke Sistem E-Kinerja untuk melanjutkan.
+                    Masuk ke Sistem Monitoring Kehadiran Pou Yuen untuk melanjutkan.
                 </p>
             </div>
 
@@ -69,7 +69,7 @@
             
             <div class="px-8 py-4 bg-gray-50 border-t border-gray-100 text-center">
                 <p class="text-xs text-gray-500">
-                    © {{ date('Y') }} Sistem E-Kinerja. All rights reserved.
+                    © {{ date('Y') }} Pou Yuen. All rights reserved.
                 </p>
             </div>
         </div>
