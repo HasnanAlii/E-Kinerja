@@ -44,18 +44,37 @@
 
 
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                <div class="px-6 py-5 border-b bg-gray-50 flex items-center justify-between rounded-lg">
+                <div class="px-6 py-5 border-b bg-gray-50 flex flex-wrap items-center justify-between gap-4 rounded-lg">
             <div class="flex items-center gap-3">
                 <span class="p-3 bg-indigo-100 text-indigo-600 rounded-xl">
                     <i data-feather="clock" class="w-6 h-6"></i>
                 </span>
 
                 <div>
-                  <h3 class="text-lg font-bold text-gray-800">Riwayat Kehadiran Pegawai</h3>
-                    <p class="text-base text-gray-500">Dokumentasi lengkap mengenai kehadiran harian Anda.</p>
+                  <h3 class="text-lg font-bold text-gray-800">Riwayat Kehadiran Karyawan</h3>
+                    <p class="text-sm text-gray-500">Hasil monitoring kehadiran otomatis (harian &amp; bulanan).</p>
                 </div>
             </div>
-            <div class="text-sm text-gray-500 text-right">Kehadiran dicatat otomatis oleh sistem monitoring kamera.</div>
+            <div class="flex flex-wrap items-center gap-2">
+                <form method="GET" action="{{ route('pegawai.kehadiran.index') }}" class="flex flex-wrap items-center gap-2">
+                    <select name="mode" onchange="this.form.submit()" class="rounded-lg border-gray-300 text-sm">
+                        <option value="bulanan" @selected(($mode ?? 'bulanan') === 'bulanan')>Per Bulan</option>
+                        <option value="harian" @selected(($mode ?? 'bulanan') === 'harian')>Harian</option>
+                    </select>
+                    @if(($mode ?? 'bulanan') === 'harian')
+                        <input type="date" name="tanggal" value="{{ $tanggal ?? date('Y-m-d') }}" onchange="this.form.submit()" class="rounded-lg border-gray-300 text-sm">
+                    @else
+                        <input type="month" name="bulan" value="{{ $bulan ?? date('Y-m') }}" onchange="this.form.submit()" class="rounded-lg border-gray-300 text-sm">
+                    @endif
+                </form>
+
+                <a href="{{ route('laporan.kehadiran.perpegawai', ['pegawai_id' => $pegawai->id ?? null]) }}"
+                   target="_blank"
+                   class="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-xl shadow transition">
+                    <i data-feather="file-text" class="w-4 h-4"></i>
+                    Cetak Laporan PDF
+                </a>
+            </div>
         </div>
 
                 <div class=" bg-white border-b border-gray-200">
@@ -127,7 +146,8 @@
                                                     @click="openDetail('{{ $pegawai->id }}', '{{ $row->tanggal }}')"
                                                     class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-sm font-semibold rounded-lg border border-indigo-200 transition-all duration-150">
                                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                                                    Efektivitas
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                                    Info Kehadiran
                                                 </button>
                                             @else
                                                 <span class="text-base text-gray-400 italic">-</span>
@@ -188,7 +208,7 @@
                                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                                 </div>
                                 <div>
-                                    <h3 class="text-white font-bold text-lg">Efektivitas Kerja</h3>
+                                    <h3 class="text-white font-bold text-lg">Info Progres Kehadiran</h3>
                                     <p class="text-indigo-200 text-sm" x-text="data ? data.tanggal_label : ''"></p>
                                 </div>
                             </div>
@@ -220,19 +240,23 @@
 
                             {{-- Efektivitas Gauge --}}
                             <div class="bg-gradient-to-br from-slate-50 to-indigo-50 rounded-2xl p-5 border border-indigo-100">
-                                <div class="flex items-end justify-between mb-3">
-                                    <span class="text-sm font-medium text-gray-600">Tingkat Efektivitas Kerja</span>
+                                <div class="flex items-end justify-between mb-2">
+                                    <div>
+                                        <span class="text-sm font-semibold text-gray-700">Progres Pemenuhan Jam Kerja</span>
+                                        <p class="text-xs text-gray-500 mt-0.5"
+                                           x-text="(data?.efektivitas_persen || 0) >= 100 ? '✓ Target 8 Jam Terpenuhi (Dianggap Hadir Penuh)' : 'Target: 8 Jam untuk dianggap hadir penuh'"></p>
+                                    </div>
                                     <span class="text-2xl font-bold"
-                                        :class="(data?.efektivitas_persen||0) >= 75 ? 'text-emerald-600' : (data?.efektivitas_persen||0) >= 50 ? 'text-amber-500' : 'text-red-500'"
+                                        :class="(data?.efektivitas_persen||0) >= 100 ? 'text-emerald-600' : (data?.efektivitas_persen||0) >= 50 ? 'text-amber-500' : 'text-red-500'"
                                         x-text="(data?.efektivitas_persen || 0) + '%'">0%</span>
                                 </div>
                                 <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                                     <div class="h-3 rounded-full transition-all duration-700"
-                                        :class="(data?.efektivitas_persen||0) >= 75 ? 'bg-emerald-500' : (data?.efektivitas_persen||0) >= 50 ? 'bg-amber-400' : 'bg-red-400'"
+                                        :class="(data?.efektivitas_persen||0) >= 100 ? 'bg-emerald-500' : (data?.efektivitas_persen||0) >= 50 ? 'bg-amber-400' : 'bg-red-400'"
                                         :style="'width:' + (data?.efektivitas_persen || 0) + '%'"></div>
                                 </div>
                                 <div class="flex justify-between mt-1.5 text-xs text-gray-400">
-                                    <span>0%</span><span>Standar: 8 Jam</span><span>100%</span>
+                                    <span>0 Jam (0%)</span><span>Standar: 8 Jam</span><span>8 Jam (100%)</span>
                                 </div>
                             </div>
 

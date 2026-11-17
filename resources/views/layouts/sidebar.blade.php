@@ -14,7 +14,7 @@ $user = Auth::user();
         x-transition>
         
         <h2 class="text-2xl font-bold mb-6 text-center text-indigo-600">
-            Monitoring Pou Yuen
+            Monitoring App
         </h2>
 
         {{-- MENU ADMIN --}}

@@ -3,153 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Laporan Kehadiran - {{ $pegawai->user->name }}</title>
-
+    <title>Data Karyawan (T1) - {{ $pegawai->user->name }}</title>
     <style>
-        @page { margin: 1.5cm 1cm; size: A4 portrait; }
-
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 10pt;
-            line-height: 1.3;
+        @page {
+            margin: 1.2cm 1.4cm;
+            size: A4 portrait;
         }
-
-        .header { text-align: center; margin-bottom: 20px; }
-        .header h1 { font-size: 12pt; font-weight: bold; margin: 0; }
-        .header h2 { font-size: 11pt; font-weight: bold; margin: 2px 0; }
-
-        .info-table { width: 100%; margin-bottom: 10px; }
-        .info-table td { padding: 3px; }
-
-        .data-table {
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 9.5pt;
+            color: #1f2937;
+            line-height: 1.35;
+        }
+        .top-meta {
+            width: 100%;
+            margin-bottom: 14px;
+            font-size: 8.5pt;
+            color: #374151;
+        }
+        .top-meta td {
+            padding: 0;
+        }
+        .profile-layout {
             width: 100%;
             border-collapse: collapse;
-            border: 1px solid #000;
-            margin-top: 10px;
+            margin-bottom: 18px;
         }
-        .data-table th, .data-table td {
-            border: 1px solid #000;
-            padding: 5px;
-            font-size: 9pt;
+        .photo-col {
+            width: 155px;
             vertical-align: top;
-        }
-        .data-table th {
-            background: #f0f0f0;
-            font-weight: bold;
+            padding-right: 18px;
             text-align: center;
         }
-
-        .signature-section { margin-top: 40px; }
+        .photo-box {
+            width: 145px;
+            height: 180px;
+            border: 1px solid #9ca3af;
+            background-color: #f3f4f6;
+            text-align: center;
+            overflow: hidden;
+        }
+        .photo-box img {
+            width: 145px;
+            height: 180px;
+            object-fit: cover;
+        }
+        .photo-placeholder {
+            padding-top: 72px;
+            font-size: 9pt;
+            color: #6b7280;
+        }
+        .status-text {
+            margin-top: 8px;
+            font-size: 9pt;
+            font-weight: bold;
+            color: #111827;
+        }
+        .info-col {
+            vertical-align: top;
+        }
+        .section-heading {
+            font-size: 10.5pt;
+            font-weight: bold;
+            color: #111827;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #111827;
+            margin-bottom: 6px;
+        }
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .info-table td {
+            padding: 6px 4px;
+            border-bottom: 1px solid #d1d5db;
+            font-size: 9.5pt;
+        }
+        .info-label {
+            width: 34%;
+            color: #374151;
+        }
+        .info-value {
+            width: 66%;
+            color: #111827;
+        }
+        .info-value-bold {
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .rekap-summary {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 14px 0 18px 0;
+        }
+        .rekap-summary th, .rekap-summary td {
+            border: 1px solid #d1d5db;
+            padding: 5px 8px;
+            text-align: center;
+            font-size: 8.5pt;
+        }
+        .rekap-summary th {
+            background-color: #f3f4f6;
+            color: #374151;
+            font-weight: bold;
+        }
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 6px;
+        }
+        .attendance-table th, .attendance-table td {
+            border: 1px solid #9ca3af;
+            padding: 5px 7px;
+            font-size: 8.8pt;
+            text-align: left;
+        }
+        .attendance-table th {
+            background-color: #f3f4f6;
+            font-weight: bold;
+            color: #111827;
+        }
+        .muted-italic {
+            color: #6b7280;
+            font-style: italic;
+        }
+        .footer-meta {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            font-size: 8pt;
+            color: #6b7280;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 4px;
+        }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h1>LAPORAN REKAPITULASI KEHADIRAN PEGAWAI</h1>
-    {{-- <h2>{{ strtoupper($pegawai->user->name) }}</h2> --}}
-    {{-- <div>PERIODE: {{ strtoupper($periode->nama_periode) }}</div> --}}
-</div>
-<table class="info-table">
-    <tr>
-        <td width="120"><strong>Nama</strong></td>
-        <td width="200">: {{ $pegawai->user->name ?? '-' }}</td>
+@php
+    $photoPath = null;
+    if (!empty($pegawai->user->profile_photo)) {
+        $candidate = storage_path('app/public/' . $pegawai->user->profile_photo);
+        if (file_exists($candidate)) {
+            $photoPath = $candidate;
+        }
+    }
+    $deptDivisi = trim(($pegawai->departemen ?? '') . (($pegawai->departemen && $pegawai->divisi) ? ' / ' : '') . ($pegawai->divisi ?? ''));
+    if ($deptDivisi === '') {
+        $deptDivisi = $pegawai->bidang->nama_bidang ?? '-';
+    }
+    $nikKaryawan = $pegawai->nik_karyawan ?? $pegawai->nip ?? ($pegawai->user->nik ?? '-');
+@endphp
 
-        <td width="120"><strong>NIP</strong></td>
-        <td width="200">: {{ $pegawai->nip ?? '-' }}</td>
-    </tr>
+<table class="top-meta">
     <tr>
-        {{-- DISABLED: jabatan --}}
-    @if(false)
-<td><strong>Jabatan</strong></td>
-        <td>: {{ $pegawai->jabatan ?? '-' }}</td>
-    @endif
-
-        <td><strong>Unit Kerja</strong></td>
-        <td>: {{ $pegawai->bidang->nama_bidang ?? '-' }}</td>
-    </tr>
-    <tr>
-        <td><strong>Tanggal Cetak</strong></td>
-        <td>: {{ now()->translatedFormat('d F Y') }}</td>
-
-        <td></td>
-        <td></td>
+        <td align="left">{{ now()->format('n/j/y, g:i A') }}</td>
+        <td align="center"><strong>Data Karyawan (T1) — PT Pou Yuen Indonesia</strong></td>
+        <td align="right"></td>
     </tr>
 </table>
 
+<table class="profile-layout">
+    <tr>
+        <td class="photo-col">
+            <div class="photo-box">
+                @if ($photoPath)
+                    <img src="{{ $photoPath }}" alt="Foto Karyawan">
+                @else
+                    <div class="photo-placeholder">Foto Karyawan</div>
+                @endif
+            </div>
+            <div class="status-text">{{ $pegawai->status ?? 'Masih Bekerja' }}</div>
+        </td>
+        <td class="info-col">
+            <div class="section-heading">Informasi Umum</div>
+            <table class="info-table">
+                <tr>
+                    <td class="info-label">Nama</td>
+                    <td class="info-value info-value-bold">{{ strtoupper($pegawai->user->name ?? '-') }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Jenis Kelamin</td>
+                    <td class="info-value info-value-bold">{{ strtoupper($pegawai->user->jenis_kelamin ?? '-') }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Departemen / Divisi</td>
+                    <td class="info-value">{{ $deptDivisi }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Jabatan</td>
+                    <td class="info-value">{{ $pegawai->jabatan ?? '-' }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">NIK Karyawan</td>
+                    <td class="info-value">{{ $nikKaryawan }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Status</td>
+                    <td class="info-value">{{ $pegawai->status ?? 'Masih Bekerja' }}</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
 
-<h3>REKAP TANGGAL BERDASARKAN JENIS KEHADIRAN</h3>
+<div class="section-heading" style="margin-top: 10px;">
+    Data Kehadiran ({{ $detail->count() }} Hari Terakhir)
+</div>
 
-<table class="data-table">
+<table class="attendance-table">
     <thead>
         <tr>
-            <th width="20%">Hadir</th>
-            <th width="20%">Izin</th>
-            <th width="20%">Sakit</th>
-            <th width="20%">Cuti</th>
-            <th width="20%">Alpha</th>
+            <th width="22%">Tanggal</th>
+            <th width="24%">Check-In</th>
+            <th width="24%">Check-Out</th>
+            <th width="15%">Kode</th>
+            <th width="15%">Lembur</th>
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td class="text-center">
-                {{ $rekap['hadir']->count() }}
-            </td>
-            <td class="text-center">
-                {{ $rekap['izin']->count() }}
-            </td>
-            <td class="text-center">
-                {{ $rekap['sakit']->count() }}
-            </td>
-            <td class="text-center">
-                {{ $rekap['cuti']->count() }}
-            </td>
-            <td class="text-center">
-                {{ $rekap['alpha']->count() }}
-            </td>
-        </tr>
+        @forelse($detail as $d)
+            @php
+                $isHadir = ($d->jenis === 'hadir');
+                $checkIn = $d->check_in ? \Carbon\Carbon::parse($d->check_in)->format('H:i:s') : ($isHadir ? '-' : '00:00');
+                $checkOut = $d->check_out ? \Carbon\Carbon::parse($d->check_out)->format('H:i:s') : ($isHadir ? null : '00:00');
+                $kode = $isHadir ? 'SYNC' : strtoupper($d->jenis ?? 'OFF');
+            @endphp
+            <tr>
+                <td>{{ \Carbon\Carbon::parse($d->tanggal)->format('Y/m/d') }}</td>
+                <td>{{ $checkIn }}</td>
+                <td>
+                    @if ($isHadir && !$checkOut)
+                        <span class="muted-italic">--- belum pulang</span>
+                    @else
+                        {{ $checkOut }}
+                    @endif
+                </td>
+                <td>{{ $kode }}</td>
+                <td>-</td>
+            </tr>
+        @empty
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 14px;" class="muted-italic">
+                    Belum ada riwayat kehadiran tercatat.
+                </td>
+            </tr>
+        @endforelse
     </tbody>
 </table>
 
-<h3>DETAIL KEHADIRAN HARIAN</h3>
-
-<table class="data-table">
-    <thead>
-        <tr>
-            <th width="5%">No</th>
-            <th width="20%">Tanggal</th>
-            <th width="20%">Hari</th>
-            <th width="20%">Jenis Kehadiran</th>
- 
-        </tr>
-    </thead>
-    <tbody>
-        @foreach($detail as $i => $d)
-        <tr>
-            <td class="text-center">{{ $i+1 }}</td>
-            <td>{{ \Carbon\Carbon::parse($d->tanggal)->format('d-m-Y') }}</td>
-            <td>{{ \Carbon\Carbon::parse($d->tanggal)->translatedFormat('l') }}</td>
-            <td style="text-transform: uppercase; font-weight: bold;">
-                {{ $d->jenis }}
-            </td>
-      
-        </tr>
-        @endforeach
-    </tbody>
+<table class="footer-meta">
+    <tr>
+        <td align="left">Sistem Monitoring Kehadiran Otomatis — PT Pou Yuen Indonesia</td>
+        <td align="right">1/1</td>
+    </tr>
 </table>
-
-<div class="signature-section">
-    <table width="100%">
-        <tr>
-            <td width="60%"></td>
-            <td width="40%" align="center">
-                Cianjur, {{ now()->translatedFormat('d F Y') }}<br>
-                Atasan Langsung,<br><br><br><br>
-                <strong>{{ Auth::user()->name }}</strong><br>
-                NIP. {{ Auth::user()->atasan->nip ?? '-' }}
-            </td>
-        </tr>
-    </table>
-</div>
 
 </body>
 </html>

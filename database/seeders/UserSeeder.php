@@ -24,22 +24,16 @@ class UserSeeder extends Seeder
         | ADMIN
         |--------------------------------------------------------------------------
         */
-        $admin = User::firstOrCreate(
+        $admin = User::updateOrCreate(
             ['email' => 'admin@gmail.com'],
             [
-                'name'            => 'Admin E-Kinerja',
-                'nik'             => '3275000000000001',
-                'jenis_kelamin'   => 'Laki-laki',
-                'tanggal_lahir'   => '1990-01-01',
-                'tempat_lahir'    => 'Cianjur',
-                'agama'           => 'Islam',
-                'alamat'          => 'Jl. Raya Cianjur No. 1',
-                'telp'            => '081111111111',
-                'profile_photo'   => null,
-                'password'        => Hash::make('password'),
+                'name'              => 'Admin Monitoring Pou Yuen',
+                'nik'               => 'PYI-000001',
+                'jenis_kelamin'     => 'Laki-laki',
+                'profile_photo'     => null,
+                'password'          => Hash::make('password'),
                 'email_verified_at' => Carbon::now(),
-                'created_at'      => Carbon::now(),
-                'updated_at'      => Carbon::now(),
+                'updated_at'        => Carbon::now(),
             ]
         );
 
@@ -50,25 +44,19 @@ class UserSeeder extends Seeder
 
         /*
         |--------------------------------------------------------------------------
-        | PEGAWAI NON-PNS
+        | KARYAWAN UTAMA (pegawai@gmail.com)
         |--------------------------------------------------------------------------
         */
-        $pegawai = User::firstOrCreate(
+        $pegawai = User::updateOrCreate(
             ['email' => 'pegawai@gmail.com'],
             [
-                'name'            => 'Pegawai Non-PNS',
-                'nik'             => '3275000000000002',
-                'jenis_kelamin'   => 'Perempuan',
-                'tanggal_lahir'   => '1995-02-10',
-                'tempat_lahir'    => 'Cianjur',
-                'agama'           => 'Islam',
-                'alamat'          => 'Jl. HOS Cokroaminoto, Cianjur',
-                'telp'            => '082222222222',
-                'profile_photo'   => null,
-                'password'        => Hash::make('password'),
+                'name'              => 'Andi Saputra Pratama',
+                'nik'               => 'PYI-260100',
+                'jenis_kelamin'     => 'Laki-laki',
+                'profile_photo'     => null,
+                'password'          => Hash::make('password'),
                 'email_verified_at' => Carbon::now(),
-                'created_at'      => Carbon::now(),
-                'updated_at'      => Carbon::now(),
+                'updated_at'        => Carbon::now(),
             ]
         );
 

@@ -26,7 +26,10 @@
             <table class="w-full text-left text-sm">
                 <thead class="bg-gray-50 text-xs uppercase text-gray-500">
                     <tr>
+                        <th class="px-4 py-3">NIK</th>
                         <th class="px-4 py-3">Nama Karyawan</th>
+                        <th class="px-4 py-3">Departemen / Divisi</th>
+                        <th class="px-4 py-3">Jabatan</th>
                         <th class="px-4 py-3 text-center">Hadir</th>
                         <th class="px-4 py-3 text-center">Izin</th>
                         <th class="px-4 py-3 text-center">Sakit</th>
@@ -38,19 +41,22 @@
                 <tbody class="divide-y">
                     @forelse ($rekap as $r)
                         <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3 font-mono text-xs text-gray-600">{{ $r->nik_karyawan }}</td>
                             <td class="px-4 py-3 font-medium text-gray-800">{{ $r->nama }}</td>
+                            <td class="px-4 py-3 text-gray-600">{{ $r->departemen }} {{ $r->divisi !== '-' ? '/ ' . $r->divisi : '' }}</td>
+                            <td class="px-4 py-3 text-gray-600">{{ $r->jabatan }}</td>
                             <td class="px-4 py-3 text-center">{{ $r->hadir }}</td>
                             <td class="px-4 py-3 text-center">{{ $r->izin }}</td>
                             <td class="px-4 py-3 text-center">{{ $r->sakit }}</td>
                             <td class="px-4 py-3 text-center">{{ $r->cuti }}</td>
                             <td class="px-4 py-3 text-center">{{ $r->alpha }}</td>
                             <td class="px-4 py-3 text-center">
-                                <a target="_blank" class="text-red-600 hover:underline"
-                                   href="{{ route('laporan.kehadiran.perpegawai', ['pegawai_id' => $r->id, 'tanggal_dari' => $dari, 'tanggal_sampai' => $sampai]) }}">PDF</a>
+                                <a target="_blank" class="inline-flex items-center px-3 py-1 bg-red-50 text-red-600 border border-red-200 rounded-lg text-xs font-semibold hover:bg-red-100"
+                                   href="{{ route('laporan.kehadiran.perpegawai', ['pegawai_id' => $r->id, 'tanggal_dari' => $dari, 'tanggal_sampai' => $sampai]) }}">PDF Per Orang</a>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="7" class="px-4 py-8 text-center text-gray-500">Tidak ada data karyawan.</td></tr>
+                        <tr><td colspan="10" class="px-4 py-8 text-center text-gray-500">Tidak ada data karyawan.</td></tr>
                     @endforelse
                 </tbody>
             </table>

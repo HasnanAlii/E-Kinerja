@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perhitungan Manual Evaluasi FaceNet + DBSCAN</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;color:#1a1a2e;line-height:1.7;padding:20px}
+.container{max-width:960px;margin:0 auto}
+h1{font-size:1.8rem;color:#1e3a5f;margin-bottom:8px}
+h2{font-size:1.3rem;color:#1e3a5f;margin:32px 0 12px;padding-bottom:8px;border-bottom:2px solid #3b82f6}
+h3{font-size:1.1rem;color:#334155;margin:20px 0 8px}
+.subtitle{color:#64748b;font-size:.95rem;margin-bottom:24px}
+.card{background:#fff;border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.info-box{background:#eff6ff;border-left:4px solid #3b82f6;padding:14px 18px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.9rem}
+.warn-box{background:#fefce8;border-left:4px solid #eab308;padding:14px 18px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.9rem}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.9rem}
+th,td{padding:10px 14px;text-align:left;border:1px solid #e2e8f0}
+th{background:#f1f5f9;font-weight:600;color:#334155}
+td{background:#fff}
+.highlight{background:#f0fdf4;font-weight:600}
+code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:.85rem;color:#7c3aed}
+.formula{background:#faf5ff;border:1px solid #e9d5ff;border-radius:8px;padding:16px;margin:12px 0;font-family:'Courier New',monospace;font-size:.95rem;text-align:center}
+.step-num{display:inline-block;width:28px;height:28px;background:#3b82f6;color:#fff;border-radius:50%;text-align:center;line-height:28px;font-weight:700;font-size:.85rem;margin-right:8px}
+.tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.78rem;font-weight:600}
+.tag-db{background:#dbeafe;color:#1e40af}
+.tag-py{background:#fef3c7;color:#92400e}
+.tag-sk{background:#ede9fe;color:#5b21b6}
+.flow-arrow{text-align:center;font-size:1.5rem;color:#94a3b8;margin:8px 0}
+.cm-table td.correct{background:#dcfce7;color:#166534;font-weight:700;text-align:center}
+.cm-table td.wrong{background:#fee2e2;color:#991b1b;text-align:center}
+.cm-table td.zero{color:#cbd5e1;text-align:center}
+.metric-result{font-size:1.5rem;font-weight:800;color:#2563eb}
+ol,ul{margin:8px 0 8px 24px}
+li{margin:4px 0}
+.src{color:#64748b;font-size:.82rem;font-style:italic}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>📊 Perhitungan Manual Evaluasi Model FaceNet + DBSCAN</h1>
+<p class="subtitle">Dokumen ini menjelaskan secara detail dari mana data berasal, bagaimana setiap metrik dihitung, dan contoh perhitungan manual langkah demi langkah.</p>
+<div class="card">
+<h2>1. Sumber Data (Ground Truth & Predicted Labels)</h2>
+<h3><span class="step-num">1</span>Dari Mana Data Berasal?</h3>
+<div class="info-box">
+<strong>Ground Truth (Label Asli)</strong> = <strong>Nama Folder</strong> di database.<br>
+Setiap foto disimpan dalam folder yang dinamai sesuai identitas orang. Contoh: folder "Andi" berisi foto-foto Andi.
+</div>
+<p><strong>Query SQL yang digunakan:</strong></p>
+<table>
+<tr><th>Sumber</th><th>Tabel</th><th>Kolom</th><th>Keterangan</th></tr>
+<tr><td><span class="tag tag-db">Database</span></td><td><code>face_embeddings</code></td><td><code>embedding</code></td><td>Vektor 512 dimensi dari FaceNet (fitur wajah)</td></tr>
+<tr><td><span class="tag tag-db">Database</span></td><td><code>face_embeddings</code></td><td><code>bbox, confidence</code></td><td>Posisi wajah &amp; tingkat keyakinan deteksi MTCNN</td></tr>
+<tr><td><span class="tag tag-db">Database</span></td><td><code>drive_files</code></td><td><code>folder_id</code></td><td>Relasi foto → folder</td></tr>
+<tr><td><span class="tag tag-db">Database</span></td><td><code>folders</code></td><td><code>name</code></td><td>Nama folder = identitas orang (Ground Truth)</td></tr>
+</table>
+<p class="src">File: python-facenet/main.py → endpoint POST /evaluate (baris 1060-1107)</p>
+<h3><span class="step-num">2</span>Filtering Data</h3>
+<p>Sebelum evaluasi, data difilter:</p>
+<ul>
+<li><strong>MIN_CONFIDENCE = 0.85</strong> → wajah dengan confidence &lt; 85% dibuang</li>
+<li><strong>MIN_FACE_DIM = 40px</strong> → wajah berukuran &lt; 40×40 pixel dibuang</li>
+</ul>
+<h3><span class="step-num">3</span>Proses DBSCAN Clustering</h3>
+<p>Embedding yang lolos filter di-normalisasi (L2), lalu DBSCAN dijalankan:</p>
+<table>
+<tr><th>Parameter</th><th>Nilai</th><th>Arti</th></tr>
+<tr><td><code>eps</code></td><td>0.25</td><td>Jarak cosine maksimum agar 2 wajah dianggap satu orang</td></tr>
+<tr><td><code>min_samples</code></td><td>1</td><td>Minimal 1 wajah untuk membentuk cluster</td></tr>
+<tr><td><code>metric</code></td><td>cosine</td><td>Mengukur kemiripan arah vektor embedding</td></tr>
+</table>
+<h3><span class="step-num">4</span>Majority Voting (Mapping Cluster → Identitas)</h3>
+<div class="info-box">
+Setiap cluster hasil DBSCAN dipetakan ke identitas yang paling sering muncul di dalamnya.<br>
+Contoh: Jika Cluster 0 berisi 5 wajah "Andi" dan 1 wajah "Budi", maka Cluster 0 = "Andi".
+</div>
+</div>
+<!-- DATA AKTUAL DB -->
+<div class="card" style="background:#f0fdf4;border:1px solid #86efac">
+<h2>2. Data Aktual di Database (Kondisi Saat Ini)</h2>
+<p>Berikut adalah data <strong>nyata</strong> yang tersimpan di database pada saat dokumen ini dibuat:</p>
+<table>
+<tr><th>Folder</th><th>Jumlah File</th><th>Lolos Filter</th><th>Keterangan</th></tr>
+<tr><td><strong>01 April 2026</strong></td><td>—</td><td>—</td><td>Foto sesi April 2026</td></tr>
+<tr><td><strong>Momen_Resepsi</strong></td><td>—</td><td>—</td><td>Foto acara resepsi</td></tr>
+<tr><td><strong>sample</strong></td><td>—</td><td>—</td><td>Foto sampel pengujian</td></tr>
+<tr><td colspan="2"><strong>Total</strong></td><td><strong>61 wajah</strong></td><td>dari 24 foto</td></tr>
+</table>
+<div class="info-box">
+<strong>✅ 3 Folder Tersedia!</strong> Database kini memiliki 3 identitas berbeda — evaluasi sudah dapat menghasilkan metrik yang bermakna (Accuracy, Precision, Recall, F1, Silhouette).
+</div>
+</div>
+<!-- CONTOH DATA -->
+<div class="card">
+<h2>3. Rincian 10 Embedding dari Database (7 Lolos Evaluasi)</h2>
+<p>Detail setiap wajah yang terdeteksi MTCNN dari <strong>3 foto</strong> dalam folder <strong>Momen_Resepsi</strong>. Yang <span style="color:#166534;font-weight:700">hijau = lolos filter</span>, <span style="color:#991b1b;font-weight:700">merah = dibuang</span>:</p>
+<table>
+<tr><th>No</th><th>Emb ID</th><th>Foto Sumber</th><th>Face#</th><th>Folder (GT)</th><th>Confidence</th><th>Ukuran Bbox</th><th>Filter</th></tr>
+<tr><td>1</td><td>E1</td><td>CC0_7638.jpg</td><td>0</td><td>Momen_Resepsi</td><td>1.000</td><td>73×99 px</td><td style="color:#166534;font-weight:700">✅ LOLOS</td></tr>
+<tr><td>2</td><td>E2</td><td>CC0_7638.jpg</td><td>1</td><td>Momen_Resepsi</td><td>1.000</td><td>65×89 px</td><td style="color:#166534;font-weight:700">✅ LOLOS</td></tr>
+<tr style="background:#fee2e2"><td>3</td><td>E3</td><td>CC0_7638.jpg</td><td>2</td><td>Momen_Resepsi</td><td>0.766</td><td>18×20 px</td><td style="color:#991b1b;font-weight:700">❌ FILTER (conf &lt; 0.85 &amp; dim &lt; 40px)</td></tr>
+<tr><td>4</td><td>E4</td><td>CC0_8149.jpg</td><td>0</td><td>Momen_Resepsi</td><td>1.000</td><td>65×85 px</td><td style="color:#166534;font-weight:700">✅ LOLOS</td></tr>
+<tr><td>5</td><td>E5</td><td>CC0_8149.jpg</td><td>1</td><td>Momen_Resepsi</td><td>1.000</td><td>64×84 px</td><td style="color:#166534;font-weight:700">✅ LOLOS</td></tr>
+<tr><td>6</td><td>E6</td><td>CC0_8149.jpg</td><td>2</td><td>Momen_Resepsi</td><td>0.998</td><td>57×75 px</td><td style="color:#166534;font-weight:700">✅ LOLOS</td></tr>
+<tr style="background:#fee2e2"><td>7</td><td>E7</td><td>CC0_8149.jpg</td><td>3</td><td>Momen_Resepsi</td><td>0.995</td><td>27×36 px</td><td style="color:#991b1b;font-weight:700">❌ FILTER (dim &lt; 40px)</td></tr>
+<tr><td>8</td><td>E8</td><td>CC2_4210.jpg</td><td>0</td><td>Momen_Resepsi</td><td>0.999</td><td>108×162 px</td><td style="color:#166534;font-weight:700">✅ LOLOS</td></tr>
+<tr><td>9</td><td>E9</td><td>CC2_4210.jpg</td><td>1</td><td>Momen_Resepsi</td><td>1.000</td><td>98×139 px</td><td style="color:#166534;font-weight:700">✅ LOLOS</td></tr>
+<tr style="background:#fee2e2"><td>10</td><td>E10</td><td>CC2_4210.jpg</td><td>2</td><td>Momen_Resepsi</td><td>0.923</td><td>22×27 px</td><td style="color:#991b1b;font-weight:700">❌ FILTER (dim &lt; 40px)</td></tr>
+</table>
+<div class="info-box">
+<strong>Ringkasan Filter:</strong>
+<ul>
+<li>E3 dibuang: confidence 0.766 &lt; 0.85 DAN ukuran 18×20 &lt; 40px</li>
+<li>E7 dibuang: ukuran 27×36 &lt; 40px (confidence OK tapi terlalu kecil)</li>
+<li>E10 dibuang: ukuran 22×27 &lt; 40px (confidence OK tapi terlalu kecil)</li>
+</ul>
+<strong>Hasil: 7 dari 10 embedding lolos filter</strong> dan ikut evaluasi (E1, E2, E4, E5, E6, E8, E9).
+</div>
+<div class="warn-box">
+<strong>Noise (DBSCAN label -1)</strong> = wajah yang tidak masuk cluster manapun. Berbeda dengan filter di atas — filter dilakukan <em>sebelum</em> DBSCAN berdasarkan ukuran/confidence. Noise terjadi <em>saat</em> DBSCAN tidak bisa mengelompokkan wajah karena terlalu berbeda dari semua wajah lain.
+</div>
+</div>
+<!-- CONFUSION MATRIX AKTUAL -->
+<div class="card">
+<h2>4. Confusion Matrix (Kondisi Database Saat Ini)</h2>
+<p>Database kini memiliki <strong>3 folder</strong> (3 identitas), sehingga confusion matrix berukuran 3×3:</p>
+<table class="cm-table">
+<tr><th>Asli ↓ \ Prediksi →</th><th>01 April 2026</th><th>Momen_Resepsi</th><th>sample</th></tr>
+<tr><td><strong>01 April 2026</strong></td><td class="correct">36</td><td class="zero">0</td><td class="wrong">3</td></tr>
+<tr><td><strong>Momen_Resepsi</strong></td><td class="wrong">4</td><td class="correct">1</td><td class="wrong">2</td></tr>
+<tr><td><strong>sample</strong></td><td class="wrong">3</td><td class="zero">0</td><td class="correct">12</td></tr>
+</table>
+<div class="info-box">
+<strong>Cara baca:</strong> Diagonal hijau = prediksi benar (TP). Sel merah = salah prediksi.<br>
+Contoh: 3 wajah "01 April 2026" salah diprediksi sebagai "sample", dan 4 wajah "Momen_Resepsi" salah diprediksi sebagai "01 April 2026".<br>
+<strong>Total benar: 36 + 1 + 12 = 49 dari 61 wajah.</strong>
+</div>
+<p class="src">Dihitung oleh: sklearn.metrics.confusion_matrix(true_labels, pred_labels)</p>
+</div>
+<!-- METRIK KLASIFIKASI AKTUAL -->
+<div class="card">
+<h2>5. Perhitungan Metrik Klasifikasi (Data Aktual)</h2>
+<div class="warn-box">
+<strong>Data Aktual:</strong> Metrik berikut dihitung dari 3 folder, 61 wajah valid. Nilai yang tidak sempurna menunjukkan model bekerja dalam kondisi nyata multi-kelas.
+</div>
+<h3>A. Accuracy (Tingkat Akurasi)</h3>
+<div class="formula">Accuracy = Jumlah Prediksi Benar / Total Data Valid × 100%</div>
+<p><strong>Perhitungan dari data aktual:</strong></p>
+<div class="formula">Accuracy = 49 / 61 × 100% = <span class="metric-result">80,33%</span></div>
+<p class="src">sklearn.metrics.accuracy_score(true, pred)</p>
+<div class="info-box">49 dari 61 wajah berhasil diprediksi dengan benar. 12 wajah salah diklasifikasi ke identitas lain. Nilai ini bermakna karena ada 3 kelas berbeda.</div>
+<h3>B. Precision (Tingkat Ketepatan) — Weighted Average</h3>
+<div class="info-box">
+Precision per kelas = TP / (TP + FP)<br>
+<strong>TP</strong> = True Positive (benar diprediksi sebagai kelas itu)<br>
+<strong>FP</strong> = False Positive (salah diprediksi sebagai kelas itu, padahal bukan)
+</div>
+<table>
+<tr><th>Kelas</th><th>TP</th><th>FP</th><th>Precision</th><th>Support</th></tr>
+<tr><td>01 April 2026</td><td>36</td><td>7</td><td>36/(36+7) = 0.8372</td><td>39</td></tr>
+<tr><td>Momen_Resepsi</td><td>1</td><td>0</td><td>1/(1+0) = 1.0000</td><td>7</td></tr>
+<tr><td>sample</td><td>12</td><td>5</td><td>12/(12+5) = 0.7059</td><td>15</td></tr>
+</table>
+<div class="formula">
+Weighted Precision = (0.8372×39 + 1.0000×7 + 0.7059×15) / 61 = <span class="metric-result">82,36%</span>
+</div>
+<h3>C. Recall (Tingkat Kepekaan) — Weighted Average</h3>
+<div class="info-box">
+Recall per kelas = TP / (TP + FN)<br>
+<strong>FN</strong> = False Negative (seharusnya kelas itu tapi diprediksi kelas lain)
+</div>
+<table>
+<tr><th>Kelas</th><th>TP</th><th>FN</th><th>Recall</th><th>Support</th></tr>
+<tr><td>01 April 2026</td><td>36</td><td>3</td><td>36/(36+3) = 0.9231</td><td>39</td></tr>
+<tr><td>Momen_Resepsi</td><td>1</td><td>6</td><td>1/(1+6) = 0.1429</td><td>7</td></tr>
+<tr><td>sample</td><td>12</td><td>3</td><td>12/(12+3) = 0.8000</td><td>15</td></tr>
+</table>
+<div class="formula">
+Weighted Recall = (0.9231×39 + 0.1429×7 + 0.8000×15) / 61 = <span class="metric-result">80,33%</span>
+</div>
+<h3>D. F1-Score (Kestabilan Model) — Weighted Average</h3>
+<div class="info-box">
+F1 per kelas = 2 × (Precision × Recall) / (Precision + Recall)
+</div>
+<table>
+<tr><th>Kelas</th><th>Precision</th><th>Recall</th><th>F1-Score</th><th>Support</th></tr>
+<tr><td>01 April 2026</td><td>0.8372</td><td>0.9231</td><td>2×(0.8372×0.9231)/(0.8372+0.9231) = 0.8780</td><td>39</td></tr>
+<tr><td>Momen_Resepsi</td><td>1.0000</td><td>0.1429</td><td>2×(1.000×0.1429)/(1.000+0.1429) = 0.2500</td><td>7</td></tr>
+<tr><td>sample</td><td>0.7059</td><td>0.8000</td><td>2×(0.7059×0.8000)/(0.7059+0.8000) = 0.7500</td><td>15</td></tr>
+</table>
+<div class="formula">
+Weighted F1 = (0.8780×39 + 0.2500×7 + 0.7500×15) / 61 = <span class="metric-result">77,45%</span>
+</div>
+</div>
+<!-- METRIK CLUSTERING -->
+<div class="card">
+<h2>5. Metrik Clustering</h2>
+<h3>A. Adjusted Rand Index (ARI)</h3>
+<div class="info-box">
+ARI mengukur kesesuaian antara pengelompokan DBSCAN vs ground truth. Menggunakan <strong>semua data termasuk noise</strong>.<br>
+Skala: -1 (lebih buruk dari acak) → 0 (acak/tidak bermakna) → 1 (sempurna).
+</div>
+<div class="formula">
+ARI = (RI - Expected_RI) / (Max_RI - Expected_RI)
+</div>
+<p><strong>Langkah perhitungan:</strong></p>
+<ol>
+<li>Hitung semua pasangan wajah yang ada (kombinasi 2 dari N wajah)</li>
+<li>Tandai pasangan yang <em>sama cluster DBSCAN</em> DAN <em>sama folder asli</em> (concordant)</li>
+<li>Normalisasi terhadap expected value agar tidak terpengaruh ukuran data</li>
+</ol>
+<p>Dengan data aktual saat ini (7 wajah dari 1 folder, semua label sama = Momen_Resepsi):</p>
+<div class="formula">ARI = <span class="metric-result">0</span> (penyebut = 0 karena hanya 1 kelas)</div>
+<p class="src">sklearn.metrics.adjusted_rand_score(true_labels, pred_labels)</p>
+<div class="warn-box" style="margin-top:12px">
+<strong>⚠️ Kenapa ARI bisa = 0?</strong><br>
+ARI = 0 terjadi ketika <strong>hanya ada 1 folder/identitas</strong> di database. Ini bukan error — ini berarti ARI <em>tidak dapat dihitung secara bermakna</em>.<br><br>
+<strong>Penjelasan matematis:</strong> Rumus ARI membagi dengan <code>(Max_RI - Expected_RI)</code>. Jika semua ground truth label identik (1 kelas), maka Max_RI = Expected_RI → penyebut = 0. Sklearn mengembalikan 0.0 untuk kasus ini.<br><br>
+<strong>Solusi:</strong> Buat minimal 2 folder dengan nama berbeda (misal: "Andi", "Budi") dan isi masing-masing dengan foto orang tersebut, lalu jalankan indexing ulang.
+</div>
+<h3>B. Silhouette Score</h3>
+<div class="info-box">
+Mengukur seberapa baik DBSCAN memisahkan wajah-wajah ke cluster yang tepat.<br>
+Skala: -1 (salah cluster) → 0 (overlap/tumpang tindih) → +1 (pemisahan sangat jelas).
+</div>
+<div class="formula">
+Silhouette(i) = (b(i) - a(i)) / max(a(i), b(i))
+</div>
+<p>Dimana:</p>
+<ul>
+<li><strong>a(i)</strong> = rata-rata jarak cosine wajah <em>i</em> ke semua wajah dalam cluster yang <em>sama</em> (semakin kecil = semakin kompak)</li>
+<li><strong>b(i)</strong> = rata-rata jarak cosine ke cluster <em>terdekat lainnya</em> (semakin besar = semakin terpisah)</li>
+</ul>
+<p><strong>Interpretasi nilai:</strong></p>
+<table>
+<tr><th>Silhouette Score</th><th>Interpretasi</th><th>Artinya</th></tr>
+<tr><td>0.71 – 1.00</td><td>🟢 Sangat Baik</td><td>Cluster terpisah dengan sangat jelas, tidak ada tumpang tindih</td></tr>
+<tr><td>0.51 – 0.70</td><td>🔵 Baik</td><td>Struktur cluster cukup jelas dan dapat diandalkan</td></tr>
+<tr><td>0.26 – 0.50</td><td>🟡 Sedang</td><td>Cluster lemah, bisa jadi ada beberapa wajah yang mirip antar orang</td></tr>
+<tr><td>&lt; 0.25</td><td>🔴 Buruk</td><td>Cluster hampir tidak ada, wajah antar orang sangat mirip atau data sedikit</td></tr>
+</table>
+<p class="src">sklearn.metrics.silhouette_score(embeddings, labels, metric="cosine")</p>
+<div class="warn-box" style="margin-top:12px">
+<strong>⚠️ Kenapa Silhouette Score bisa N/A?</strong><br>
+Silhouette Score memerlukan minimal <strong>2 cluster yang berbeda</strong> untuk dihitung. Jika DBSCAN hanya menghasilkan 1 cluster (semua wajah dianggap 1 orang), maka Silhouette tidak bisa dihitung dan ditampilkan sebagai N/A.
+</div>
+</div>
+<!-- ALUR DATA -->
+<div class="card">
+<h2>6. Alur Lengkap Data Evaluasi</h2>
+<table>
+<tr><th>Tahap</th><th>Proses</th><th>Sumber</th><th>Output</th></tr>
+<tr><td><span class="tag tag-db">1</span></td><td>Ambil embedding + folder name dari DB</td><td>MySQL: face_embeddings + drive_files + folders</td><td>Array embedding (512-dim) + ground truth labels</td></tr>
+<tr><td><span class="tag tag-py">2</span></td><td>Filter confidence &lt; 0.85 dan bbox &lt; 40px</td><td>Python: main.py</td><td>Data bersih siap evaluasi</td></tr>
+<tr><td><span class="tag tag-sk">3</span></td><td>Normalisasi L2 embedding</td><td>sklearn: normalize()</td><td>Embedding unit-length</td></tr>
+<tr><td><span class="tag tag-sk">4</span></td><td>DBSCAN clustering (eps=0.25, cosine)</td><td>sklearn: DBSCAN</td><td>Predicted cluster labels</td></tr>
+<tr><td><span class="tag tag-py">5</span></td><td>Majority voting per cluster</td><td>Python: Counter</td><td>Cluster → identitas mapping</td></tr>
+<tr><td><span class="tag tag-sk">6</span></td><td>Hitung metrik evaluasi</td><td>sklearn: accuracy, precision, recall, f1, ARI, silhouette</td><td>Skor performa final</td></tr>
+</table>
+</div>
+<!-- INTERPRETASI METRIK -->
+<div class="card">
+<h2>6. Panduan Interpretasi Hasil</h2>
+<p>Tabel acuan untuk memahami apakah nilai metrik yang diperoleh tergolong bagus atau perlu perbaikan:</p>
+<table>
+<tr><th>Metrik</th><th>🔴 Buruk</th><th>🟡 Sedang</th><th>🔵 Baik</th><th>🟢 Sangat Baik</th><th>Syarat Dapat Dihitung</th></tr>
+<tr><td><strong>Accuracy</strong></td><td>&lt; 60%</td><td>60–79%</td><td>80–89%</td><td>≥ 90%</td><td>Min. 1 kelas, ada data valid (non-noise)</td></tr>
+<tr><td><strong>Precision</strong></td><td>&lt; 60%</td><td>60–79%</td><td>80–89%</td><td>≥ 90%</td><td>Min. 1 kelas, ada data valid</td></tr>
+<tr><td><strong>Recall</strong></td><td>&lt; 60%</td><td>60–79%</td><td>80–89%</td><td>≥ 90%</td><td>Min. 1 kelas, ada data valid</td></tr>
+<tr><td><strong>F1-Score</strong></td><td>&lt; 60%</td><td>60–79%</td><td>80–89%</td><td>≥ 90%</td><td>Min. 1 kelas, ada data valid</td></tr>
+<tr><td><strong>ARI</strong></td><td>&lt; 0.3</td><td>0.3–0.6</td><td>0.6–0.8</td><td>≥ 0.8</td><td><strong>Min. 2 folder berbeda</strong></td></tr>
+<tr><td><strong>Silhouette</strong></td><td>&lt; 0.25</td><td>0.25–0.50</td><td>0.51–0.70</td><td>≥ 0.71</td><td><strong>Min. 2 cluster terbentuk</strong></td></tr>
+</table>
+<div class="warn-box">
+<strong>Perhatian — Accuracy = 100% dengan 1 Folder:</strong><br>
+Jika database hanya memiliki <strong>1 folder</strong>, maka Accuracy/Precision/Recall/F1 akan selalu 100%. Ini bukan berarti model sangat akurat — ini karena hanya ada 1 kelas sehingga semua prediksi dianggap "benar". Hasil ini <em>tidak bermakna secara ilmiah</em>. Evaluasi yang valid membutuhkan minimal 2–3 folder dengan identitas berbeda.
+</div>
+</div>
+<!-- RINGKASAN -->
+<div class="card">
+<h2>7. Ringkasan Hasil Aktual (Sesuai Output Sistem)</h2>
+<p>Berikut adalah hasil evaluasi yang <strong>benar-benar dihasilkan sistem</strong> berdasarkan data di database saat ini:</p>
+<table>
+<tr><th>Metrik</th><th>Nilai Aktual</th><th>Perhitungan / Sumber</th><th>Keterangan</th></tr>
+<tr><td>Total Foto</td><td>24</td><td>COUNT(*) drive_files</td><td>3 folder: 01 April 2026, Momen_Resepsi, sample</td></tr>
+<tr><td>Wajah Dievaluasi</td><td><strong>61</strong></td><td>face_embeddings lolos filter</td><td>Lolos filter conf≥0.85 &amp; dim≥40px</td></tr>
+<tr><td>Identitas (Folder)</td><td><strong>3</strong></td><td>LabelEncoder(folder_name)</td><td>01 April 2026, Momen_Resepsi, sample</td></tr>
+<tr><td>Grup Dibuat (Cluster)</td><td><strong>37</strong></td><td>DBSCAN eps=0.25, cosine, min_samples=1</td><td>61 wajah dibagi ke 37 cluster</td></tr>
+<tr><td>Noise (DBSCAN label -1)</td><td><strong>0</strong></td><td>Tidak ada wajah yang menjadi noise</td><td>Semua wajah masuk cluster</td></tr>
+<tr><td>Tebakan Benar</td><td><strong>49</strong></td><td>Majority voting per cluster → 49 benar</td><td>12 wajah salah diklasifikasi</td></tr>
+<tr class="highlight"><td><strong>Accuracy</strong></td><td><strong>80,33%</strong></td><td>49 ÷ 61 × 100%</td><td>✅ Baik — multi-kelas nyata</td></tr>
+<tr class="highlight"><td><strong>Precision</strong></td><td><strong>82,36%</strong></td><td>Weighted: (0.8372×39 + 1.00×7 + 0.7059×15) ÷ 61</td><td>✅ Baik</td></tr>
+<tr class="highlight"><td><strong>Recall</strong></td><td><strong>80,33%</strong></td><td>Weighted: (0.9231×39 + 0.1429×7 + 0.80×15) ÷ 61</td><td>🔵 Recall Momen_Resepsi rendah (14,29%)</td></tr>
+<tr class="highlight"><td><strong>F1-Score</strong></td><td><strong>77,45%</strong></td><td>Weighted F1 dari 3 kelas</td><td>🟡 Sedang — dipengaruhi Momen_Resepsi</td></tr>
+<tr><td>ARI</td><td><strong>−0.0138</strong></td><td>adjusted_rand_score(true, pred)</td><td>🔴 Mendekati 0 — DBSCAN belum match GT</td></tr>
+<tr><td>Silhouette Score</td><td><strong>0.2693</strong></td><td>sklearn.silhouette_score(61 emb, 37 cluster, cosine)</td><td>🟡 Sedang — cluster ada tapi overlap</td></tr>
+</table>
+<div class="info-box">
+<strong>Catatan Silhouette = 0.2693 (Sedang):</strong> DBSCAN menghasilkan <strong>37 cluster</strong> dari 61 embedding. Nilai 0.2693 berarti pemisahan cluster <em>ada tapi overlap</em> — beberapa wajah dari identitas berbeda memiliki embedding yang mirip, atau 1 orang tersebar ke beberapa cluster.
+</div>
+<div class="warn-box">
+<strong>Kesimpulan kondisi saat ini:</strong> Dengan 3 folder dan 61 wajah, evaluasi sudah bermakna. Accuracy 80,33% menunjukkan model cukup baik. Recall rendah pada Momen_Resepsi (14,29%) menandakan perlu lebih banyak foto resepsi agar model lebih mengenal identitas tersebut. ARI −0.0138 menunjukkan cluster DBSCAN belum sepenuhnya selaras dengan pembagian folder asli.
+</div>
+</div>
+<!-- FAQ -->
+<div class="card">
+<h2>8. Pertanyaan yang Sering Muncul (FAQ)</h2>
+<h3>❓ Kenapa ARI = 0?</h3>
+<div class="warn-box">
+ARI = −0.0138 karena meskipun ada 3 folder, DBSCAN menghasilkan 37 cluster yang tidak selaras sempurna dengan pembagian folder. ARI mendekati 0 berarti pengelompokan hampir acak dibanding ground truth. Untuk meningkatkan ARI, pastikan eps DBSCAN disesuaikan agar cluster lebih sesuai dengan identitas asli.
+</div>
+<h3>❓ Kenapa Accuracy/Precision/Recall/F1 = 100% padahal model belum tentu sempurna?</h3>
+<div class="warn-box">
+Dengan 3 folder, nilai Accuracy 80,33% sudah bermakna. Nilai tidak sempurna justru menunjukkan model bekerja dalam kondisi nyata — ada 12 wajah yang salah diklasifikasi, terutama pada kelas Momen_Resepsi yang memiliki sedikit foto.
+</div>
+<h3>❓ Kenapa Silhouette Score = N/A?</h3>
+<div class="info-box">
+Silhouette Score membutuhkan minimal 2 cluster yang berbeda. Jika semua wajah masuk ke 1 cluster atau semua menjadi noise, maka tidak bisa dihitung.
+</div>
+<h3>❓ Kenapa ada wajah yang jadi Noise (label -1)?</h3>
+<div class="info-box">
+DBSCAN memberi label noise kepada wajah yang <em>tidak memiliki tetangga cukup dekat</em> dalam ruang embedding. Ini bisa terjadi karena: wajah tersebut sangat berbeda dari semua wajah lain, foto berkualitas rendah, atau orang tersebut hanya muncul 1 kali dengan pose/pencahayaan unik. Noise <strong>tidak dihitung</strong> dalam Accuracy/Precision/Recall/F1, namun tetap dihitung dalam ARI.
+</div>
+<h3>❓ Berapa folder/foto minimal untuk evaluasi yang bermakna?</h3>
+<div class="info-box">
+Rekomendasi minimum untuk evaluasi yang dapat dipercaya:
+<ul>
+<li><strong>Minimal 3 folder</strong> (3 identitas orang berbeda)</li>
+<li><strong>Minimal 3–5 foto per orang</strong> dengan variasi pose dan pencahayaan</li>
+<li>Total minimal <strong>10–15 embedding</strong> yang lolos filter (confidence ≥ 85%, ukuran ≥ 40px)</li>
+</ul>
+</div>
+<h3>❓ Apa bedanya ARI dan Silhouette Score?</h3>
+<div class="info-box">
+<strong>ARI</strong> mengukur <em>apakah DBSCAN mengelompokkan orang yang tepat bersama</em> (membandingkan dengan folder asli sebagai ground truth). ARI = 1 berarti setiap cluster hanya berisi wajah dari 1 orang yang sama.<br><br>
+<strong>Silhouette Score</strong> mengukur <em>seberapa jelas batas antar cluster</em> tanpa melihat label asli. Silhouette tinggi berarti wajah dalam 1 cluster sangat mirip satu sama lain, dan sangat berbeda dengan cluster lain.
+</div>
+</div>
+<div class="card" style="background:#f0fdf4;border:1px solid #86efac">
+<h3>✅ Kesimpulan</h3>
+<p>Semua data evaluasi berasal dari <strong>database MySQL</strong> yang sama dengan aplikasi Laravel. Ground truth ditentukan dari <strong>nama folder</strong> tempat foto disimpan. Model FaceNet mengekstrak fitur wajah menjadi vektor 512 dimensi, lalu DBSCAN mengelompokkan vektor-vektor tersebut berdasarkan kemiripan cosine. Metrik dihitung menggunakan library <strong>scikit-learn</strong>.</p>
+<p style="margin-top:10px"><strong>Agar evaluasi bermakna:</strong> Pastikan ada minimal 3 folder berbeda (nama = identitas orang), masing-masing berisi beberapa foto orang tersebut. Jalankan indexing ulang setelah upload foto, kemudian jalankan Evaluasi di aplikasi.</p>
+</div>
+</div>
+</body>
+</html>

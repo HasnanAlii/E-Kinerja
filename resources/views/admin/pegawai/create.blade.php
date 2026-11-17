@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold text-gray-800 leading-tight">
-            Tambah Pegawai Non-PNS
+            Tambah Data Karyawan
         </h2>
     </x-slot>
 
-    <div class="py-1">
+    <div class="py-6">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white shadow-xl sm:rounded-xl border border-gray-200">
 
@@ -15,38 +15,135 @@
                         <i data-feather="user-plus" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-gray-800">Form Tambah Pegawai</h3>
-                        <p class="text-sm text-gray-500">Lengkapi data berikut untuk menambahkan pegawai baru.</p>
+                        <h3 class="text-lg font-bold text-gray-800">Form Tambah Karyawan</h3>
+                        <p class="text-sm text-gray-500">Lengkapi data karyawan PT Pou Yuen berikut.</p>
                     </div>
                 </div>
 
+                @if ($errors->any())
+                    <div class="mx-6 mt-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+                        <ul class="list-disc pl-5 space-y-1">
+                            @foreach ($errors->all() as $err)
+                                <li>{{ $err }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <form action="{{ route('admin.pegawai.store') }}" method="POST" enctype="multipart/form-data"
-                      class="px-6 pb-6 space-y-10">
+                      class="p-6 space-y-8">
                     @csrf
 
-                    {{-- ================================================= --}}
-                    {{-- SECTION 1 — Akun User --}}
-                    {{-- ================================================= --}}
+                    {{-- SECTION 1 — Data Karyawan --}}
                     <div>
                         <h3 class="text-lg font-bold flex items-center text-gray-900 space-x-2">
-                            <i data-feather="lock" class="w-5 h-5 text-indigo-600"></i>
-                            <span>Akun Pegawai</span>
+                            <i data-feather="briefcase" class="w-5 h-5 text-indigo-600"></i>
+                            <span>Data Karyawan</span>
                         </h3>
 
-                        <p class="mt-1 text-sm text-gray-600">Digunakan untuk login ke sistem.</p>
-
-                        <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
 
                             {{-- Nama --}}
                             <div class="md:col-span-2">
                                 <label class="font-medium text-gray-700">
-                                    Nama Pegawai <span class="text-red-600">*</span>
+                                    Nama <span class="text-red-600">*</span>
                                 </label>
                                 <input type="text" name="nama" required value="{{ old('nama') }}"
+                                       placeholder="Nama lengkap karyawan"
                                        class="mt-1 w-full rounded-md border-gray-300 shadow-sm">
                             </div>
 
-                            {{-- Email --}}
+                            {{-- NIK Karyawan --}}
+                            <div>
+                                <label class="font-medium text-gray-700">
+                                    NIK Karyawan <span class="text-red-600">*</span>
+                                </label>
+                                <input type="text" name="nik_karyawan" required value="{{ old('nik_karyawan') }}"
+                                       placeholder="Nomor Induk Karyawan"
+                                       class="mt-1 w-full rounded-md border-gray-300 shadow-sm">
+                            </div>
+
+                            {{-- Jenis Kelamin --}}
+                            <div>
+                                <label class="font-medium text-gray-700">
+                                    Jenis Kelamin <span class="text-red-600">*</span>
+                                </label>
+                                <select name="jenis_kelamin" required
+                                        class="mt-1 w-full rounded-md border-gray-300 shadow-sm">
+                                    <option value="">-- Pilih Jenis Kelamin --</option>
+                                    <option value="Laki-laki" @selected(old('jenis_kelamin')=='Laki-laki')>Laki-laki</option>
+                                    <option value="Perempuan" @selected(old('jenis_kelamin')=='Perempuan')>Perempuan</option>
+                                </select>
+                            </div>
+
+                            {{-- Departemen --}}
+                            <div>
+                                <label class="font-medium text-gray-700">
+                                    Departemen <span class="text-red-600">*</span>
+                                </label>
+                                <input type="text" name="departemen" required value="{{ old('departemen') }}"
+                                       placeholder="Contoh: Produksi / HRD / QC"
+                                       class="mt-1 w-full rounded-md border-gray-300 shadow-sm">
+                            </div>
+
+                            {{-- Divisi --}}
+                            <div>
+                                <label class="font-medium text-gray-700">
+                                    Divisi <span class="text-red-600">*</span>
+                                </label>
+                                <input type="text" name="divisi" required value="{{ old('divisi') }}"
+                                       placeholder="Contoh: Assembly / Sewing / Cutting"
+                                       class="mt-1 w-full rounded-md border-gray-300 shadow-sm">
+                            </div>
+
+                            {{-- Jabatan --}}
+                            <div>
+                                <label class="font-medium text-gray-700">
+                                    Jabatan <span class="text-red-600">*</span>
+                                </label>
+                                <input type="text" name="jabatan" required value="{{ old('jabatan') }}"
+                                       placeholder="Contoh: Operator / Staff / Leader"
+                                       class="mt-1 w-full rounded-md border-gray-300 shadow-sm">
+                            </div>
+
+                            {{-- Status --}}
+                            <div>
+                                <label class="font-medium text-gray-700">
+                                    Status <span class="text-red-600">*</span>
+                                </label>
+                                <select name="status" required
+                                        class="mt-1 w-full rounded-md border-gray-300 shadow-sm">
+                                    <option value="Masih Bekerja" @selected(old('status', 'Masih Bekerja')=='Masih Bekerja')>Masih Bekerja</option>
+                                    <option value="Tidak Aktif" @selected(old('status')=='Tidak Aktif')>Tidak Aktif</option>
+                                </select>
+                            </div>
+
+                            {{-- Foto (Opsional) --}}
+                            <div class="md:col-span-2">
+                                <label class="font-medium text-gray-700">Foto Profil (Opsional)</label>
+                                <div class="mt-2 flex items-center">
+                                    <img id="previewImage" src="" class="hidden w-20 h-20 rounded-lg object-cover mr-4 border border-gray-300">
+                                    <label class="cursor-pointer bg-blue-50 text-blue-700 border border-blue-300 hover:bg-blue-100 transition px-4 py-2 rounded-lg flex items-center gap-2 font-medium shadow-sm">
+                                        <i data-feather="upload" class="w-5 h-5"></i>
+                                        <span>Pilih Foto</span>
+                                        <input type="file" name="profile_photo" id="profile_photo"
+                                            class="hidden" accept="image/*" onchange="previewFile(event)">
+                                    </label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    {{-- SECTION 2 — Akun Login --}}
+                    <div class="pt-6 border-t border-gray-100">
+                        <h3 class="text-lg font-bold flex items-center text-gray-900 space-x-2">
+                            <i data-feather="lock" class="w-5 h-5 text-indigo-600"></i>
+                            <span>Akun Login Karyawan</span>
+                        </h3>
+                        <p class="mt-1 text-sm text-gray-500">Digunakan karyawan untuk masuk ke sistem.</p>
+
+                        <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label class="font-medium text-gray-700">
                                     Email <span class="text-red-600">*</span>
@@ -55,7 +152,6 @@
                                        class="mt-1 w-full rounded-md border-gray-300 shadow-sm">
                             </div>
 
-                            {{-- Password --}}
                             <div>
                                 <label class="font-medium text-gray-700">
                                     Password <span class="text-red-600">*</span>
@@ -63,203 +159,10 @@
                                 <input type="password" name="password" required
                                        class="mt-1 w-full rounded-md border-gray-300 shadow-sm">
                             </div>
-
-                        </div>
-                    </div>
-{{-- ================================================= --}}
-{{-- SECTION 2 — Data Pribadi User --}}
-{{-- ================================================= --}}
-<div>
-    <h3 class="text-lg font-bold flex items-center text-gray-900 space-x-2">
-        <i data-feather="user" class="w-5 h-5 text-indigo-600"></i>
-        <span>Data Pribadi</span>
-    </h3>
-
-    <p class="mt-1 text-sm text-gray-500 italic">
-        Data pribadi bersifat opsional dan dapat diisi oleh pegawai setelah akun dibuat.
-    </p>
-
-    <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-6">
-
-        {{-- NIK --}}
-        <div>
-            <label class="font-medium text-gray-700">NIK (Opsional)</label>
-            <input type="text" name="nik" value="{{ old('nik') }}"
-                   class="mt-1 w-full rounded-md border-gray-300">
-        </div>
-
-        {{-- Jenis Kelamin --}}
-        <div>
-            <label class="font-medium text-gray-700">Jenis Kelamin (Opsional)</label>
-            <select name="jenis_kelamin"
-                    class="mt-1 w-full rounded-md border-gray-300">
-                <option value="">-- Pilih --</option>
-                <option value="Laki-laki" @selected(old('jenis_kelamin')=='Laki-laki')>Laki-laki</option>
-                <option value="Perempuan" @selected(old('jenis_kelamin')=='Perempuan')>Perempuan</option>
-            </select>
-        </div>
-
-        {{-- Tempat Lahir --}}
-        <div>
-            <label class="font-medium text-gray-700">Tempat Lahir (Opsional)</label>
-            <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir') }}"
-                   class="mt-1 w-full rounded-md border-gray-300">
-        </div>
-
-        {{-- Tanggal Lahir --}}
-        <div>
-            <label class="font-medium text-gray-700">Tanggal Lahir (Opsional)</label>
-            <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}"
-                   class="mt-1 w-full rounded-md border-gray-300">
-        </div>
-
-        {{-- Agama --}}
-        <div>
-            <label class="font-medium text-gray-700">Agama (Opsional)</label>
-            <input type="text" name="agama" value="{{ old('agama') }}"
-                   class="mt-1 w-full rounded-md border-gray-300">
-        </div>
-
-        {{-- Telepon --}}
-        <div>
-            <label class="font-medium text-gray-700">Telepon (Opsional)</label>
-            <input type="text" name="telp" value="{{ old('telp') }}"
-                   class="mt-1 w-full rounded-md border-gray-300">
-        </div>
-
-        {{-- Alamat --}}
-        <div class="md:col-span-2">
-            <label class="font-medium text-gray-700">Alamat (Opsional)</label>
-            <textarea name="alamat" rows="2"
-                      class="mt-1 w-full rounded-md border-gray-300">{{ old('alamat') }}</textarea>
-        </div>
-
-        {{-- Foto (Opsional) --}}
-        <div class="md:col-span-2">
-            <label class="font-medium text-gray-700">Foto Profil (Opsional)</label>
-
-            <div class="mt-2 flex items-center">
-                {{-- Preview --}}
-                <img id="previewImage" 
-                     src="{{ asset('images/default-preview.png') }}" 
-                     class="hidden w-20 h-20 rounded-lg object-cover mr-4 border border-gray-300">
-
-                {{-- Custom File Input --}}
-                <label class="cursor-pointer bg-blue-50 text-blue-700 border border-blue-300 hover:bg-blue-100 
-                               transition px-4 py-2 rounded-lg flex items-center gap-2 font-medium shadow-sm">
-
-                    <i data-feather="upload" class="w-5 h-5"></i>
-                    <span>Pilih Foto</span>
-
-                    <input type="file" name="profile_photo" id="profile_photo"
-                        class="hidden" accept="image/*" onchange="previewFile(event)">
-                </label>
-            </div>
-        </div>
-
-        <script>
-        function previewFile(event) {
-            const image = document.getElementById('previewImage');
-            image.src = URL.createObjectURL(event.target.files[0]);
-            image.classList.remove('hidden');
-        }
-        </script>
-
-    </div>
-</div>
-
-
-                    {{-- ================================================= --}}
-                    {{-- SECTION 3 — Detail Pegawai --}}
-                    {{-- ================================================= --}}
-                    <div>
-                        <h3 class="text-lg font-bold flex items-center text-gray-900 space-x-2">
-                            <i data-feather="briefcase" class="w-5 h-5 text-indigo-600"></i>
-                            <span>Detail Pegawai</span>
-                        </h3>
-
-                        <p class="mt-1 text-sm text-gray-600">Informasi kepegawaian untuk administrasi.</p>
-
-                        <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                            {{-- Bidang --}}
-                            <div>
-                                <label class="font-medium text-gray-700">
-                                    Bidang <span class="text-red-600">*</span>
-                                </label>
-                                <select name="bidang_id" required
-                                        class="mt-1 w-full rounded-md border-gray-300">
-                                    <option value="">-- Pilih Bidang --</option>
-                                    @foreach ($bidang as $b)
-                                        <option value="{{ $b->id }}" @selected(old('bidang_id')==$b->id)>
-                                            {{ $b->nama_bidang }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            {{-- Atasan --}}
-                            <div>
-                                <label class="font-medium text-gray-700">
-                                    Atasan <span class="text-red-600">*</span>
-                                </label>
-                                <select name="atasan_id" required
-                                        class="mt-1 w-full rounded-md border-gray-300">
-                                    <option value="">-- Pilih Atasan --</option>
-                                    @foreach ($atasan as $a)
-                                        <option value="{{ $a->id }}" @selected(old('atasan_id')==$a->id)>
-                                            {{ $a->name }} — {{ $a->jabatan }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            @if(false) {{-- DISABLED: jabatan --}}
-{{-- Jabatan --}}
-                            <div>
-                                <label class="font-medium text-gray-700">
-                                    Jabatan <span class="text-red-600">*</span>
-                                </label>
-                                <input type="text" name="jabatan" required value="{{ old('jabatan') }}"
-                                       class="mt-1 w-full rounded-md border-gray-300">
-                            </div>
-@endif
-
-                            {{-- NIP (opsional) --}}
-                            <div>
-                                <label class="font-medium text-gray-700">NIP (Opsional)</label>
-                                <input type="text" name="nip" value="{{ old('nip') }}"
-                                       class="mt-1 w-full rounded-md border-gray-300">
-                            </div>
-
-                            {{-- Status --}}
-                            <div>
-                                <label class="font-medium text-gray-700">
-                                    Status Kepegawaian <span class="text-red-600">*</span>
-                                </label>
-                                <select name="status" required
-                                        class="mt-1 w-full rounded-md border-gray-300">
-                                    <option value="">-- Pilih Status --</option>
-                                    <option value="Aktif" @selected(old('status')=='Aktif')>Aktif</option>
-                                    <option value="Tidak Aktif" @selected(old('status')=='Tidak Aktif')>Tidak Aktif</option>
-                                </select>
-                            </div>
-
-                            {{-- Tanggal Masuk --}}
-                            <div>
-                                <label class="font-medium text-gray-700">
-                                    Tanggal Masuk <span class="text-red-600">*</span>
-                                </label>
-                                <input type="date" name="tanggal_masuk" required value="{{ old('tanggal_masuk') }}"
-                                       class="mt-1 w-full rounded-md border-gray-300">
-                            </div>
-
                         </div>
                     </div>
 
-                    {{-- ================================================= --}}
                     {{-- FOOTER --}}
-                    {{-- ================================================= --}}
                     <div class="flex items-center justify-end pt-6 border-t border-gray-200">
                         <a href="{{ route('admin.pegawai.index') }}"
                            class="text-gray-600 hover:text-gray-900 mr-4 text-base">
@@ -269,12 +172,19 @@
                         <button type="submit"
                                 class="inline-flex items-center px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-sm text-base transition focus:ring-2 focus:ring-indigo-500">
                             <i data-feather="save" class="w-5 h-5 mr-2"></i>
-                            Simpan Pegawai
+                            Simpan Karyawan
                         </button>
                     </div>
 
                 </form>
 
+                <script>
+                function previewFile(event) {
+                    const image = document.getElementById('previewImage');
+                    image.src = URL.createObjectURL(event.target.files[0]);
+                    image.classList.remove('hidden');
+                }
+                </script>
             </div>
         </div>
     </div>

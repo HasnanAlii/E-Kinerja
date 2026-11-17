@@ -76,26 +76,16 @@ public function show($id)
     public function store(Request $request)
     {
         $request->validate([
-           
-            'nama'            => 'required',
+            'nama'            => 'required|string|max:255',
             'email'           => 'required|email|unique:users,email',
             'password'        => 'required|min:5',
-            'nik'             => 'nullable|string|unique:users,nik',
-            'jenis_kelamin'   => 'nullable|string',
-            'tanggal_lahir'   => 'nullable|date',
-            'tempat_lahir'    => 'nullable|string',
-            'agama'           => 'nullable|string',
-            'alamat'          => 'nullable|string',
-            'telp'            => 'nullable|string',
+            'jenis_kelamin'   => 'required|string',
+            'departemen'      => 'required|string|max:255',
+            'divisi'          => 'required|string|max:255',
+            'jabatan'         => 'required|string|max:255',
+            'nik_karyawan'    => 'required|string|max:255',
+            'status'          => 'required|string|max:255',
             'profile_photo'   => 'nullable|image|max:2048',
-
-            // PEGAWAI DETAIL
-            'bidang_id'       => 'required|exists:bidang,id',
-            'atasan_id'       => 'nullable|exists:atasan,id',
-            'jabatan'         => 'nullable|string',
-            'nip'             => 'nullable|string',
-            'status'          => 'nullable|string',
-            'tanggal_masuk'   => 'nullable|date',
         ]);
 
         // === Create USER ===
@@ -103,13 +93,8 @@ public function show($id)
             'name'          => $request->nama,
             'email'         => $request->email,
             'password'      => Hash::make($request->password),
-            'nik'           => $request->nik,
+            'nik'           => $request->nik_karyawan,
             'jenis_kelamin' => $request->jenis_kelamin,
-            'tanggal_lahir' => $request->tanggal_lahir,
-            'tempat_lahir'  => $request->tempat_lahir,
-            'agama'         => $request->agama,
-            'alamat'        => $request->alamat,
-            'telp'          => $request->telp,
         ]);
 
         $user->assignRole('pegawai');
@@ -120,23 +105,24 @@ public function show($id)
             $user->update(['profile_photo' => $path]);
         }
 
-      
+        $defaultBidangId = $request->bidang_id ?: Bidang::value('id');
+        $defaultAtasanId = $request->atasan_id ?: Atasan::value('id');
 
         // === Create Pegawai Detail ===
         PegawaiDetail::create([
             'user_id'      => $user->id,
-            'bidang_id'    => $request->bidang_id,
-            'atasan_id'    => $request->atasan_id,
-            'name'         => $request->nama,
-            'nip'          => $request->nip,
+            'bidang_id'    => $defaultBidangId,
+            'atasan_id'    => $defaultAtasanId,
+            'departemen'   => $request->departemen,
+            'divisi'       => $request->divisi,
             'jabatan'      => $request->jabatan,
-            // 'masa_kontrak' => $request->masa_kontrak,
+            'nik_karyawan' => $request->nik_karyawan,
+            'nip'          => $request->nik_karyawan,
             'status'       => $request->status,
-            'tanggal_masuk'=> $request->tanggal_masuk,
         ]);
 
         return redirect()->route('admin.pegawai.index')
-            ->with('success', 'Pegawai berhasil ditambahkan.');
+            ->with('success', 'Data karyawan berhasil ditambahkan.');
     }
 
     public function edit($id)
@@ -154,26 +140,16 @@ public function show($id)
         $user    = $pegawai->user;
 
         $request->validate([
-            // USER
-            'nama'            => 'required',
+            'nama'            => 'required|string|max:255',
             'email'           => 'required|email|unique:users,email,' . $user->id,
             'password'        => 'nullable|min:5',
-            'nik'             => 'nullable|string|unique:users,nik,' . $user->id,
-            'jenis_kelamin'   => 'nullable|string',
-            'tanggal_lahir'   => 'nullable|date',
-            'tempat_lahir'    => 'nullable|string',
-            'agama'           => 'nullable|string',
-            'alamat'          => 'nullable|string',
-            'telp'            => 'nullable|string',
+            'jenis_kelamin'   => 'required|string',
+            'departemen'      => 'required|string|max:255',
+            'divisi'          => 'required|string|max:255',
+            'jabatan'         => 'required|string|max:255',
+            'nik_karyawan'    => 'required|string|max:255',
+            'status'          => 'required|string|max:255',
             'profile_photo'   => 'nullable|image|max:2048',
-
-            // PEGAWAI DETAIL
-            'bidang_id'       => 'required|exists:bidang,id',
-            'atasan_id'       => 'nullable|exists:atasan,id',
-            'jabatan'         => 'nullable|string',
-            'nip'             => 'nullable|string',
-            'status'          => 'nullable|string',
-            'tanggal_masuk'   => 'nullable|date',
         ]);
 
         // === Update USER ===
@@ -181,13 +157,8 @@ public function show($id)
             'name'          => $request->nama,
             'email'         => $request->email,
             'password'      => $request->password ? Hash::make($request->password) : $user->password,
-            'nik'           => $request->nik,
+            'nik'           => $request->nik_karyawan,
             'jenis_kelamin' => $request->jenis_kelamin,
-            'tanggal_lahir' => $request->tanggal_lahir,
-            'tempat_lahir'  => $request->tempat_lahir,
-            'agama'         => $request->agama,
-            'alamat'        => $request->alamat,
-            'telp'          => $request->telp,
         ]);
 
         // Update Profile Photo
@@ -199,21 +170,18 @@ public function show($id)
             $user->update(['profile_photo' => $profile]);
         }
 
- 
-
         // === Update Pegawai Detail ===
         $pegawai->update([
-            'bidang_id'    => $request->bidang_id,
-            'atasan_id'    => $request->atasan_id,
-            'name'         => $request->nama,
-            'nip'          => $request->nip,
+            'departemen'   => $request->departemen,
+            'divisi'       => $request->divisi,
             'jabatan'      => $request->jabatan,
+            'nik_karyawan' => $request->nik_karyawan,
+            'nip'          => $request->nik_karyawan,
             'status'       => $request->status,
-            'tanggal_masuk'=> $request->tanggal_masuk,
         ]);
 
         return redirect()->route('admin.pegawai.index')
-            ->with('success', 'Data pegawai berhasil diperbarui.');
+            ->with('success', 'Data karyawan berhasil diperbarui.');
     }
 
     public function destroy($id)

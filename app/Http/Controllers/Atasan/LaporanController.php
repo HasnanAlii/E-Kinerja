@@ -30,14 +30,19 @@ class LaporanController extends Controller
             ->get()->sortBy(fn ($p) => $p->user->name ?? '')->map(function ($p) use ($kehadiran) {
             $k = $kehadiran->get($p->id, collect());
             return (object) [
-                'id'    => $p->id,
-                'nama'  => $p->user->name ?? '-',
-                'jabatan' => $p->jabatan,
-                'hadir' => $k->where('jenis', 'hadir')->count(),
-                'izin'  => $k->where('jenis', 'izin')->count(),
-                'sakit' => $k->where('jenis', 'sakit')->count(),
-                'cuti'  => $k->where('jenis', 'cuti')->count(),
-                'alpha' => $k->where('jenis', 'alpha')->count(),
+                'id'           => $p->id,
+                'nama'         => $p->user->name ?? '-',
+                'nik_karyawan' => $p->nik_karyawan ?? $p->nip ?? ($p->user->nik ?? '-'),
+                'jenis_kelamin'=> $p->user->jenis_kelamin ?? '-',
+                'departemen'   => $p->departemen ?? '-',
+                'divisi'       => $p->divisi ?? '-',
+                'jabatan'      => $p->jabatan ?? '-',
+                'status'       => $p->status ?? 'Masih Bekerja',
+                'hadir'        => $k->where('jenis', 'hadir')->count(),
+                'izin'         => $k->where('jenis', 'izin')->count(),
+                'sakit'        => $k->where('jenis', 'sakit')->count(),
+                'cuti'         => $k->where('jenis', 'cuti')->count(),
+                'alpha'        => $k->where('jenis', 'alpha')->count(),
             ];
         })->values();
     }
@@ -74,9 +79,9 @@ class LaporanController extends Controller
         return response()->streamDownload(function () use ($rekap) {
             $out = fopen('php://output', 'w');
             fwrite($out, "\xEF\xBB\xBF");
-            fputcsv($out, ['No', 'Nama', 'Hadir', 'Izin', 'Sakit', 'Cuti', 'Alpha']);
+            fputcsv($out, ['No', 'NIK Karyawan', 'Nama Karyawan', 'Jenis Kelamin', 'Departemen', 'Divisi', 'Jabatan', 'Hadir', 'Izin', 'Sakit', 'Cuti', 'Alpha']);
             foreach ($rekap as $i => $r) {
-                fputcsv($out, [$i + 1, $r->nama, $r->hadir, $r->izin, $r->sakit, $r->cuti, $r->alpha]);
+                fputcsv($out, [$i + 1, $r->nik_karyawan, $r->nama, $r->jenis_kelamin, $r->departemen, $r->divisi, $r->jabatan, $r->hadir, $r->izin, $r->sakit, $r->cuti, $r->alpha]);
             }
             fclose($out);
         }, "Laporan_Kehadiran_{$dari}_{$sampai}.csv", ['Content-Type' => 'text/csv']);

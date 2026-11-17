@@ -13,7 +13,7 @@ class PegawaiDetailSeeder extends Seeder
     public function run(): void
     {
         // Pastikan minimal ada 1 bidang
-        $bidang = Bidang::firstOrCreate(['nama_bidang' => 'Umum']);
+        $bidang = Bidang::firstOrCreate(['nama_bidang' => 'Produksi']);
 
         // Ambil user
         $pegawai = User::where('email', 'pegawai@gmail.com')->first();
@@ -22,16 +22,19 @@ class PegawaiDetailSeeder extends Seeder
             return; // hentikan jika user belum dibuat
         }
 
-        // Data pegawai detail lengkap sesuai tabel
+        // Data karyawan lengkap sesuai struktur terbaru PT Pou Yuen
         $data = [
             'user_id'        => $pegawai->id,
             'bidang_id'      => $bidang->id,
-            'atasan_id'      => 1, // id pada tabel atasan (pastikan ada)
-            'nip'            => '2001',
-            'jabatan'        => 'Staf Non-PNS',
+            'atasan_id'      => 1,
+            'departemen'     => 'PRODUCTION',
+            'divisi'         => '010410 Assembly Line Utama',
+            'jabatan'        => 'Operator Assembly',
+            'nik_karyawan'   => 'PYI-260100',
+            'nip'            => 'PYI-260100',
             'foto'           => null,
-            'status'         => 'aktif',
-            'tanggal_masuk'  => Carbon::now()->subMonths(3),
+            'status'         => 'Masih Bekerja',
+            'tanggal_masuk'  => Carbon::now()->subMonths(6)->toDateString(),
             'created_at'     => now(),
             'updated_at'     => now(),
         ];

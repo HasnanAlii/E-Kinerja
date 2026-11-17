@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FSM Diagram - Sistem Pengenalan Wajah</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        body {
+            background-color: #1a1a1a;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: #fff;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 40px 40px 80px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            margin: 0 0 10px;
+            font-size: 1.8rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #ccc;
+            margin-bottom: 40px;
+            font-size: .95rem
+        }
+
+        .section {
+            margin-bottom: 40px
+        }
+
+        .section h2 {
+            display: none;
+        }
+
+        .legend {
+            display: none;
+        }
+
+        .mermaid {
+            text-align: center;
+        }
+
+        /* Override Mermaid SVG node styles */
+        .mermaid svg .node rect,
+        .mermaid svg .node polygon,
+        .mermaid svg .node circle,
+        .mermaid svg .node ellipse {
+            rx: 8;
+            ry: 8;
+            stroke-width: 2.5px !important;
+        }
+
+        .mermaid svg .node rect {
+            rx: 8px;
+            ry: 8px;
+        }
+
+        /* Post-render override via attribute */
+        .mermaid svg rect:not(.background):not(.label-container) {
+            rx: 8 !important;
+            ry: 8 !important;
+            stroke-width: 2.5 !important;
+        }
+
+        /* ===== TAB NAV BAR ===== */
+        .tab-bar {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            background: #111;
+            border-top: 1px solid #2a2a2a;
+            padding: 0 12px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .tab-bar::-webkit-scrollbar { display: none; }
+
+        .tab-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 20px;
+            font-size: 13.5px;
+            font-family: 'Segoe UI', sans-serif;
+            color: #aaa;
+            background: transparent;
+            border: none;
+            border-top: 2px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: color .2s, border-color .2s, background .2s;
+            letter-spacing: .01em;
+        }
+        .tab-btn:hover {
+            color: #e0e0e0;
+            background: rgba(255,255,255,.04);
+        }
+        .tab-btn.active {
+            color: #fff;
+            border-top: 2px solid #3b8ef8;
+            background: rgba(59,142,248,.08);
+        }
+
+        /* Sections hidden AFTER mermaid renders (via JS) */
+        .section.tab-hidden { display: none; }
+    </style>
+</head>
+
+<body>
+    <!-- <h1>&#127916; Diagram FSM &mdash; Sistem Pengenalan Wajah (FaceNet + DBSCAN)</h1>
+    <p class="subtitle">Finite State Machine: Alur lengkap proses Upload Foto dan Pencarian Wajah</p> -->
+
+    <!-- TAB NAVIGATION BAR -->
+    <nav class="tab-bar" id="tabBar">
+        <button class="tab-btn active" data-tab="sec-alur"     onclick="showTab('sec-alur', this)">Flowchart Alur Utama</button>
+        <button class="tab-btn"        data-tab="sec-mtcnn"    onclick="showTab('sec-mtcnn', this)">Flowchart MTCNN</button>
+        <button class="tab-btn"        data-tab="sec-facenet"  onclick="showTab('sec-facenet', this)">Flowchart FaceNet</button>
+        <button class="tab-btn"        data-tab="sec-dbscan"   onclick="showTab('sec-dbscan', this)">Flowchart DBSCAN</button>
+        <button class="tab-btn"        data-tab="sec-search"   onclick="showTab('sec-search', this)">Flowchart Pencarian Foto</button>
+    </nav>
+
+    <div class="section" id="sec-alur">
+        <h2><span class="badge">0</span> Alur Utama &mdash; Pemilihan Proses</h2>
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box" style="background:#1f6feb"></div>Input/Output (jajar genjang)
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background:#388bfd"></div>Proses (persegi panjang)
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background:#d29922"></div>Keputusan (belah ketupat)
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background:#3fb950"></div>Konektor
+            </div>
+        </div>
+        <div class="mermaid">
+            flowchart TD
+            S((Mulai)) --> A[/Membaca Tombol/]
+            A --> D{Jenis Proses\n== upload ?}
+            D -->|True| U[Penambahan Foto]
+            D -->|False| P[Pencarian Foto]
+            U --> C1{1}
+            P --> C2{2}
+        </div>
+    </div>
+
+    <div class="section" id="sec-mtcnn">
+        <h2><span class="badge">1</span> Penambahan Foto &mdash; Deteksi MTCNN &amp; Preprocessing</h2>
+        <div class="mermaid">
+            flowchart TD
+            C1{1} --> B[/Membaca Foto/]
+            B --> IP["Membentuk Image Pyramid\nberbagai skala resolusi"]
+            IP --> PN["P-Net: Mendeteksi Kandidat\nArea Wajah Awal"]
+            PN --> NMS1["Non-Maximum Suppression NMS\nMenghapus Bounding Box Bertumpuk"]
+            NMS1 --> RN["R-Net: Menyaring Kandidat\nWajah yang Valid"]
+            RN --> NMS2["Non-Maximum Suppression NMS\nMenyempurnakan Bounding Box"]
+            NMS2 --> ON["O-Net: Memvalidasi Wajah\ndan Menentukan 5 Titik Landmark"]
+            ON --> BB["Menghasilkan Bounding Box\ndan Titik Landmark Wajah"]
+            BB --> Q1{Wajah\nTerdeteksi?}
+            Q1 -->|Tidak| IG["Mengabaikan Foto\n( tidak ada wajah )"]
+            IG --> B
+            Q1 -->|Iya| CW["Crop Wajah\nsesuai Bounding Box"]
+            CW --> RS["Resize menjadi\n160x160 pixel"]
+            RS --> NM["Normalisasi Nilai Pixel\nx_norm = x / 255"]
+            NM --> C3{3}
+        </div>
+    </div>
+
+    <div class="section" id="sec-facenet">
+        <h2><span class="badge">3&#8594;4</span> FaceNet &mdash; Ekstraksi Embedding 512 Dimensi</h2>
+        <div class="mermaid">
+            flowchart TD
+            C3b{3} --> FD[Menerima Citra Wajah\nHasil Crop 160x160]
+            FD --> FN["FaceNet InceptionResNetV1\nMelakukan Forward Pass"]
+            FN --> EMB["Menghasilkan Vektor Embedding\n512 Dimensi per Wajah"]
+            EMB --> NORM["Normalisasi L2 Embedding\ne_norm = e / ||e||"]
+            NORM --> SAVE["Menyimpan Embedding ke DB\ntabel: face_embeddings"]
+            SAVE --> C4{4}
+        </div>
+    </div>
+
+    <div class="section" id="sec-dbscan">
+        <h2><span class="badge">4&#8594;5</span> DBSCAN Clustering &mdash; Pengelompokan Wajah Otomatis</h2>
+        <div class="mermaid">
+            flowchart TD
+            C4b{4} --> PARAM["Menentukan Parameter\n&#949; eps=0.25, MinPts=1, metric=cosine"]
+            PARAM --> DIST["Menghitung Jarak Cosine\nAntar Semua Embedding\nd(x,y) = 1 - (x&#183;y)/(|x||y|)"]
+            DIST --> CORE["Identifikasi Core Points\n( tetangga dalam eps &ge; MinPts )"]
+            CORE --> EXPAND["Ekspansi Cluster\nDensity-Reachable Points"]
+            EXPAND --> NOISE["Tandai Noise Points\n( tidak punya cukup tetangga )"]
+            NOISE --> VOTE["Majority Voting per Cluster\nCluster &#8594; Identitas Dominan"]
+            VOTE --> SAVEC["Simpan Hasil Cluster ke DB\ntabel: face_clusters"]
+            SAVEC --> C5{5}
+        </div>
+    </div>
+
+    <div class="section" id="sec-search">
+        <h2><span class="badge">2</span> Pencarian Foto &mdash; Face Search by Query Image</h2>
+        <div class="mermaid">
+            flowchart TD
+            C2b{2} --> QI[/Membaca Foto Query dari User/]
+            QI --> VALID["Validasi: max 5MB\njpeg, png, webp"]
+            VALID --> Q3{Service\nFaceNet Aktif?}
+            Q3 -->|Tidak| OFFL[Kembalikan Error\n503 Service Offline]
+            Q3 -->|Iya| DWQ["Deteksi Wajah via MTCNN\npada Foto Query"]
+            DWQ --> Q4{Wajah\nTerdeteksi?}
+            Q4 -->|Tidak| NOFACE[Kembalikan Error\n422 No Face Detected]
+            Q4 -->|Iya| EMBQ["Ekstrak Embedding 512 Dim\ndari Wajah Query"]
+            EMBQ --> SIM["Hitung Cosine Similarity\ndengan semua Embedding di DB"]
+            SIM --> THR{Similarity\n&ge; threshold\ndefault 0.70 ?}
+            THR -->|Iya| ADD[Tambahkan ke Hasil Pencarian]
+            THR -->|Tidak| SKIP[Abaikan / Skip]
+            ADD --> SORT["Urutkan berdasarkan\nSimilarity Tertinggi"]
+            SKIP --> SORT
+            SORT --> TOPK["Ambil Top-K Hasil\ndefault top_k=30"]
+            TOPK --> RET[/Kembalikan Hasil ke User/]
+            RET --> DONE((Selesai))
+            OFFL --> DONE
+            NOFACE --> DONE
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        function showTab(tabId, btnEl) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(s => s.classList.add('tab-hidden'));
+            // Deactivate all buttons
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            // Show selected section & activate button
+            document.getElementById(tabId).classList.remove('tab-hidden');
+            btnEl.classList.add('active');
+            // Re-apply diagram styles for newly shown section
+            setTimeout(applyDiagramStyles, 50);
+        }
+
+        // Active tab ID tracker
+        let activeTabId = 'sec-alur';
+
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                darkMode: true,
+                background: 'transparent',
+                primaryColor: '#000000',
+                primaryTextColor: '#ffffff',
+                primaryBorderColor: '#ffffff',
+                lineColor: '#ffffff',
+                secondaryColor: '#000000',
+                tertiaryColor: '#000000',
+                nodeBorder: '#ffffff',
+                mainBkg: '#000000',
+                clusterBkg: '#000000',
+                fontSize: '17px'
+            },
+            flowchart: { curve: 'linear', padding: 30, nodeSpacing: 50, rankSpacing: 60 }
+        });
+
+        // Apply rounded corners, bold border, and pentagon connectors after Mermaid renders
+        function applyDiagramStyles() {
+            // 1. Rounded corners & bold border for all rect nodes
+            document.querySelectorAll('.mermaid svg rect').forEach(el => {
+                const rx = el.getAttribute('rx');
+                if (!rx || parseFloat(rx) < 4) {
+                    el.setAttribute('rx', '8');
+                    el.setAttribute('ry', '8');
+                }
+                const sw = el.style.strokeWidth;
+                if (!sw || parseFloat(sw) < 2) {
+                    el.style.strokeWidth = '2.5px';
+                }
+            });
+
+            // 1b. Auto-expand rect height to fit label text (prevent clipping)
+            const PADDING_V = 20; // vertical padding inside node
+            document.querySelectorAll('.mermaid svg .node').forEach(nodeEl => {
+                const rect = nodeEl.querySelector('rect');
+                if (!rect) return;
+                if (rect.dataset.heightFixed) return;
+
+                const label = nodeEl.querySelector('.nodeLabel, foreignObject');
+                if (!label) return;
+
+                // Get bounding boxes
+                const labelBBox = label.getBoundingClientRect();
+                const rectBBox  = rect.getBoundingClientRect();
+
+                if (labelBBox.height <= 0 || rectBBox.height <= 0) return;
+
+                const needed = labelBBox.height + PADDING_V * 2;
+                if (rectBBox.height < needed) {
+                    const diff   = needed - rectBBox.height;
+                    const curH   = parseFloat(rect.getAttribute('height') || rectBBox.height);
+                    const curY   = parseFloat(rect.getAttribute('y')      || '0');
+                    rect.setAttribute('height', curH + diff);
+                    rect.setAttribute('y',      curY - diff / 2);
+                }
+                rect.dataset.heightFixed = '1';
+            });
+
+            // 2. Convert connector nodes (single digit) to downward-pointing pentagon
+            document.querySelectorAll('.mermaid svg .node').forEach(nodeEl => {
+                // Find the text label - try multiple selectors
+                const labelEl = nodeEl.querySelector('.nodeLabel p, .nodeLabel, text');
+                if (!labelEl) return;
+                const text = labelEl.textContent.trim();
+
+                // Only target single-digit connectors: 1, 2, 3, 4, 5
+                if (!/^\d$/.test(text)) return;
+
+                const polygon = nodeEl.querySelector('polygon');
+                if (!polygon) return;
+
+                // Mark as converted to avoid repeated processing
+                if (polygon.dataset.pentagonDone) return;
+                polygon.dataset.pentagonDone = '1';
+
+                // Use compact fixed size for the pentagon connector
+                const bbox = polygon.getBBox();
+                const cx = bbox.x + bbox.width  / 2;
+                const cy = bbox.y + bbox.height / 2;
+                const w  = 32;   // fixed half-width
+                const h  = 28;   // fixed half-height
+
+                // Pentagon: flat top, straight sides, pointed bottom
+                const topY    = cy - h;
+                const midY    = cy + h * 0.15;   // start of slope (~85% down)
+                const bottomY = cy + h;           // tip
+                const leftX   = cx - w;
+                const rightX  = cx + w;
+
+                const pts = [
+                    `${leftX},${topY}`,    // top-left
+                    `${rightX},${topY}`,   // top-right
+                    `${rightX},${midY}`,   // lower-right
+                    `${cx},${bottomY}`,    // bottom tip
+                    `${leftX},${midY}`,    // lower-left
+                ].join(' ');
+
+                polygon.setAttribute('points', pts);
+                polygon.style.strokeWidth = '2.5px';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // MutationObserver to apply styles as Mermaid renders
+            const observer = new MutationObserver(applyDiagramStyles);
+            observer.observe(document.body, { childList: true, subtree: true });
+
+            // After Mermaid has had time to render ALL diagrams, hide non-active sections
+            setTimeout(() => {
+                document.querySelectorAll('.section').forEach(s => {
+                    if (s.id !== activeTabId) {
+                        s.classList.add('tab-hidden');
+                    }
+                });
+                // Make sure active tab button is marked
+                const activeBtn = document.querySelector(`.tab-btn[data-tab="${activeTabId}"]`);
+                if (activeBtn) activeBtn.classList.add('active');
+            }, 1500); // wait for Mermaid to finish rendering
+        });
+    </script>
+</body>
+
+</html>

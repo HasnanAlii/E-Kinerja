@@ -10,17 +10,29 @@ use Illuminate\Support\Facades\Auth;
 
 class KehadiranController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $pegawai = Auth::user()->detail;
+        $mode    = $request->get('mode', 'bulanan'); // 'harian' | 'bulanan'
+        $bulan   = $request->get('bulan', Carbon::today()->format('Y-m'));
+        $tanggal = $request->get('tanggal', Carbon::today()->toDateString());
 
-        $data = Kehadiran::with('izin')
-            ->where('pegawai_id', $pegawai->id)
-            ->whereDate('tanggal', Carbon::today()) 
-            ->orderBy('tanggal', 'desc')
-            ->paginate(10);
+        $query = Kehadiran::with('izin')
+            ->where('pegawai_id', $pegawai->id);
 
-        return view('pegawai.kehadiran.index', compact('data', 'pegawai'));
+        if ($mode === 'harian') {
+            $query->whereDate('tanggal', $tanggal);
+        } else {
+            $parsed = Carbon::parse($bulan . '-01');
+            $query->whereYear('tanggal', $parsed->year)
+                  ->whereMonth('tanggal', $parsed->month);
+        }
+
+        $data = $query->orderBy('tanggal', 'desc')
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('pegawai.kehadiran.index', compact('data', 'pegawai', 'mode', 'bulan', 'tanggal'));
     }
 
 

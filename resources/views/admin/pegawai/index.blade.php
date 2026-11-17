@@ -118,9 +118,9 @@
                             @endif
                         </div>
 
-                        {{-- Badge NIP --}}
+                        {{-- Badge NIK Karyawan --}}
                         <span class="mb-1 px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-mono rounded border border-gray-200">
-                            {{ $row->nip ?? 'No NIP' }}
+                            {{ $row->nik_karyawan ?? $row->nip ?? $row->user->nik ?? 'No NIK' }}
                         </span>
                     </div>
 
@@ -129,37 +129,33 @@
                         <h3 class="text-base font-bold text-gray-900 line-clamp-1" title="{{ $row->user->name }}">
                             {{ $row->user->name }}
                         </h3>
-                        @if(false) {{-- DISABLED: jabatan --}}
-<div class="flex items-center mt-1 text-indigo-600 text-xs font-medium uppercase tracking-wide">
-                            {{ $row->jabatan ?? 'Jabatan Tidak Tersedia' }}
+                        <div class="flex items-center mt-1 text-indigo-600 text-xs font-medium uppercase tracking-wide">
+                            {{ $row->jabatan ?? 'Jabatan Belum Diisi' }}
                         </div>
-@endif
                     </div>
 
                     {{-- Detail List --}}
                     <div class="space-y-2 text-sm text-gray-600 flex-1">
 
-                        {{-- DISABLED: Bidang --}}
-                        @if(false)
+                        {{-- Departemen & Divisi --}}
                         <div class="flex items-start p-2 bg-gray-50 rounded-lg">
                             <i data-feather="layers" class="w-4 h-4 text-gray-400 mr-2 mt-0.5"></i>
                             <span class="font-medium text-gray-700 text-xs">
-                                {{ $row->bidang->nama_bidang ?? '-' }}
+                                {{ $row->departemen ?? '-' }} {{ $row->divisi ? '• ' . $row->divisi : '' }}
                             </span>
                         </div>
-                        @endif
 
-                        {{-- Email --}}
+                        {{-- Jenis Kelamin --}}
                         <div class="flex items-center px-2">
-                            <i data-feather="mail" class="w-3.5 h-3.5 text-gray-400 mr-2"></i>
-                            <span class="truncate text-xs">{{ $row->user->email }}</span>
+                            <i data-feather="user" class="w-3.5 h-3.5 text-gray-400 mr-2"></i>
+                            <span class="truncate text-xs">{{ $row->user->jenis_kelamin ?? '-' }}</span>
                         </div>
 
-                        {{-- Atasan --}}
+                        {{-- Status --}}
                         <div class="flex items-center px-2">
-                            <i data-feather="user-check" class="w-3.5 h-3.5 text-gray-400 mr-2"></i>
-                            <span class="truncate text-xs text-gray-700">
-                                {{ $row->atasan->name ?? 'Tidak Ada Atasan' }}
+                            <i data-feather="check-circle" class="w-3.5 h-3.5 text-emerald-500 mr-2"></i>
+                            <span class="truncate text-xs font-medium text-emerald-700">
+                                {{ $row->status ?? 'Masih Bekerja' }}
                             </span>
                         </div>
                     </div>

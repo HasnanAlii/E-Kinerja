@@ -35,7 +35,7 @@ class AtasanSeeder extends Seeder
          */
         $atasanList = [
             [
-                'name'           => 'Siti Rahmawati',
+                'name'           => 'atasan',
                 'jabatan'        => 'Kepala Bidang Keuangan',
                 'nip'            => '19820414 200601 2 002',
                 'nik'            => '3275004104820002',
@@ -61,7 +61,7 @@ class AtasanSeeder extends Seeder
         foreach ($atasanList as $a) {
 
             // Email berdasarkan nama
-            $email = strtolower(str_replace(' ', '', $a['name'])) . '@example.com';
+            $email = strtolower(str_replace(' ', '', $a['name'])) . '@gmail.com';
 
             /**
              * ➤ Buat user lengkap di tabel users

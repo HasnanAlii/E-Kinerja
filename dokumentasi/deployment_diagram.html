@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deployment Diagram - VisiFoto</title>
+    <!-- Memuat pustaka Mermaid.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            border-top: 5px solid var(--secondary-color);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .diagram-wrapper {
+            background: #fdfdfd;
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+        }
+
+        .legend {
+            background: #f0f7fb;
+            border-left: 4px solid var(--secondary-color);
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 4px;
+        }
+
+        .legend h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        .legend ul {
+            margin-bottom: 0;
+            padding-left: 20px;
+        }
+
+        .legend li {
+            margin-bottom: 10px;
+        }
+        
+        .legend li:last-child {
+            margin-bottom: 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>UML Deployment Diagram</h1>
+            <p>Arsitektur Infrastruktur & Deployment Sistem VisiFoto</p>
+        </div>
+
+        <div class="diagram-wrapper">
+            <div class="mermaid">
+                flowchart TD
+                    %% Definisi Style
+                    classDef node fill:#ecf0f1,stroke:#bdc3c7,stroke-width:2px,color:#2c3e50,stroke-dasharray: 5 5;
+                    classDef component fill:#fff,stroke:#3498db,stroke-width:2px,color:#2c3e50;
+                    classDef database fill:#fff,stroke:#e67e22,stroke-width:2px,color:#2c3e50;
+                    classDef storage fill:#fff,stroke:#27ae60,stroke-width:2px,color:#2c3e50;
+
+                    %% Node 1: Client
+                    subgraph ClientNode ["&laquo;device&raquo; Client Workstation / Mobile"]
+                        direction TB
+                        Browser["&laquo;component&raquo;<br/>Web Browser"]:::component
+                    end
+
+                    %% Node 2: Web Server
+                    subgraph WebServerNode ["&laquo;execution environment&raquo; Web Server (Nginx/Apache)"]
+                        direction TB
+                        Laravel["&laquo;artifact&raquo;<br/>Laravel 12 App (PHP 8.2)"]:::component
+                    end
+
+                    %% Node 3: AI Microservice
+                    subgraph PythonServerNode ["&laquo;execution environment&raquo; AI Microservice Server"]
+                        direction TB
+                        FastAPI["&laquo;artifact&raquo;<br/>Python FastAPI Service"]:::component
+                        Models["&laquo;artifact&raquo;<br/>FaceNet & MTCNN Models"]:::component
+                        FastAPI -.->|"Load in Memory"| Models
+                    end
+
+                    %% Node 4: Database Server
+                    subgraph DBNode ["&laquo;database server&raquo; Database Host"]
+                        direction TB
+                        MySQL[("&laquo;database&raquo;<br/>MySQL 8.0")]:::database
+                    end
+
+                    %% Node 5: Storage
+                    subgraph StorageNode ["&laquo;file server&raquo; Storage Host"]
+                        direction TB
+                        LocalStorage[/"&laquo;storage&raquo;<br/>Local File System"\]:::storage
+                    end
+
+                    %% Hubungan antar Node
+                    Browser -- "HTTP / HTTPS" --> Laravel
+                    Laravel -- "REST API (Port 8001)" --> FastAPI
+                    Laravel -- "PDO / TCP (Port 3306)" --> MySQL
+                    FastAPI -- "PyMySQL / TCP (Port 3306)" --> MySQL
+                    Laravel -- "File I/O (Read/Write)" --> LocalStorage
+                    FastAPI -- "File I/O (Read-only)" --> LocalStorage
+
+                    %% Menerapkan class node pada subgraph
+                    class ClientNode,WebServerNode,PythonServerNode,DBNode,StorageNode node;
+            </div>
+        </div>
+
+        <div class="legend">
+            <h3>Keterangan Node & Komponen:</h3>
+            <ul>
+                <li><span class="badge">Client Workstation</span> Perangkat fisik pengguna (PC/Smartphone) yang mengakses sistem melalui peramban (Web Browser).</li>
+                <li><span class="badge">Web Server</span> Lingkungan yang mengeksekusi aplikasi web utama berbasis Laravel 12. Mengatur autentikasi, UI, manajemen folder, dan routing.</li>
+                <li><span class="badge">AI Microservice Server</span> Lingkungan Python terpisah yang menjalankan layanan FastAPI. Bertugas melakukan ekstraksi fitur wajah (FaceNet), deteksi (MTCNN), dan clustering (DBSCAN).</li>
+                <li><span class="badge">Database Server</span> Basis data relasional MySQL yang menyimpan metadata file, data pengguna, serta vektor <i>face embedding</i>.</li>
+                <li><span class="badge">Storage Host</span> Sistem file lokal (Local Disk) tempat menyimpan aset gambar fisik. Laravel memiliki akses baca-tulis, sedangkan layanan Python hanya memerlukan akses baca (Read-only) untuk pemrosesan citra.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Inisialisasi Mermaid.js
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            fontFamily: 'Segoe UI',
+            flowchart: {
+                htmlLabels: true,
+                curve: 'basis'
+            }
+        });
+    </script>
+</body>
+</html>

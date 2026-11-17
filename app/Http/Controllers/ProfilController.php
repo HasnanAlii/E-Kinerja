@@ -94,8 +94,12 @@ class ProfilController extends Controller
 
             // Pegawai & Atasan
             'nip'            => 'nullable|string|max:255',
+            'nik_karyawan'   => 'nullable|string|max:255',
+            'departemen'     => 'nullable|string|max:255',
+            'divisi'         => 'nullable|string|max:255',
             'jabatan'        => 'nullable|string|max:255',
-            'dolongan'        => 'nullable|string|max:255',
+            'status'         => 'nullable|string|max:255',
+            'dolongan'       => 'nullable|string|max:255',
 
         ]);
 
@@ -164,10 +168,22 @@ class ProfilController extends Controller
             //     $pegawai->foto = $request->file('foto')->store('pegawai', 'public');
             // }
 
+            if ($request->filled('nik_karyawan')) {
+                $user->nik = $request->nik_karyawan;
+                $user->save();
+            }
+
             $pegawai->fill($request->only([
                 'nip',
+                'nik_karyawan',
+                'departemen',
+                'divisi',
                 'jabatan',
+                'status',
             ]));
+            if ($request->filled('nik_karyawan')) {
+                $pegawai->nip = $request->nik_karyawan;
+            }
 
             $pegawai->save();
         }

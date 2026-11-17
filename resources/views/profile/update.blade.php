@@ -60,10 +60,10 @@
                             </div>
                         </x-profile.input-row>
 
-                        {{-- DATA USER --}}
-                        <x-profile.section title="Data Akun" desc="Informasi akun dasar Anda.">
+                        {{-- DATA USER & KARYAWAN --}}
+                        <x-profile.section title="Data Diri Karyawan" desc="Informasi data karyawan PT Pou Yuen.">
 
-                            <x-profile.input-row id="name" label="Nama Lengkap">
+                            <x-profile.input-row id="name" label="Nama">
                                 <x-text-input name="name" type="text" class="w-full"
                                               :value="old('name', $user->name)" required />
                             </x-profile.input-row>
@@ -71,27 +71,6 @@
                             <x-profile.input-row id="email" label="Alamat Email">
                                 <x-text-input name="email" type="email" class="w-full"
                                               :value="old('email', $user->email)" required />
-
-                                {{-- STATUS VERIFIKASI EMAIL --}}
-                                @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-                                    <div class="mt-3 bg-yellow-50 border border-yellow-200 p-4 rounded-md">
-                                        <p class="text-sm text-yellow-800">Email Anda belum diverifikasi.</p>
-
-                                        <button form="send-verification"
-                                                class="underline text-sm text-yellow-600 hover:text-yellow-700">
-                                            Kirim ulang tautan verifikasi →
-                                        </button>
-
-                                        @if (session('status') === 'verification-link-sent')
-                                            <p class="text-sm mt-2 text-green-600">Tautan verifikasi telah dikirim.</p>
-                                        @endif
-                                    </div>
-                                @endif
-                            </x-profile.input-row>
-
-                            <x-profile.input-row id="nik" label="NIK">
-                                <x-text-input name="nik" type="text" class="w-full"
-                                              :value="old('nik', $user->nik)" />
                             </x-profile.input-row>
 
                             <x-profile.input-row id="jenis_kelamin" label="Jenis Kelamin">
@@ -108,73 +87,39 @@
                                 </select>
                             </x-profile.input-row>
 
-                            <x-profile.input-row id="tanggal_lahir" label="Tanggal Lahir">
-                                <x-text-input name="tanggal_lahir" type="date" class="w-full"
-                                              :value="old('tanggal_lahir',
-                                                    $user->tanggal_lahir
-                                                        ? \Carbon\Carbon::parse($user->tanggal_lahir)->format('Y-m-d')
-                                                        : '')" />
-                            </x-profile.input-row>
-
-                            <x-profile.input-row id="tempat_lahir" label="Tempat Lahir">
-                                <x-text-input name="tempat_lahir" type="text" class="w-full"
-                                              :value="old('tempat_lahir', $user->tempat_lahir)" />
-                            </x-profile.input-row>
-
-                            <x-profile.input-row id="agama" label="Agama">
-                                <x-text-input name="agama" type="text" class="w-full"
-                                              :value="old('agama', $user->agama)" />
-                            </x-profile.input-row>
-
-                            <x-profile.input-row id="alamat" label="Alamat">
-                                <textarea name="alamat" class="w-full border rounded-lg p-2" rows="2">{{ old('alamat', $user->alamat) }}</textarea>
-                            </x-profile.input-row>
-
-                            <x-profile.input-row id="telp" label="No. Telpon">
-                                <x-text-input name="telp" type="text" class="w-full"
-                                              :value="old('telp', $user->telp)" />
-                            </x-profile.input-row>
-
-                        </x-profile.section>
-
-                        {{-- DATA PEGAWAI --}}
-                        @if ($pegawai)
-                            <x-profile.section title="Data Pegawai" desc="Informasi kepegawaian Anda.">
-
-                                <x-profile.input-row id="pegawai_nip" label="NIP">
-                                    <x-text-input name="nip" type="text" class="w-full"
-                                                  :value="old('nip', $pegawai->nip)" />
+                            @if ($pegawai)
+                                <x-profile.input-row id="nik_karyawan" label="NIK Karyawan">
+                                    <x-text-input name="nik_karyawan" type="text" class="w-full"
+                                                  :value="old('nik_karyawan', $pegawai->nik_karyawan ?? $pegawai->nip ?? $user->nik)" />
                                 </x-profile.input-row>
 
-                                @if(false) {{-- DISABLED: jabatan --}}
-<x-profile.input-row id="pegawai_jabatan" label="Jabatan">
+                                <x-profile.input-row id="departemen" label="Departemen">
+                                    <x-text-input name="departemen" type="text" class="w-full"
+                                                  :value="old('departemen', $pegawai->departemen)" />
+                                </x-profile.input-row>
+
+                                <x-profile.input-row id="divisi" label="Divisi">
+                                    <x-text-input name="divisi" type="text" class="w-full"
+                                                  :value="old('divisi', $pegawai->divisi)" />
+                                </x-profile.input-row>
+
+                                <x-profile.input-row id="pegawai_jabatan" label="Jabatan">
                                     <x-text-input name="jabatan" type="text" class="w-full"
                                                   :value="old('jabatan', $pegawai->jabatan)" />
                                 </x-profile.input-row>
-@endif
 
-                                <x-profile.input-row id="pegawai_bidang" label="Bidang">
+                                <x-profile.input-row id="pegawai_status" label="Status">
                                     <x-text-input disabled class="w-full bg-gray-100"
-                                                  value="{{ $pegawai->bidang->nama_bidang ?? '-' }}" />
+                                                  value="{{ $pegawai->status ?? 'Masih Bekerja' }}" />
                                 </x-profile.input-row>
-
-                                <x-profile.input-row id="pegawai_atasan" label="Atasan">
-                                    <x-text-input disabled class="w-full bg-gray-100"
-                                                  value="{{ $pegawai->atasan->name ?? '-' }}" />
+                            @else
+                                <x-profile.input-row id="nik" label="NIK Karyawan">
+                                    <x-text-input name="nik" type="text" class="w-full"
+                                                  :value="old('nik', $user->nik)" />
                                 </x-profile.input-row>
+                            @endif
 
-                                <x-profile.input-row id="pegawai_status" label="Status Kepegawaian">
-                                    <x-text-input disabled class="w-full bg-gray-100"
-                                                  value="{{ $pegawai->status ?? '-' }}" />
-                                </x-profile.input-row>
-                                <x-profile.input-row id="atasan_status" label="Masa Kerja">
-                                    <x-text-input disabled class="w-full bg-gray-100"
-                                                  value="{{ $masaKerjaPegawai ?? '-' }}" />
-                                </x-profile.input-row>
-
-
-                            </x-profile.section>
-                        @endif
+                        </x-profile.section>
 
                         {{-- DATA ATASAN --}}
                         @if ($atasan)

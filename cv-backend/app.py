@@ -1,4 +1,4 @@
-import os, sys, base64, datetime
+import os, sys, base64, datetime, time, threading
 import numpy as np, cv2
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 from config.database import SessionLocal, engine
 from models.models import Base, User, PegawaiDetail, Kehadiran, CctvMonitoringLog, DeteksiAktivitas, ZonaKamera
-from ai.vision import process_frame_zone, process_frame_zone_simulated, SLOT_COLORS_HEX
+from ai.vision import process_frame_zone, process_frame_zone_simulated, SLOT_COLORS_HEX, reset_detection_state
 
 # Create tables on startup
 Base.metadata.create_all(bind=engine)
@@ -17,6 +17,125 @@ CORS(app)
 
 def get_db():
     return SessionLocal()
+
+
+# ─── PERSISTENT BACKGROUND MONITORING ENGINE ─────────────────────────────────
+# Keeps surveillance running even if the browser reloads, switches pages, or logs out.
+# Only stops when /api/stop-monitoring is explicitly called.
+_MONITOR_LOCK = threading.Lock()
+_MONITOR_STATE = {
+    "active": False,
+    "simulate": False,
+    "started_at": None,
+    "last_browser_frame_ts": 0.0,
+    "detected_count": 0,
+    "detections": [],
+    "annotated_image": None,
+    "thread": None
+}
+
+
+def _make_simulation_frame():
+    """Generate a synthetic dark grid frame for server-side simulation."""
+    frame = np.full((360, 640, 3), (42, 23, 15), dtype=np.uint8)
+    for x in range(0, 640, 40):
+        cv2.line(frame, (x, 0), (x, 360), (55, 35, 25), 1)
+    for y in range(0, 360, 40):
+        cv2.line(frame, (0, y), (640, y), (55, 35, 25), 1)
+    ts_str = datetime.datetime.now().strftime("%H:%M:%S")
+    cv2.putText(frame, f"BACKGROUND CCTV SIMULATION | {ts_str}", (12, 22),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.45, (140, 140, 140), 1)
+    return frame
+
+
+def _background_monitoring_worker():
+    """
+    Background worker that runs while _MONITOR_STATE['active'] is True.
+    If the browser is closed/logged out (no frames pushed in > 2.0s), it automatically
+    captures from local camera (cv2.VideoCapture(0)) or falls back to simulation so
+    monitoring never stops until explicitly halted via /api/stop-monitoring.
+    """
+    cap = None
+    try:
+        while True:
+            with _MONITOR_LOCK:
+                if not _MONITOR_STATE["active"]:
+                    break
+                last_browser_ts = _MONITOR_STATE["last_browser_frame_ts"]
+                force_sim = _MONITOR_STATE["simulate"]
+
+            now_ts = time.time()
+            # If browser is actively sending frames (< 2.0s ago), let browser feed drive it
+            if now_ts - last_browser_ts < 2.0:
+                if cap is not None:
+                    cap.release()
+                    cap = None
+                time.sleep(0.3)
+                continue
+
+            # Browser is NOT sending frames (reloading, on another menu, or logged out)
+            frame = None
+            use_sim = force_sim
+
+            if not use_sim:
+                if cap is None:
+                    cap = cv2.VideoCapture(0)
+                    if cap.isOpened():
+                        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+                        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 360)
+                if cap is not None and cap.isOpened():
+                    ok, grabbed = cap.read()
+                    if ok and grabbed is not None:
+                        frame = grabbed
+                    else:
+                        use_sim = True
+                else:
+                    use_sim = True
+
+            if frame is None:
+                use_sim = True
+                frame = _make_simulation_frame()
+
+            db = get_db()
+            try:
+                if use_sim:
+                    annotated, detections, count = process_frame_zone_simulated(db, frame)
+                else:
+                    annotated, detections, count = process_frame_zone(db, frame)
+
+                b64_img = None
+                if use_sim:
+                    _, buf = cv2.imencode('.jpg', annotated, [cv2.IMWRITE_JPEG_QUALITY, 70])
+                    b64_img = f"data:image/jpeg;base64,{base64.b64encode(buf).decode('utf-8')}"
+
+                with _MONITOR_LOCK:
+                    if _MONITOR_STATE["active"]:
+                        _MONITOR_STATE["detected_count"] = count
+                        _MONITOR_STATE["detections"] = detections
+                        if b64_img:
+                            _MONITOR_STATE["annotated_image"] = b64_img
+            except Exception as e:
+                print(f"[BackgroundMonitor] Error: {e}")
+            finally:
+                db.close()
+
+            time.sleep(0.45)
+    finally:
+        if cap is not None:
+            cap.release()
+
+
+def _ensure_background_worker(simulate=False):
+    with _MONITOR_LOCK:
+        _MONITOR_STATE["active"] = True
+        _MONITOR_STATE["simulate"] = bool(simulate)
+        if not _MONITOR_STATE["started_at"]:
+            _MONITOR_STATE["started_at"] = datetime.datetime.now().strftime("%H:%M:%S")
+        t = _MONITOR_STATE.get("thread")
+        if t is None or not t.is_alive():
+            t = threading.Thread(target=_background_monitoring_worker, daemon=True)
+            _MONITOR_STATE["thread"] = t
+            t.start()
 
 
 # ─── HEALTH ─────────────────────────────────────────────────────────────────
@@ -153,6 +272,35 @@ def delete_zone(pegawai_id):
         db.close()
 
 
+# ─── MONITORING STATUS & START ───────────────────────────────────────────────
+@app.route('/api/monitoring-status', methods=['GET'])
+def monitoring_status():
+    """Return whether persistent monitoring is currently active on the server."""
+    with _MONITOR_LOCK:
+        return jsonify({
+            "active": _MONITOR_STATE["active"],
+            "simulate": _MONITOR_STATE["simulate"],
+            "started_at": _MONITOR_STATE["started_at"],
+            "detected_count": _MONITOR_STATE["detected_count"],
+            "detections": _MONITOR_STATE["detections"]
+        })
+
+
+@app.route('/api/start-monitoring', methods=['POST'])
+def start_monitoring():
+    """Explicitly start persistent monitoring session."""
+    data = request.json or {}
+    simulate = bool(data.get('simulate', False))
+    _ensure_background_worker(simulate=simulate)
+    with _MONITOR_LOCK:
+        return jsonify({
+            "success": True,
+            "active": _MONITOR_STATE["active"],
+            "simulate": _MONITOR_STATE["simulate"],
+            "started_at": _MONITOR_STATE["started_at"]
+        })
+
+
 # ─── PROCESS FRAME ───────────────────────────────────────────────────────────
 @app.route('/api/process-frame', methods=['POST'])
 def process_frame():
@@ -166,6 +314,11 @@ def process_frame():
 
     img_b64 = data['image']
     simulate = data.get('simulate', False)
+
+    # Mark persistent monitoring active & update browser heartbeat timestamp
+    with _MONITOR_LOCK:
+        _MONITOR_STATE["last_browser_frame_ts"] = time.time()
+    _ensure_background_worker(simulate=simulate)
 
     if ',' in img_b64:
         img_b64 = img_b64.split(',')[1]
@@ -184,14 +337,24 @@ def process_frame():
         else:
             annotated, detections, count = process_frame_zone(db, frame)
 
-        _, buf = cv2.imencode('.jpg', annotated, [cv2.IMWRITE_JPEG_QUALITY, 85])
-        b64_out = base64.b64encode(buf).decode('utf-8')
+        # Return annotated_image only if requested or in simulation mode to save bandwidth
+        include_image = data.get('include_image', True)
+        b64_img = None
+        if include_image or simulate:
+            _, buf = cv2.imencode('.jpg', annotated, [cv2.IMWRITE_JPEG_QUALITY, 72])
+            b64_img = f"data:image/jpeg;base64,{base64.b64encode(buf).decode('utf-8')}"
+
+        with _MONITOR_LOCK:
+            _MONITOR_STATE["detected_count"] = count
+            _MONITOR_STATE["detections"] = detections
+            if b64_img:
+                _MONITOR_STATE["annotated_image"] = b64_img
 
         return jsonify({
             "success": True,
             "detected_count": count,
             "detections": detections,
-            "annotated_image": f"data:image/jpeg;base64,{b64_out}"
+            "annotated_image": b64_img
         })
     except Exception as e:
         import traceback; traceback.print_exc()
@@ -393,11 +556,18 @@ def get_efektivitas(pegawai_id, tanggal):
 @app.route('/api/stop-monitoring', methods=['POST'])
 def stop_monitoring():
     """
-    Called when the supervisor stops the camera/surveillance session.
-    Resets the CCTV status of all employees that are currently marked as
-    'di_meja' back to 'belum_terdeteksi' and clears last_seen so that the
-    live-duration ticker on the frontend freezes correctly.
+    Called ONLY when the supervisor explicitly clicks 'Hentikan Pengawasan'.
+    Stops the persistent background worker, resets CCTV status of all employees
+    back to 'belum_terdeteksi', and clears last_seen so the live ticker freezes.
     """
+    with _MONITOR_LOCK:
+        _MONITOR_STATE["active"] = False
+        _MONITOR_STATE["simulate"] = False
+        _MONITOR_STATE["started_at"] = None
+        _MONITOR_STATE["detected_count"] = 0
+        _MONITOR_STATE["detections"] = []
+        _MONITOR_STATE["annotated_image"] = None
+
     db = get_db()
     today = datetime.date.today()
     try:
@@ -412,6 +582,7 @@ def stop_monitoring():
                 log.last_seen = None      # stop the live ticker
                 reset_count += 1
 
+        reset_detection_state()
         db.commit()
         return jsonify({
             "success": True,

@@ -62,20 +62,46 @@
 
             </div>
 
-            <!-- Video Container (Hidden by default) -->
+            <!-- Video Container (Full Width & Large + Fullscreen Support) -->
             <div x-show="isCameraOpen" x-transition style="display: none;"
-                class="p-6 bg-slate-900 flex justify-center border-b border-gray-200">
-                <div
-                    class="relative rounded-2xl overflow-hidden border-4 border-slate-800 shadow-2xl max-w-4xl w-full aspect-video bg-black flex items-center justify-center">
+                class="bg-slate-950 border-b border-gray-200">
+                <div x-ref="videoWrapper"
+                    class="relative w-full h-[78vh] min-h-[520px] bg-black flex items-center justify-center overflow-hidden">
                     
-                    <!-- Hidden Canvas & Video -->
+                    <!-- Hidden Capture Canvas -->
                     <canvas x-ref="canvasElement" class="hidden"></canvas>
-                    <video x-ref="videoElement" autoplay playsinline muted class="hidden"></video>
-                    
-                    <!-- Annotated Stream Display -->
-                    <img x-ref="annotatedImg" x-show="$refs.annotatedImg && $refs.annotatedImg.src && $refs.annotatedImg.src !== window.location.href" class="w-full h-full object-contain" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" style="display:none" />
 
-                    <!-- Overlay UI -->
+                    <!-- Native Smooth 60FPS Video Stream (Full Cover) -->
+                    <video x-ref="videoElement" autoplay playsinline muted
+                        x-show="!isSimulating"
+                        class="w-full h-full object-cover"></video>
+                    
+                    <!-- Annotated Stream Display (Fallback for Simulation Mode) -->
+                    <img x-ref="annotatedImg"
+                        x-show="isSimulating && $refs.annotatedImg && $refs.annotatedImg.src"
+                        class="w-full h-full object-cover"
+                        src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                        style="display:none" />
+
+                    <!-- Smooth Overlay Canvas for Zones & AI Bounding Boxes -->
+                    <canvas x-ref="overlayCanvas"
+                        x-show="!isSimulating"
+                        class="absolute inset-0 w-full h-full pointer-events-none"></canvas>
+
+                    <!-- Fullscreen Toggle Button -->
+                    <button type="button"
+                        @click="toggleFullscreen()"
+                        class="absolute bottom-4 right-4 z-20 inline-flex items-center gap-2 px-3.5 py-2 bg-black/65 hover:bg-black/85 text-white text-xs font-semibold rounded-xl border border-white/20 backdrop-blur-md shadow-lg transition">
+                        <svg x-show="!isFullscreen" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+                        </svg>
+                        <svg x-show="isFullscreen" style="display:none" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9L4 4m0 0v4m0-4h4m7 5l5-5m0 0v4m0-4h-4M9 15l-5 5m0 0v-4m0 4h4m7-5l5 5m0 0v-4m0 4h-4"/>
+                        </svg>
+                        <span x-text="isFullscreen ? 'Keluar Layar Penuh' : 'Layar Penuh'">Layar Penuh</span>
+                    </button>
+
+                    {{-- DISABLED: Overlay UI (LIVE AI & YOLOv8 Active)
                     <div class="absolute top-4 left-4 flex flex-col gap-2">
                         <span class="px-3 py-1.5 bg-red-600 text-white text-xs font-bold rounded-lg flex items-center shadow-lg uppercase tracking-widest">
                             <span class="w-2.5 h-2.5 bg-white rounded-full mr-2 animate-pulse"></span> Live AI
@@ -85,6 +111,7 @@
                             <i data-feather="cpu" class="w-3 h-3 mr-1.5"></i> YOLOv8 Active
                         </span>
                     </div>
+                    --}}
 
                     <!-- Scanning Animation Mock -->
                     <div class="absolute inset-0 pointer-events-none border border-emerald-500/20"
@@ -149,7 +176,7 @@
                                 <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Status CCTV</th>
                                 <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Durasi di Meja</th>
                                 <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Terakhir Terlihat</th>
-                                {{-- <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aksi</th> --}}
+                                <th class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Info Kehadiran</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
@@ -217,12 +244,16 @@
                                     </td>
                                     <td class="px-4 py-3 text-center text-sm text-gray-500" x-text="log.waktu_selesai"></td>
 
-                                    {{-- <td class="px-4 py-3 text-center text-sm">
-                                        <button onclick="alert('Fitur timeline pergerakan sedang dalam pengembangan.')"
-                                            class="text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
-                                            Timeline
+                                    <td class="px-4 py-3 text-center text-sm">
+                                        <button type="button"
+                                            @click="openInfoModal(log)"
+                                            class="inline-flex items-center gap-1.5 text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-xs font-semibold transition border border-indigo-200 shadow-sm">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            Info
                                         </button>
-                                    </td> --}}
+                                    </td>
                                 </tr>
                             </template>
                             <tr x-show="detectionLogs.length === 0">
@@ -234,6 +265,173 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            {{-- MODAL INFO PROGRES KEHADIRAN (STANDAR 8 JAM) --}}
+            <div x-show="infoModalOpen" x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+                 style="display:none" @click.self="closeInfoModal()">
+
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+                    {{-- Header --}}
+                    <div class="bg-gradient-to-r from-indigo-600 to-indigo-700 px-6 py-4 flex items-center justify-between text-white">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-white/20 rounded-xl">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg" x-text="infoData ? infoData.nama : 'Info Kehadiran'">Info Kehadiran</h3>
+                                <p class="text-indigo-200 text-xs" x-text="infoData ? infoData.tanggal_label : 'Progres Jam Kerja Harian'"></p>
+                            </div>
+                        </div>
+                        <button type="button" @click="closeInfoModal()" class="p-1.5 rounded-xl hover:bg-white/20 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    {{-- Body --}}
+                    <div class="p-6 space-y-5">
+                        <div x-show="infoLoading" class="py-10 flex flex-col items-center gap-3">
+                            <div class="w-9 h-9 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+                            <p class="text-sm text-gray-500">Memuat informasi kehadiran...</p>
+                        </div>
+
+                        <div x-show="!infoLoading && infoData" class="space-y-5">
+                            {{-- Status Kelayakan Kehadiran (Standar 8 Jam) --}}
+                            <div class="p-4 rounded-xl border flex items-center justify-between"
+                                 :class="liveProgressPct(infoLog) >= 100
+                                    ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                                    : 'bg-amber-50 border-amber-200 text-amber-800'">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-white flex-shrink-0"
+                                         :class="liveProgressPct(infoLog) >= 100 ? 'bg-emerald-500' : 'bg-amber-500'">
+                                        <span x-show="liveProgressPct(infoLog) >= 100">&#10003;</span>
+                                        <span x-show="liveProgressPct(infoLog) < 100">&#8987;</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-semibold uppercase tracking-wider opacity-75">Status Pemenuhan Jam Kerja</p>
+                                        <p class="text-base font-bold"
+                                           x-text="liveProgressPct(infoLog) >= 100 ? 'HADIR PENUH (Target 8 Jam Terpenuhi)' : 'Dalam Progres Pemenuhan 8 Jam'"></p>
+                                    </div>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-xs font-bold"
+                                      :class="liveProgressPct(infoLog) >= 100 ? 'bg-emerald-200 text-emerald-900' : 'bg-amber-200 text-amber-900'"
+                                      x-text="liveProgressPct(infoLog) >= 100 ? 'Hadir Sah' : 'Belum 8 Jam'"></span>
+                            </div>
+
+                            {{-- Progress Bar 8 Jam --}}
+                            <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200">
+                                <div class="flex items-end justify-between mb-2">
+                                    <div>
+                                        <span class="text-sm font-semibold text-gray-700">Progres Durasi Kehadiran</span>
+                                        <p class="text-xs text-gray-500 mt-0.5">Standar Kehadiran Penuh: <strong>8 Jam (480 Menit)</strong></p>
+                                    </div>
+                                    <span class="text-2xl font-extrabold"
+                                          :class="liveProgressPct(infoLog) >= 100 ? 'text-emerald-600' : (liveProgressPct(infoLog) >= 50 ? 'text-indigo-600' : 'text-amber-500')"
+                                          x-text="liveProgressPct(infoLog) + '%'">0%</span>
+                                </div>
+
+                                <div class="w-full bg-gray-200 rounded-full h-3.5 overflow-hidden">
+                                    <div class="h-3.5 rounded-full transition-all duration-500"
+                                         :class="liveProgressPct(infoLog) >= 100 ? 'bg-emerald-500' : (liveProgressPct(infoLog) >= 50 ? 'bg-indigo-600' : 'bg-amber-500')"
+                                         :style="'width:' + Math.min(100, liveProgressPct(infoLog)) + '%'"></div>
+                                </div>
+
+                                <div class="flex justify-between mt-2 text-xs text-gray-500 font-medium">
+                                    <span>0 Jam (0%)</span>
+                                    <span x-text="'Tercapai: ' + (infoLog ? liveDuration(infoLog) : (infoData?.durasi_di_meja || '0 Menit'))"></span>
+                                    <span>8 Jam (100%)</span>
+                                </div>
+                            </div>
+
+                            {{-- Detail Grid --}}
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="bg-blue-50 rounded-xl p-3.5 border border-blue-100">
+                                    <p class="text-xs text-blue-600 font-medium">Pertama Terdeteksi (Masuk)</p>
+                                    <p class="text-base font-bold text-blue-900 mt-1" x-text="infoData?.check_in || '-'"></p>
+                                </div>
+                                <div class="bg-purple-50 rounded-xl p-3.5 border border-purple-100">
+                                    <p class="text-xs text-purple-600 font-medium">Terakhir Terdeteksi (Pulang)</p>
+                                    <p class="text-base font-bold text-purple-900 mt-1" x-text="infoData?.check_out || '-'"></p>
+                                </div>
+                                <div class="bg-emerald-50 rounded-xl p-3.5 border border-emerald-100">
+                                    <p class="text-xs text-emerald-600 font-medium">Durasi Aktif di Zona</p>
+                                    <p class="text-base font-bold text-emerald-900 mt-1" x-text="infoLog ? liveDuration(infoLog) : (infoData?.durasi_di_meja || '0 Menit')"></p>
+                                </div>
+                                <div class="bg-gray-50 rounded-xl p-3.5 border border-gray-200">
+                                    <p class="text-xs text-gray-500 font-medium">Sisa Menuju 8 Jam</p>
+                                    <p class="text-base font-bold text-gray-800 mt-1" x-text="remainingTo8Hours(infoLog)"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Footer --}}
+                    <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end">
+                        <button type="button" @click="closeInfoModal()"
+                                class="px-5 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-100 transition">
+                            Tutup
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {{-- MODAL PERINGATAN ZONA BELUM DIKONFIGURASI --}}
+            <div x-show="zoneWarningOpen" x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+                 style="display:none" @click.self="zoneWarningOpen = false">
+
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+                    <div class="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-4 flex items-center justify-between text-white">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-white/20 rounded-xl">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                </svg>
+                            </div>
+                            <h3 class="font-bold text-lg">Zona Belum Dikonfigurasi</h3>
+                        </div>
+                        <button type="button" @click="zoneWarningOpen = false" class="p-1.5 rounded-xl hover:bg-white/20 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="p-6 text-center space-y-3">
+                        <div class="w-14 h-14 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-base font-bold text-gray-900">Tidak Dapat Memulai Pengawasan</h4>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            Belum ada zona posisi duduk/kerja karyawan yang dikonfigurasi. Silakan tandai minimal <strong>1 zona karyawan</strong> terlebih dahulu sebelum memulai pengawasan kamera.
+                        </p>
+                    </div>
+
+                    <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-end gap-3">
+                        <button type="button" @click="zoneWarningOpen = false"
+                                class="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-100 transition">
+                            Batal
+                        </button>
+                        <button type="button" @click="zoneWarningOpen = false; openZonaSetup();"
+                                class="px-4 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow transition">
+                            Atur Zona Sekarang
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -255,17 +453,22 @@
                 </div>
                 <div class="flex flex-1 overflow-hidden" style="min-height:420px">
                     <div class="flex-1 p-5 flex flex-col bg-slate-900 overflow-hidden">
-                        <div class="relative flex-1" style="min-height:300px">
+                        <div class="relative flex-1 rounded-xl border-2 border-slate-700 overflow-hidden bg-slate-950" style="min-height:300px">
+                            {{-- Live Camera Preview inside Zona Setup Modal --}}
+                            <video id="zonaPreviewVideo" autoplay playsinline muted
+                                   x-show="previewCameraReady"
+                                   class="absolute inset-0 w-full h-full object-cover pointer-events-none"></video>
+
                             <canvas id="zonaDrawCanvas"
                                 :style="selectedPegawai ? 'cursor:crosshair' : 'cursor:not-allowed'"
-                                class="w-full h-full rounded-xl border-2 border-slate-700 select-none"
+                                class="relative z-10 w-full h-full select-none"
                                 @mousedown="startDraw($event)" @mousemove="updateDraw($event)"
                                 @mouseup="endDraw($event)" @mouseleave="cancelDraw()" style="min-height:300px">
                             </canvas>
-                            <div x-show="!selectedPegawai" class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                <div class="bg-black/70 text-white text-center px-6 py-4 rounded-xl">
+                            <div x-show="!selectedPegawai" class="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+                                <div class="bg-black/70 text-white text-center px-6 py-4 rounded-xl backdrop-blur-sm border border-white/10">
                                     <p class="font-semibold">&larr; Pilih pegawai dari daftar kanan</p>
-                                    <p class="text-sm text-gray-400 mt-1">lalu klik-drag untuk menandai meja</p>
+                                    <p class="text-sm text-gray-300 mt-1">lalu klik-drag pada tampilan kamera untuk menandai posisi</p>
                                 </div>
                             </div>
                         </div>
