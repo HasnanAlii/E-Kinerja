@@ -184,7 +184,7 @@ class BlackBoxSystemTest extends TestCase
     {
         $mon = $this->actingAs($this->atasanUser)->get(route('atasan.monitoring.index'));
         $mon->assertStatus(200);
-        $mon->assertSee('CCTV Monitoring Kehadiran');
+        $mon->assertSee('Monitoring Kehadiran Kamera Real-Time');
         $mon->assertSee('Zona Belum Dikonfigurasi');
         $mon->assertSee('Layar Penuh');
 

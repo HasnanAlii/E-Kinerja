@@ -9,7 +9,7 @@
 
         <div class="flex items-center gap-6">
 
-            <span class="px-3 py-1 text-xs font-semibold rounded-full
+            {{-- <span class="px-3 py-1 text-xs font-semibold rounded-full
                 @if(Auth::user()->hasRole('admin'))
                     bg-red-100 text-red-700
                 @elseif(Auth::user()->hasRole('atasan'))
@@ -19,7 +19,7 @@
                 @endif
             ">
                 {{ ucfirst(Auth::user()->roles->first()->name ?? 'User') }}
-            </span>
+            </span> --}}
 
             {{-- DISABLED --}}
 @if(false)

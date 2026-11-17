@@ -40,9 +40,8 @@ class PegawaiController extends Controller
 
         return view('admin.pegawai.create', compact('bidang', 'atasan'));
     }
-public function show($id)
+public function show(Request $request, $id)
 {
-    // Ambil periode yang sedang aktif (status_aktif = true)
     $periode = \App\Models\PeriodePenilaian::where('status_aktif', true)->first();
 
     $data = PegawaiDetail::with([
@@ -50,25 +49,26 @@ public function show($id)
         'bidang',
         'atasan',
         'atasan.user',
-        'kehadiran' => function ($q) use ($periode) {
-            if ($periode) {
-                $q->whereBetween('tanggal', [
-                    $periode->tgl_mulai,
-                    $periode->tgl_selesai
-                ]);
+        'kehadiran' => function ($q) use ($request) {
+            if ($request->filled('tanggal_dari')) {
+                $q->whereDate('tanggal', '>=', $request->tanggal_dari);
             }
+            if ($request->filled('tanggal_sampai')) {
+                $q->whereDate('tanggal', '<=', $request->tanggal_sampai);
+            }
+            $q->orderByDesc('tanggal')->orderByDesc('id');
         },
-        'izinSakit' => function ($q) use ($periode) {
-            if ($periode) {
-                $q->whereBetween('tanggal_mulai', [
-                    $periode->tgl_mulai,
-                    $periode->tgl_selesai
-                ]);
-            }
+        'izinSakit' => function ($q) {
+            $q->orderByDesc('tanggal_mulai');
         }
     ])->findOrFail($id);
 
-    return view('admin.pegawai.show', compact('data', 'periode'));
+    $cctvLogs = \Illuminate\Support\Facades\DB::table('cctv_monitoring_logs')
+        ->where('pegawai_id', $data->id)
+        ->get()
+        ->keyBy(fn ($l) => \Carbon\Carbon::parse($l->tanggal)->toDateString());
+
+    return view('admin.pegawai.show', compact('data', 'periode', 'cctvLogs'));
 }
 
 

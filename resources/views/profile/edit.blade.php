@@ -1,21 +1,22 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
+            Pengaturan Akun &amp; Kata Sandi
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            {{-- <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div> --}}
+    <div class="py-6">
+        <div class=" mx-auto sm:px-6 lg:px-8 space-y-6">
+            @include('profile.partials.update-profile-information-form')
 
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <div class="lg:col-span-7">
                     @include('profile.partials.update-password-form')
-
+                </div>
+                <div class="lg:col-span-5">
                     @include('profile.partials.delete-user-form')
+                </div>
             </div>
         </div>
+    </div>
 </x-app-layout>
