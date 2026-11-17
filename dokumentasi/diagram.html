@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FSM Diagram - Sistem Pengenalan Wajah</title>
+    <title>Flowchart Proses Monitoring Kehadiran Kamera (CNN &amp; YOLOv8) - PT Pou Yuen</title>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <style>
         * {
@@ -19,7 +19,7 @@
             background-size: 20px 20px;
             color: #fff;
             font-family: 'Segoe UI', sans-serif;
-            padding: 40px 40px 80px;
+            padding: 40px 40px 100px;
         }
 
         h1 {
@@ -37,7 +37,7 @@
         }
 
         .section {
-            margin-bottom: 40px
+            margin-bottom: 36px
         }
 
         .section h2 {
@@ -72,6 +72,72 @@
             rx: 8 !important;
             ry: 8 !important;
             stroke-width: 2.5 !important;
+        }
+
+        /* ===== PENJELASAN DI BAWAH FLOWCHART ===== */
+        .explanation-wrap {
+            max-width: 1020px;
+            margin: 28px auto 0;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+
+        .exp-card {
+            background: rgba(17, 24, 39, 0.88);
+            border: 1px solid #2e3a4e;
+            border-left: 4px solid #3b8ef8;
+            border-radius: 10px;
+            padding: 20px 24px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+        }
+
+        .exp-card.ai-card {
+            border-left-color: #10b981;
+        }
+
+        .exp-card h3 {
+            font-size: 1.05rem;
+            color: #f8fafc;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .exp-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 14px 22px;
+        }
+
+        .exp-item {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            line-height: 1.55;
+        }
+
+        .exp-item strong {
+            color: #ffffff;
+        }
+
+        .exp-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 0.76rem;
+            font-weight: 700;
+            margin-right: 6px;
+            background: #1d4ed8;
+            color: #fff;
+        }
+
+        .exp-badge.cnn {
+            background: #0d9488;
+        }
+
+        .exp-badge.yolo {
+            background: #059669;
         }
 
         /* ===== TAB NAV BAR ===== */
@@ -125,118 +191,160 @@
 </head>
 
 <body>
-    <!-- <h1>&#127916; Diagram FSM &mdash; Sistem Pengenalan Wajah (FaceNet + DBSCAN)</h1>
-    <p class="subtitle">Finite State Machine: Alur lengkap proses Upload Foto dan Pencarian Wajah</p> -->
 
-    <!-- TAB NAVIGATION BAR -->
+    <!-- TAB NAVIGATION BAR (Khusus Tahapan Proses Monitoring Kamera sampai Hasil Kehadiran) -->
     <nav class="tab-bar" id="tabBar">
-        <button class="tab-btn active" data-tab="sec-alur"     onclick="showTab('sec-alur', this)">Flowchart Alur Utama</button>
-        <button class="tab-btn"        data-tab="sec-mtcnn"    onclick="showTab('sec-mtcnn', this)">Flowchart MTCNN</button>
-        <button class="tab-btn"        data-tab="sec-facenet"  onclick="showTab('sec-facenet', this)">Flowchart FaceNet</button>
-        <button class="tab-btn"        data-tab="sec-dbscan"   onclick="showTab('sec-dbscan', this)">Flowchart DBSCAN</button>
-        <button class="tab-btn"        data-tab="sec-search"   onclick="showTab('sec-search', this)">Flowchart Pencarian Foto</button>
+        <button class="tab-btn active" data-tab="sec-alur"     onclick="showTab('sec-alur', this)">Flowchart Alur Utama Monitoring</button>
+        <button class="tab-btn"        data-tab="sec-zona"     onclick="showTab('sec-zona', this)">Flowchart Konfigurasi Zona Kamera</button>
+        <button class="tab-btn"        data-tab="sec-yolo"     onclick="showTab('sec-yolo', this)">Flowchart CNN &amp; Deteksi YOLOv8</button>
+        <button class="tab-btn"        data-tab="sec-matching" onclick="showTab('sec-matching', this)">Flowchart Pencocokan Zona &amp; Streak</button>
+        <button class="tab-btn"        data-tab="sec-hasil"    onclick="showTab('sec-hasil', this)">Flowchart Hasil Kehadiran &amp; Durasi 8 Jam</button>
     </nav>
 
+    <!-- 0. ALUR UTAMA PROSES MONITORING -->
     <div class="section" id="sec-alur">
-        <h2><span class="badge">0</span> Alur Utama &mdash; Pemilihan Proses</h2>
-        <div class="legend">
-            <div class="legend-item">
-                <div class="legend-box" style="background:#1f6feb"></div>Input/Output (jajar genjang)
-            </div>
-            <div class="legend-item">
-                <div class="legend-box" style="background:#388bfd"></div>Proses (persegi panjang)
-            </div>
-            <div class="legend-item">
-                <div class="legend-box" style="background:#d29922"></div>Keputusan (belah ketupat)
-            </div>
-            <div class="legend-item">
-                <div class="legend-box" style="background:#3fb950"></div>Konektor
-            </div>
-        </div>
+        <h2><span class="badge">0</span> Alur Utama &mdash; Inisialisasi Proses Monitoring</h2>
         <div class="mermaid">
             flowchart TD
-            S((Mulai)) --> A[/Membaca Tombol/]
-            A --> D{Jenis Proses\n== upload ?}
-            D -->|True| U[Penambahan Foto]
-            D -->|False| P[Pencarian Foto]
+            S((Mulai)) --> A[/Membaca Tombol Aksi Monitoring/]
+            A --> D{Jenis Aksi\n== Atur Zona ?}
+            D -->|True| U[Konfigurasi Zona Posisi Karyawan]
+            D -->|False| P[Mulai Pengawasan Kamera]
             U --> C1{1}
-            P --> C2{2}
+            P --> QZ{Zona Sudah\nTerkonfigurasi?}
+            QZ -->|Tidak| W[/Tampilkan Modal Peringatan:\nZona Belum Dikonfigurasi/]
+            W --> C1{1}
+            QZ -->|Iya| C2{2}
         </div>
     </div>
 
-    <div class="section" id="sec-mtcnn">
-        <h2><span class="badge">1</span> Penambahan Foto &mdash; Deteksi MTCNN &amp; Preprocessing</h2>
+    <!-- 1. KONFIGURASI ZONA KAMERA -->
+    <div class="section" id="sec-zona">
+        <h2><span class="badge">1</span> Konfigurasi Zona Posisi Duduk / Kerja pada Kamera</h2>
         <div class="mermaid">
             flowchart TD
-            C1{1} --> B[/Membaca Foto/]
-            B --> IP["Membentuk Image Pyramid\nberbagai skala resolusi"]
-            IP --> PN["P-Net: Mendeteksi Kandidat\nArea Wajah Awal"]
-            PN --> NMS1["Non-Maximum Suppression NMS\nMenghapus Bounding Box Bertumpuk"]
-            NMS1 --> RN["R-Net: Menyaring Kandidat\nWajah yang Valid"]
-            RN --> NMS2["Non-Maximum Suppression NMS\nMenyempurnakan Bounding Box"]
-            NMS2 --> ON["O-Net: Memvalidasi Wajah\ndan Menentukan 5 Titik Landmark"]
-            ON --> BB["Menghasilkan Bounding Box\ndan Titik Landmark Wajah"]
-            BB --> Q1{Wajah\nTerdeteksi?}
-            Q1 -->|Tidak| IG["Mengabaikan Foto\n( tidak ada wajah )"]
-            IG --> B
-            Q1 -->|Iya| CW["Crop Wajah\nsesuai Bounding Box"]
-            CW --> RS["Resize menjadi\n160x160 pixel"]
-            RS --> NM["Normalisasi Nilai Pixel\nx_norm = x / 255"]
-            NM --> C3{3}
+            C1{1} --> CAM_Z["Mengaktifkan Live Preview Kamera\n(Resolusi 1280x720)"]
+            CAM_Z --> SEL_P[/Memilih Nama Karyawan dari Daftar/]
+            SEL_P --> DRAG[/Klik &amp; Drag Area Meja/Posisi pada Kanvas Kamera/]
+            DRAG --> NORM_Z["Normalisasi Koordinat Pixel ke Persentase:\nx1_pct = (x1 / W) x 100, y1_pct = (y1 / H) x 100\nx2_pct = (x2 / W) x 100, y2_pct = (y2 / H) x 100"]
+            NORM_Z --> QMIN{Lebar &amp; Tinggi\nZona &ge; 3% ?}
+            QMIN -->|Tidak| DRAG
+            QMIN -->|Iya| SAVE_Z["Menyimpan Koordinat &amp; Warna Zona ke DB\n(tabel: zona_kameras)"]
+            SAVE_Z --> C2{2}
         </div>
     </div>
 
-    <div class="section" id="sec-facenet">
-        <h2><span class="badge">3&#8594;4</span> FaceNet &mdash; Ekstraksi Embedding 512 Dimensi</h2>
+    <!-- 2. EKSTRAKSI FITUR CNN, DETEKSI YOLOv8 & FILTER OBJEK KOSONG -->
+    <div class="section" id="sec-yolo">
+        <h2><span class="badge">2&#8594;3</span> Ekstraksi Fitur CNN, Deteksi YOLOv8 &amp; Penyaringan Objek Kosong</h2>
         <div class="mermaid">
             flowchart TD
-            C3b{3} --> FD[Menerima Citra Wajah\nHasil Crop 160x160]
-            FD --> FN["FaceNet InceptionResNetV1\nMelakukan Forward Pass"]
-            FN --> EMB["Menghasilkan Vektor Embedding\n512 Dimensi per Wajah"]
-            EMB --> NORM["Normalisasi L2 Embedding\ne_norm = e / ||e||"]
-            NORM --> SAVE["Menyimpan Embedding ke DB\ntabel: face_embeddings"]
-            SAVE --> C4{4}
+            C2b{2} --> CAP[/Membaca Frame Video Kamera Real-Time/]
+            CAP --> RES["Preprocessing Citra Input:\nResize Lebar 480px &amp; Normalisasi Pixel"]
+            RES --> CNN["Backbone CNN (CSPDarknet / C2f):\nEkstraksi Fitur Visual Spasial Multi-Skala\n(Bentuk Tubuh, Kepala, Bahu &amp; Siluet Manusia)"]
+            CNN --> YOLO["Detection Head YOLOv8 (yolov8n.pt):\nPrediksi Koordinat Bounding Box (x1, y1, x2, y2)\n&amp; Skor Confidence Kelas Manusia (class = 0)"]
+            YOLO --> NMS["Non-Maximum Suppression (NMS)\nMenyaring Kotak Bertumpuk (IoU = 0.45)"]
+            NMS --> QBOX{Ada Objek Manusia\nTerdeteksi?}
+            QBOX -->|Tidak| C4{4}
+            QBOX -->|Iya| QCONF{"Confidence Score\nconf &ge; 0.50 ?"}
+            QCONF -->|Tidak| REJ["Abaikan Deteksi Palsu\n(Objek Kosong / Kursi / Monitor / Bayangan)"]
+            QCONF -->|Iya| QGEOM{"Validasi Proporsi Tubuh:\nLuas Box 1.2% - 88% Frame &amp;\nRasio Tinggi/Lebar 0.30 - 4.20?"}
+            QGEOM -->|Tidak| REJ
+            QGEOM -->|Iya| VALID["Bounding Box Manusia Valid\n(x1, y1, x2, y2)"]
+            REJ --> C4{4}
+            VALID --> C3{3}
         </div>
     </div>
 
-    <div class="section" id="sec-dbscan">
-        <h2><span class="badge">4&#8594;5</span> DBSCAN Clustering &mdash; Pengelompokan Wajah Otomatis</h2>
+    <!-- 3. PENCOCOKAN ZONA (OVERLAP & TORSO) + STREAK CONFIRMATION -->
+    <div class="section" id="sec-matching">
+        <h2><span class="badge">3&#8594;4</span> Pencocokan Zona Kerja &amp; Konfirmasi Multi-Frame (Streak)</h2>
         <div class="mermaid">
             flowchart TD
-            C4b{4} --> PARAM["Menentukan Parameter\n&#949; eps=0.25, MinPts=1, metric=cosine"]
-            PARAM --> DIST["Menghitung Jarak Cosine\nAntar Semua Embedding\nd(x,y) = 1 - (x&#183;y)/(|x||y|)"]
-            DIST --> CORE["Identifikasi Core Points\n( tetangga dalam eps &ge; MinPts )"]
-            CORE --> EXPAND["Ekspansi Cluster\nDensity-Reachable Points"]
-            EXPAND --> NOISE["Tandai Noise Points\n( tidak punya cukup tetangga )"]
-            NOISE --> VOTE["Majority Voting per Cluster\nCluster &#8594; Identitas Dominan"]
-            VOTE --> SAVEC["Simpan Hasil Cluster ke DB\ntabel: face_clusters"]
-            SAVEC --> C5{5}
+            C3b{3} --> TORSO["Menghitung Titik Tengah &amp; Torso Manusia:\ncx_pct = ((x1 + x2) / 2 / W) x 100\ncy_torso = (y1 + 0.45 x (y2 - y1)) / H x 100"]
+            TORSO --> OVL["Menghitung Rasio Irisan Area (Overlap)\nAntara Bounding Box Manusia &amp; Zona Karyawan:\nOverlap = Area_Irisan / min(Area_Box, Area_Zona)"]
+            OVL --> QOVL{"Titik Torso di Dalam Zona\nATAU Overlap &ge; 0.20 ?"}
+            QOVL -->|Tidak| OUT["Tandai Objek di Luar Zona Kerja"]
+            QOVL -->|Iya| INC_S["Tambah Counter Deteksi Beruntun:\nstreak[pegawai_id] = streak + 1"]
+            INC_S --> QSTRK{"streak[pegawai_id]\n&ge; 2 Frame Berturut-turut?"}
+            QSTRK -->|Tidak| C2c{2}
+            QSTRK -->|Iya| CONF_P["Konfirmasi Karyawan Hadir di Zona\n(present = True)"]
+            OUT --> C4b{4}
+            CONF_P --> C4b{4}
         </div>
     </div>
 
-    <div class="section" id="sec-search">
-        <h2><span class="badge">2</span> Pencarian Foto &mdash; Face Search by Query Image</h2>
+    <!-- 4. HASIL MONITORING: JAM MASUK, DURASI 8 JAM, DAN JAM PULANG -->
+    <div class="section" id="sec-hasil">
+        <h2><span class="badge">4</span> Hasil Monitoring: Check-In, Akumulasi Durasi 8 Jam &amp; Check-Out</h2>
         <div class="mermaid">
             flowchart TD
-            C2b{2} --> QI[/Membaca Foto Query dari User/]
-            QI --> VALID["Validasi: max 5MB\njpeg, png, webp"]
-            VALID --> Q3{Service\nFaceNet Aktif?}
-            Q3 -->|Tidak| OFFL[Kembalikan Error\n503 Service Offline]
-            Q3 -->|Iya| DWQ["Deteksi Wajah via MTCNN\npada Foto Query"]
-            DWQ --> Q4{Wajah\nTerdeteksi?}
-            Q4 -->|Tidak| NOFACE[Kembalikan Error\n422 No Face Detected]
-            Q4 -->|Iya| EMBQ["Ekstrak Embedding 512 Dim\ndari Wajah Query"]
-            EMBQ --> SIM["Hitung Cosine Similarity\ndengan semua Embedding di DB"]
-            SIM --> THR{Similarity\n&ge; threshold\ndefault 0.70 ?}
-            THR -->|Iya| ADD[Tambahkan ke Hasil Pencarian]
-            THR -->|Tidak| SKIP[Abaikan / Skip]
-            ADD --> SORT["Urutkan berdasarkan\nSimilarity Tertinggi"]
-            SKIP --> SORT
-            SORT --> TOPK["Ambil Top-K Hasil\ndefault top_k=30"]
-            TOPK --> RET[/Kembalikan Hasil ke User/]
-            RET --> DONE((Selesai))
-            OFFL --> DONE
-            NOFACE --> DONE
+            C4c{4} --> QHADIR{Status Karyawan\npresent == True ?}
+            QHADIR -->|Iya| QFIRST{Sudah Ada Record\nKehadiran Hari Ini?}
+            QFIRST -->|Belum| INS_IN["Catat Hasil Absen Masuk Otomatis:\njenis = hadir\ncheck_in = Waktu Pertama Terdeteksi\ncheck_out = Waktu Saat Ini"]
+            QFIRST -->|Sudah| UPD_OUT["Perbarui Waktu Terakhir Terdeteksi:\ncheck_out = Waktu Saat Ini"]
+            INS_IN --> ADD_DUR["Update Log Monitoring (status = di_meja)\nAkumulasi Durasi: durasi_stay = now - waktu_mulai"]
+            UPD_OUT --> ADD_DUR
+
+            QHADIR -->|Tidak| QABS{"Tidak Terdeteksi\n&gt; 10 Detik?"}
+            QABS -->|Iya| SET_KEL["Update Log Monitoring:\nstatus_terakhir = keluar_ruangan\n(Durasi Stay Berhenti Bertambah)"]
+            QABS -->|Tidak| CALC_PCT
+
+            ADD_DUR --> CALC_PCT["Hitung Progres Standar 8 Jam (28.800 Detik):\nPersentase = (durasi_stay / 28.800) x 100%"]
+            SET_KEL --> CALC_PCT
+
+            CALC_PCT --> OUT_UI[/Tampilkan Hasil Monitoring Real-Time:\nOverlay Box, Status CCTV, Durasi, Progres 8 Jam,\nJam Masuk &amp; Jam Pulang/]
+            OUT_UI --> QSTOP{Atasan Menekan\nHentikan Pengawasan?}
+            QSTOP -->|Tidak| C2d{2}
+            QSTOP -->|Iya| FINAL[/Kunci Hasil Akhir Kehadiran Hari Ini:\nJam Masuk = Pertama Terdeteksi\nJam Pulang = Terakhir Terdeteksi Sebelum Ditutup/]
+            FINAL --> DONE((Selesai))
+        </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- PENJELASAN DI BAWAH FLOWCHART (PERAN CNN, YOLOv8 & ALUR PROSES)  -->
+    <!-- ================================================================ -->
+    <div class="explanation-wrap">
+        <div class="exp-card ai-card">
+            <h3>Perbedaan &amp; Peran CNN serta YOLOv8 dalam Proses Monitoring</h3>
+            <div class="exp-grid">
+                <div class="exp-item">
+                    <span class="exp-badge cnn">CNN (Convolutional Neural Network)</span>
+                    <strong>Untuk Ekstraksi Fitur Visual Manusia:</strong><br>
+                    Lapisan *Backbone CNN* (*CSPDarknet / C2f*) mengekstraksi fitur visual spasial bertingkat (*edges*, kontur kepala, bahu, dan siluet postur tubuh manusia) dari citra frame kamera. Peran CNN memastikan sistem dapat mengenali karakteristik visual manusia asli dan membedakannya dari objek mati seperti kursi kosong, meja kerja, layar monitor, atau bayangan.
+                </div>
+                <div class="exp-item">
+                    <span class="exp-badge yolo">YOLOv8 (You Only Look Once v8)</span>
+                    <strong>Untuk Deteksi Posisi &amp; Lokalisasi Koordinat Real-Time:</strong><br>
+                    *Detection Head* YOLOv8 menggunakan peta fitur dari CNN untuk memprediksi lokasi koordinat kotak batas (*bounding box* `x1, y1, x2, y2`), menyaring kotak ganda melalui *Non-Maximum Suppression (NMS)*, serta menghitung nilai keyakinan (*confidence score* $\ge 0.50$) secara cepat dalam satu tahap (*single-stage*) pada setiap frame.
+                </div>
+            </div>
+        </div>
+
+        <div class="exp-card">
+            <h3>Penjelasan Tahapan Flowchart Monitoring Sampai Hasil Akhir</h3>
+            <div class="exp-grid">
+                <div class="exp-item">
+                    <span class="exp-badge">Tahap 0 &amp; 1</span>
+                    <strong>Inisialisasi &amp; Konfigurasi Zona:</strong><br>
+                    Sistem memeriksa apakah zona posisi duduk/kerja sudah diatur. Jika belum, muncul peringatan modal dan *live preview* kamera dinyalakan agar atasan dapat menandai koordinat persentase zona (`x1_pct..y2_pct`) tiap karyawan.
+                </div>
+                <div class="exp-item">
+                    <span class="exp-badge">Tahap 2</span>
+                    <strong>Akuisisi Frame, CNN &amp; Filter Objek Kosong:</strong><br>
+                    Frame kamera diproses oleh **CNN** (ekstraksi fitur tubuh) dan **YOLOv8** (deteksi kotak manusia), lalu difilter berdasarkan *confidence* $\ge 0.50$, luas area (`1.2%–88%`), dan rasio tinggi/lebar tubuh (`0.30–4.20`) agar bebas dari deteksi objek kosong.
+                </div>
+                <div class="exp-item">
+                    <span class="exp-badge">Tahap 3</span>
+                    <strong>Pencocokan Zona &amp; Streak Confirmation:</strong><br>
+                    Koordinat *torso* dan persentase irisan area (*overlap* $\ge 20\%$) dicocokkan dengan zona karyawan. Karyawan baru dinyatakan hadir di zona setelah terdeteksi konsisten minimal **2 frame berturut-turut** (*streak*).
+                </div>
+                <div class="exp-item">
+                    <span class="exp-badge">Tahap 4</span>
+                    <strong>Hasil Kehadiran &amp; Progres 8 Jam:</strong><br>
+                    Deteksi pertama otomatis dicatat sebagai **Jam Masuk (`check_in`)**, durasi di meja diakumulasikan terhadap standar **8 Jam (28.800 detik)**, dan deteksi terakhir sebelum atasan menghentikan pengawasan dikunci sebagai **Jam Pulang (`check_out`)**.
+                </div>
+            </div>
         </div>
     </div>
 

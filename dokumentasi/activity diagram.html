@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Diagram Monitoring Kehadiran (Visual Paradigm Style) - PT Pou Yuen</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Tahoma, 'Segoe UI', Arial, sans-serif;
+            background-color: #eef2f6;
+            color: #1e293b;
+            margin: 0;
+            padding: 28px 18px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1220px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 28px 32px;
+            border-radius: 10px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+            border-top: 5px solid #0284c7;
+        }
+
+        .header {
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 14px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #0c4a6e;
+        }
+
+        .header p {
+            margin: 4px 0 0 0;
+            color: #64748b;
+            font-size: 0.92rem;
+        }
+
+        /* Kanvas Visual Paradigm Classic */
+        .vp-canvas-wrap {
+            border: 1.5px solid #94a3b8;
+            background-color: #ffffff;
+            overflow-x: auto;
+            padding: 0 12px 14px 0;
+            margin-bottom: 26px;
+        }
+
+        .vp-pkg-tab {
+            display: inline-block;
+            background: #f1f5f9;
+            border-right: 1px solid #94a3b8;
+            border-bottom: 1px solid #94a3b8;
+            padding: 3px 16px 3px 10px;
+            font-size: 11.5px;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        svg.vp-ad {
+            display: block;
+            margin: 0 auto;
+            min-width: 1120px;
+            height: auto;
+            font-family: Tahoma, Arial, sans-serif;
+        }
+
+        /* Keterangan Poin Penting di Bawah */
+        .legend {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-left: 4px solid #0284c7;
+            padding: 20px 24px;
+            border-radius: 8px;
+        }
+
+        .legend h3 {
+            margin: 0 0 14px 0;
+            color: #0c4a6e;
+            font-size: 1.05rem;
+            border-bottom: 1px solid #bae6fd;
+            padding-bottom: 8px;
+        }
+
+        .step-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 10px 18px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .step-item {
+            background: #ffffff;
+            border: 1px solid #bae6fd;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 0.86rem;
+            color: #334155;
+        }
+
+        .step-item strong {
+            color: #0c4a6e;
+            display: block;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Activity Diagram — Proses Monitoring Kehadiran Karyawan PT Pou Yuen</h1>
+        <p>Alur Inti Mulai Monitoring Kamera Sampai Selesai (Format Standar Visual Paradigm Swimlane)</p>
+    </div>
+
+    <div class="vp-canvas-wrap">
+        <div class="vp-pkg-tab">act Monitoring Kehadiran Kamera</div>
+
+        <svg class="vp-ad" viewBox="0 0 1160 870" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Gradient Biru Cyan Khas Action Node Visual Paradigm -->
+                <linearGradient id="vpActionCyan" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#9be0ff"/>
+                    <stop offset="100%" stop-color="#76c7f2"/>
+                </linearGradient>
+
+                <!-- Gradient Header Swimlane Visual Paradigm -->
+                <linearGradient id="vpSwimHeader" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#e2e8f0"/>
+                    <stop offset="100%" stop-color="#cbd5e1"/>
+                </linearGradient>
+
+                <!-- Marker Panah Terbuka Standar UML Visual Paradigm -->
+                <marker id="vpArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                    <path d="M 1 1.5 L 9 5 L 1 8.5" fill="none" stroke="#111827" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </marker>
+            </defs>
+
+            <!-- ======================================================================= -->
+            <!-- SWIMLANE PARTITIONS (3 KOLOM: ATASAN | SISTEM WEB | AI KAMERA)          -->
+            <!-- ======================================================================= -->
+            <!-- Bingkai Luar Swimlane -->
+            <rect x="30" y="15" width="1100" height="835" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+
+            <!-- Header Swimlane -->
+            <rect x="30" y="15" width="1100" height="38" fill="url(#vpSwimHeader)" stroke="#1e293b" stroke-width="1.5"/>
+
+            <!-- Garis Pemisah Kolom Swimlane -->
+            <line x1="350" y1="15" x2="350" y2="850" stroke="#1e293b" stroke-width="1.4"/>
+            <line x1="730" y1="15" x2="730" y2="850" stroke="#1e293b" stroke-width="1.4"/>
+
+            <!-- Judul Kolom Swimlane -->
+            <text x="190" y="39" text-anchor="middle" font-size="13" font-weight="bold" fill="#0f172a">Atasan</text>
+            <text x="540" y="39" text-anchor="middle" font-size="13" font-weight="bold" fill="#0f172a">Sistem Web (Laravel)</text>
+            <text x="930" y="39" text-anchor="middle" font-size="13" font-weight="bold" fill="#0f172a">Engine AI (CNN &amp; YOLOv8)</text>
+
+
+            <!-- ======================================================================= -->
+            <!-- GARIS ALUR AKTIVITAS (CONTROL FLOW)                                     -->
+            <!-- ======================================================================= -->
+
+            <!-- 1. Start -> Buka Menu Monitoring Kamera -->
+            <line x1="190" y1="98" x2="190" y2="132" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+
+            <!-- 2. Buka Menu Monitoring -> Tampilkan Halaman & Cek Zona -->
+            <line x1="295" y1="155" x2="425" y2="155" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+
+            <!-- 3. Tampilkan Halaman & Cek Zona -> Decision Zona -->
+            <line x1="540" y1="178" x2="540" y2="213" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+
+            <!-- 4a. Decision [Belum Ada Zona] -> Atur & Simpan Zona Kamera -->
+            <line x1="518" y1="235" x2="302" y2="235" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+            <text x="412" y="226" text-anchor="middle" font-size="11" fill="#111827">[Belum Ada Zona]</text>
+
+            <!-- 4b. Atur & Simpan Zona Kamera -> Klik Mulai Monitoring -->
+            <line x1="190" y1="258" x2="190" y2="308" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+
+            <!-- 4c. Decision [Zona Tersedia] -> Klik Mulai Monitoring -->
+            <polyline points="540,257 540,332 297,332" fill="none" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+            <text x="435" y="323" text-anchor="middle" font-size="11" fill="#111827">[Zona Tersedia]</text>
+
+            <!-- 5. Klik Mulai Monitoring -> Aktifkan Kamera & Tangkap Video -->
+            <polyline points="190,355 190,405 793,405" fill="none" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+
+            <!-- 6. Aktifkan Kamera -> Ekstraksi Fitur CNN & Deteksi YOLOv8 -->
+            <line x1="930" y1="428" x2="930" y2="462" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+
+            <!-- 7. Ekstraksi CNN & YOLOv8 -> Cocokkan Posisi dengan Zona Kamera -->
+            <line x1="930" y1="510" x2="930" y2="542" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+
+            <!-- 8. Cocokkan Posisi -> Catat Check-In Otomatis & Hitung Durasi 8 Jam -->
+            <line x1="790" y1="565" x2="662" y2="565" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+
+            <!-- 9. Catat Check-In -> Tampilkan Status Live & Progres 8 Jam -->
+            <line x1="540" y1="588" x2="540" y2="625" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+
+            <!-- 10. Tampilkan Status Live -> Klik Hentikan Monitoring -->
+            <line x1="420" y1="648" x2="297" y2="648" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+
+            <!-- 11. Klik Hentikan Monitoring -> Simpan Check-Out & Hasil Kehadiran -->
+            <polyline points="190,671 190,735 418,735" fill="none" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+
+            <!-- 12. Simpan Check-Out & Hasil Kehadiran -> Activity Final Node -->
+            <line x1="540" y1="758" x2="540" y2="796" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+
+
+            <!-- ======================================================================= -->
+            <!-- SIMBOL NODE AKTIVITAS VISUAL PARADIGM                                   -->
+            <!-- ======================================================================= -->
+
+            <!-- Initial Node (Start) -->
+            <circle cx="190" cy="86" r="11" fill="#000000"/>
+
+            <!-- 1. Buka Menu Monitoring Kamera (Atasan) -->
+            <g transform="translate(85, 133)">
+                <rect x="0" y="0" width="210" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="105" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Buka Menu Monitoring Kamera</text>
+            </g>
+
+            <!-- 2. Tampilkan Halaman & Cek Zona (Sistem Web) -->
+            <g transform="translate(427, 133)">
+                <rect x="0" y="0" width="226" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="113" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Tampilkan Halaman &amp; Cek Zona</text>
+            </g>
+
+            <!-- Decision Node: Cek Zona -->
+            <polygon points="540,215 562,235 540,255 518,235" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+
+            <!-- 3. Atur & Simpan Zona Kamera (Atasan) -->
+            <g transform="translate(80, 213)">
+                <rect x="0" y="0" width="220" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="110" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Atur &amp; Simpan Zona Kamera</text>
+            </g>
+
+            <!-- 4. Klik Mulai Monitoring (Atasan) -->
+            <g transform="translate(85, 310)">
+                <rect x="0" y="0" width="210" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="105" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Klik Mulai Monitoring</text>
+            </g>
+
+            <!-- 5. Aktifkan Kamera & Tangkap Video (AI Kamera) -->
+            <g transform="translate(795, 383)">
+                <rect x="0" y="0" width="270" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="135" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Aktifkan Kamera &amp; Tangkap Video</text>
+            </g>
+
+            <!-- 6. Ekstraksi Fitur (CNN) & Deteksi Objek (YOLOv8) -->
+            <g transform="translate(785, 464)">
+                <rect x="0" y="0" width="290" height="46" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="145" y="20" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Ekstraksi Fitur Tubuh (CNN) &amp;</text>
+                <text x="145" y="36" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Deteksi Koordinat Manusia (YOLOv8)</text>
+            </g>
+
+            <!-- 7. Cocokkan Posisi dengan Zona Kamera -->
+            <g transform="translate(790, 543)">
+                <rect x="0" y="0" width="280" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="140" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Cocokkan Posisi dengan Zona Kamera</text>
+            </g>
+
+            <!-- 8. Catat Check-In Otomatis & Hitung Durasi 8 Jam -->
+            <g transform="translate(420, 543)">
+                <rect x="0" y="0" width="240" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="120" y="20" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Catat Check-In Otomatis &amp;</text>
+                <text x="120" y="36" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Hitung Durasi Kerja (Target 8 Jam)</text>
+            </g>
+
+            <!-- 9. Tampilkan Status Live & Progres Kehadiran -->
+            <g transform="translate(420, 626)">
+                <rect x="0" y="0" width="240" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="120" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Tampilkan Status Live &amp; Progres</text>
+            </g>
+
+            <!-- 10. Klik Hentikan Monitoring (Atasan) -->
+            <g transform="translate(85, 626)">
+                <rect x="0" y="0" width="210" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="105" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Klik Hentikan Monitoring</text>
+            </g>
+
+            <!-- 11. Simpan Check-Out & Hasil Kehadiran -->
+            <g transform="translate(420, 713)">
+                <rect x="0" y="0" width="240" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="120" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Simpan Check-Out &amp; Hasil Kehadiran</text>
+            </g>
+
+            <!-- Activity Final Node (End) -->
+            <circle cx="540" cy="812" r="13" fill="#ffffff" stroke="#000000" stroke-width="1.8"/>
+            <circle cx="540" cy="812" r="8" fill="#000000"/>
+
+        </svg>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- KETERANGAN POIN PENTING ACTIVITY DIAGRAM                         -->
+    <!-- ================================================================ -->
+    <div class="legend">
+        <h3>Ringkasan Poin Penting Alur Monitoring:</h3>
+        <ul class="step-list">
+            <li class="step-item">
+                <strong>1. Persiapan &amp; Pengecekan Zona</strong>
+                Atasan membuka menu monitoring; apabila zona kursi/meja karyawan belum diatur, atasan membuat zona terlebih dahulu sebelum memulai monitoring.
+            </li>
+            <li class="step-item">
+                <strong>2. Deteksi Kamera oleh CNN &amp; YOLOv8</strong>
+                Saat monitoring dimulai, <em>Backbone CNN</em> mengekstraksi fitur siluet tubuh manusia dan <em>YOLOv8</em> mendeteksi kotak koordinat posisi karyawan pada zona kamera.
+            </li>
+            <li class="step-item">
+                <strong>3. Pencatatan Check-In &amp; Durasi 8 Jam</strong>
+                Sistem otomatis mencatat waktu pertama terlihat sebagai <code>check_in</code>, menghitung akumulasi durasi berada di zona (standar 8 jam), dan menampilkan status <em>live</em>.
+            </li>
+            <li class="step-item">
+                <strong>4. Penghentian &amp; Hasil Akhir Kehadiran</strong>
+                Saat Atasan menekan tombol hentikan monitoring, sistem menyimpan waktu terakhir terlihat sebagai <code>check_out</code> dan merekap hasil kehadiran harian.
+            </li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>

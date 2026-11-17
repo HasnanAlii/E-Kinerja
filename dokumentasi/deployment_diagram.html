@@ -3,187 +3,497 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deployment Diagram - VisiFoto</title>
-    <!-- Memuat pustaka Mermaid.js -->
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <title>UML Deployment Diagram (Visual Paradigm Standard) - Sistem Monitoring Kehadiran PT Pou Yuen</title>
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --bg-color: #f8f9fa;
-            --card-bg: #ffffff;
-            --text-color: #333333;
+            --vp-node-fill: #c9dff2;
+            --vp-node-top: #dcebf8;
+            --vp-node-side: #a6c5e3;
+            --vp-node-stroke: #3f6896;
+            --vp-comp-fill: #e8f2fc;
+            --vp-comp-stroke: #3f6896;
+            --vp-art-fill: #ffffff;
+            --vp-art-stroke: #4b6584;
+            --vp-text: #1b2a47;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #1e293b;
             margin: 0;
-            padding: 40px 20px;
-            line-height: 1.6;
+            padding: 32px 20px;
+            line-height: 1.55;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1220px;
             margin: 0 auto;
-            background-color: var(--card-bg);
-            padding: 40px;
+            background: #ffffff;
+            padding: 32px 36px;
             border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-            border-top: 5px solid var(--secondary-color);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+            border-top: 5px solid #2b579a;
         }
 
         .header {
-            text-align: center;
-            margin-bottom: 40px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 18px;
+            margin-bottom: 24px;
         }
 
         .header h1 {
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            font-size: 2.2em;
+            margin: 0;
+            font-size: 1.65rem;
+            color: #1e3a8a;
         }
 
         .header p {
-            color: #666;
-            font-size: 1.1em;
+            margin: 4px 0 0 0;
+            color: #64748b;
+            font-size: 0.95rem;
         }
 
-        .diagram-wrapper {
-            background: #fdfdfd;
-            border: 1px solid #eaeaea;
-            border-radius: 8px;
-            padding: 30px;
-            margin: 30px 0;
-            display: flex;
-            justify-content: center;
+        /* Visual Paradigm Diagram Frame */
+        .vp-frame {
+            border: 1.5px solid #3f6896;
+            background-color: #ffffff;
+            background-image:
+                linear-gradient(rgba(63, 104, 150, 0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(63, 104, 150, 0.06) 1px, transparent 1px);
+            background-size: 20px 20px;
+            position: relative;
             overflow-x: auto;
+            margin-bottom: 28px;
         }
 
+        .vp-frame-tag {
+            display: inline-block;
+            background: #dcebf8;
+            border-right: 1.5px solid #3f6896;
+            border-bottom: 1.5px solid #3f6896;
+            padding: 5px 16px 5px 12px;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #1b2a47;
+            clip-path: polygon(0 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+        }
+
+        .diagram-scroll {
+            width: 100%;
+            overflow-x: auto;
+            padding: 12px;
+        }
+
+        svg.vp-svg {
+            display: block;
+            margin: 0 auto;
+            min-width: 1120px;
+            height: auto;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        /* Section Penjelasan Bawah */
         .legend {
-            background: #f0f7fb;
-            border-left: 4px solid var(--secondary-color);
-            padding: 20px;
-            margin-top: 30px;
-            border-radius: 4px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-left: 4px solid #2b579a;
+            padding: 22px 26px;
+            border-radius: 8px;
+            margin-bottom: 22px;
+        }
+
+        .legend.legend-net {
+            border-left-color: #d97706;
         }
 
         .legend h3 {
-            margin-top: 0;
-            color: var(--primary-color);
+            margin: 0 0 16px 0;
+            color: #1e3a8a;
+            font-size: 1.08rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
         }
 
-        .legend ul {
+        .node-group-block {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px 18px;
+            margin-bottom: 14px;
+        }
+
+        .node-group-block:last-child {
             margin-bottom: 0;
-            padding-left: 20px;
         }
 
-        .legend li {
-            margin-bottom: 10px;
-        }
-        
-        .legend li:last-child {
-            margin-bottom: 0;
+        .node-group-title {
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 6px;
         }
 
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            background: var(--primary-color);
-            color: white;
-            border-radius: 12px;
-            font-size: 0.8em;
-            font-weight: bold;
-            margin-right: 8px;
+        .sub-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 10px 20px;
+        }
+
+        .sub-list li {
+            font-size: 0.88rem;
+            color: #334155;
+            background: #f8fafc;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="header">
-            <h1>UML Deployment Diagram</h1>
-            <p>Arsitektur Infrastruktur & Deployment Sistem VisiFoto</p>
+<div class="container">
+    <div class="header">
+        <h1>UML Deployment Diagram (Visual Paradigm Standard)</h1>
+        <p>Arsitektur Infrastruktur &amp; Deployment Sistem Monitoring Kehadiran Karyawan PT Pou Yuen Indonesia</p>
+    </div>
+
+    <div class="vp-frame">
+        <div class="vp-frame-tag">
+            <strong>dep</strong> Deployment Diagram — Sistem Monitoring Kehadiran Karyawan PT Pou Yuen (YOLOv8 &amp; CNN)
         </div>
 
-        <div class="diagram-wrapper">
-            <div class="mermaid">
-                flowchart TD
-                    %% Definisi Style
-                    classDef node fill:#ecf0f1,stroke:#bdc3c7,stroke-width:2px,color:#2c3e50,stroke-dasharray: 5 5;
-                    classDef component fill:#fff,stroke:#3498db,stroke-width:2px,color:#2c3e50;
-                    classDef database fill:#fff,stroke:#e67e22,stroke-width:2px,color:#2c3e50;
-                    classDef storage fill:#fff,stroke:#27ae60,stroke-width:2px,color:#2c3e50;
+        <div class="diagram-scroll">
+            <svg class="vp-svg" viewBox="0 0 1160 720" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <!-- Reusable UML Component Icon -->
+                    <g id="uml-comp-icon">
+                        <rect x="0" y="0" width="16" height="18" fill="#ffffff" stroke="#3f6896" stroke-width="1.3"/>
+                        <rect x="-4" y="3" width="8" height="4" fill="#ffffff" stroke="#3f6896" stroke-width="1.2"/>
+                        <rect x="-4" y="10" width="8" height="4" fill="#ffffff" stroke="#3f6896" stroke-width="1.2"/>
+                    </g>
 
-                    %% Node 1: Client
-                    subgraph ClientNode ["&laquo;device&raquo; Client Workstation / Mobile"]
-                        direction TB
-                        Browser["&laquo;component&raquo;<br/>Web Browser"]:::component
-                    end
+                    <!-- Reusable UML Artifact Icon -->
+                    <g id="uml-art-icon">
+                        <polygon points="0,0 11,0 15,4 15,18 0,18" fill="#ffffff" stroke="#3f6896" stroke-width="1.2"/>
+                        <polyline points="11,0 11,4 15,4" fill="none" stroke="#3f6896" stroke-width="1.2"/>
+                    </g>
 
-                    %% Node 2: Web Server
-                    subgraph WebServerNode ["&laquo;execution environment&raquo; Web Server (Nginx/Apache)"]
-                        direction TB
-                        Laravel["&laquo;artifact&raquo;<br/>Laravel 12 App (PHP 8.2)"]:::component
-                    end
+                    <!-- Arrow marker -->
+                    <marker id="arrow-open" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                        <path d="M 1 1 L 9 5 L 1 9" fill="none" stroke="#1b2a47" stroke-width="1.7"/>
+                    </marker>
+                </defs>
 
-                    %% Node 3: AI Microservice
-                    subgraph PythonServerNode ["&laquo;execution environment&raquo; AI Microservice Server"]
-                        direction TB
-                        FastAPI["&laquo;artifact&raquo;<br/>Python FastAPI Service"]:::component
-                        Models["&laquo;artifact&raquo;<br/>FaceNet & MTCNN Models"]:::component
-                        FastAPI -.->|"Load in Memory"| Models
-                    end
+                <!-- ================================================================ -->
+                <!-- NODE 1: PERANGKAT ATASAN / SUPERVISOR                            -->
+                <!-- ================================================================ -->
+                <g transform="translate(30, 35)">
+                    <polygon points="0,12 12,0 312,0 300,12" fill="#dcebf8" stroke="#3f6896" stroke-width="1.6"/>
+                    <polygon points="300,12 312,0 312,198 300,210" fill="#a6c5e3" stroke="#3f6896" stroke-width="1.6"/>
+                    <rect x="0" y="12" width="300" height="198" fill="#c9dff2" stroke="#3f6896" stroke-width="1.6"/>
+                    <line x1="0" y1="58" x2="300" y2="58" stroke="#3f6896" stroke-width="1.2"/>
 
-                    %% Node 4: Database Server
-                    subgraph DBNode ["&laquo;database server&raquo; Database Host"]
-                        direction TB
-                        MySQL[("&laquo;database&raquo;<br/>MySQL 8.0")]:::database
-                    end
+                    <text x="150" y="31" text-anchor="middle" font-size="11.5" fill="#1b2a47">&laquo;device&raquo;</text>
+                    <text x="150" y="49" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#1b2a47">Perangkat Atasan / Supervisor</text>
 
-                    %% Node 5: Storage
-                    subgraph StorageNode ["&laquo;file server&raquo; Storage Host"]
-                        direction TB
-                        LocalStorage[/"&laquo;storage&raquo;<br/>Local File System"\]:::storage
-                    end
+                    <!-- Web Browser -->
+                    <rect x="18" y="72" width="264" height="54" rx="3" fill="#e8f2fc" stroke="#3f6896" stroke-width="1.4"/>
+                    <use href="#uml-comp-icon" x="256" y="78"/>
+                    <text x="142" y="93" text-anchor="middle" font-size="10.5" fill="#1b2a47">&laquo;component&raquo;</text>
+                    <text x="142" y="112" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b2a47">Web Browser (Dashboard &amp; Canvas)</text>
 
-                    %% Hubungan antar Node
-                    Browser -- "HTTP / HTTPS" --> Laravel
-                    Laravel -- "REST API (Port 8001)" --> FastAPI
-                    Laravel -- "PDO / TCP (Port 3306)" --> MySQL
-                    FastAPI -- "PyMySQL / TCP (Port 3306)" --> MySQL
-                    Laravel -- "File I/O (Read/Write)" --> LocalStorage
-                    FastAPI -- "File I/O (Read-only)" --> LocalStorage
+                    <!-- Kamera Pengawas -->
+                    <rect x="18" y="138" width="264" height="54" rx="3" fill="#e8f2fc" stroke="#3f6896" stroke-width="1.4"/>
+                    <use href="#uml-comp-icon" x="256" y="144"/>
+                    <text x="142" y="159" text-anchor="middle" font-size="10.5" fill="#1b2a47">&laquo;device / sensor&raquo;</text>
+                    <text x="142" y="178" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b2a47">Kamera Pengawas CCTV / Webcam</text>
+                </g>
 
-                    %% Menerapkan class node pada subgraph
-                    class ClientNode,WebServerNode,PythonServerNode,DBNode,StorageNode node;
-            </div>
+                <!-- ================================================================ -->
+                <!-- NODE 2: PERANGKAT KARYAWAN                                       -->
+                <!-- ================================================================ -->
+                <g transform="translate(30, 325)">
+                    <polygon points="0,12 12,0 312,0 300,12" fill="#dcebf8" stroke="#3f6896" stroke-width="1.6"/>
+                    <polygon points="300,12 312,0 312,138 300,150" fill="#a6c5e3" stroke="#3f6896" stroke-width="1.6"/>
+                    <rect x="0" y="12" width="300" height="138" fill="#c9dff2" stroke="#3f6896" stroke-width="1.6"/>
+                    <line x1="0" y1="58" x2="300" y2="58" stroke="#3f6896" stroke-width="1.2"/>
+
+                    <text x="150" y="31" text-anchor="middle" font-size="11.5" fill="#1b2a47">&laquo;device&raquo;</text>
+                    <text x="150" y="49" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#1b2a47">Perangkat Karyawan (PC / Mobile)</text>
+
+                    <!-- Web Browser Karyawan -->
+                    <rect x="18" y="74" width="264" height="56" rx="3" fill="#e8f2fc" stroke="#3f6896" stroke-width="1.4"/>
+                    <use href="#uml-comp-icon" x="256" y="80"/>
+                    <text x="142" y="96" text-anchor="middle" font-size="10.5" fill="#1b2a47">&laquo;component&raquo;</text>
+                    <text x="142" y="115" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b2a47">Web Browser Karyawan</text>
+                </g>
+
+                <!-- ================================================================ -->
+                <!-- NODE 3: WEB APPLICATION SERVER (LARAVEL 12)                      -->
+                <!-- ================================================================ -->
+                <g transform="translate(430, 250)">
+                    <polygon points="0,14 14,0 324,0 310,14" fill="#dcebf8" stroke="#3f6896" stroke-width="1.6"/>
+                    <polygon points="310,14 324,0 324,336 310,350" fill="#a6c5e3" stroke="#3f6896" stroke-width="1.6"/>
+                    <rect x="0" y="14" width="310" height="336" fill="#c9dff2" stroke="#3f6896" stroke-width="1.6"/>
+                    <line x1="0" y1="62" x2="310" y2="62" stroke="#3f6896" stroke-width="1.2"/>
+
+                    <text x="155" y="33" text-anchor="middle" font-size="11.5" fill="#1b2a47">&laquo;execution environment&raquo;</text>
+                    <text x="155" y="51" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#1b2a47">Web Application Server (Laravel 12)</text>
+
+                    <!-- Monitoring & Kehadiran Controller -->
+                    <rect x="18" y="76" width="274" height="52" rx="3" fill="#e8f2fc" stroke="#3f6896" stroke-width="1.4"/>
+                    <use href="#uml-comp-icon" x="266" y="82"/>
+                    <text x="145" y="96" text-anchor="middle" font-size="10.5" fill="#1b2a47">&laquo;component&raquo;</text>
+                    <text x="145" y="114" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b2a47">Monitoring &amp; Kehadiran Controller</text>
+
+                    <!-- Manajemen Karyawan & Izin/Cuti -->
+                    <rect x="18" y="140" width="274" height="52" rx="3" fill="#e8f2fc" stroke="#3f6896" stroke-width="1.4"/>
+                    <use href="#uml-comp-icon" x="266" y="146"/>
+                    <text x="145" y="160" text-anchor="middle" font-size="10.5" fill="#1b2a47">&laquo;component&raquo;</text>
+                    <text x="145" y="178" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b2a47">Manajemen Karyawan &amp; Izin/Cuti</text>
+
+                    <!-- Generator Laporan PDF & Excel -->
+                    <rect x="18" y="204" width="274" height="52" rx="2" fill="#ffffff" stroke="#4b6584" stroke-width="1.3"/>
+                    <use href="#uml-art-icon" x="267" y="210"/>
+                    <text x="145" y="224" text-anchor="middle" font-size="10.5" fill="#1b2a47">&laquo;artifact&raquo;</text>
+                    <text x="145" y="242" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b2a47">Generator Laporan PDF &amp; Excel</text>
+
+                    <!-- Storage Disk -->
+                    <rect x="18" y="268" width="274" height="52" rx="2" fill="#ffffff" stroke="#4b6584" stroke-width="1.3"/>
+                    <use href="#uml-art-icon" x="267" y="274"/>
+                    <text x="145" y="288" text-anchor="middle" font-size="10.5" fill="#1b2a47">&laquo;artifact / storage&raquo;</text>
+                    <text x="145" y="306" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b2a47">Storage Disk</text>
+                </g>
+
+                <!-- ================================================================ -->
+                <!-- NODE 4: AI COMPUTER VISION SERVER (FLASK + YOLOv8 + CNN)         -->
+                <!-- ================================================================ -->
+                <g transform="translate(805, 25)">
+                    <polygon points="0,14 14,0 334,0 320,14" fill="#dcebf8" stroke="#3f6896" stroke-width="1.6"/>
+                    <polygon points="320,14 334,0 334,336 320,350" fill="#a6c5e3" stroke="#3f6896" stroke-width="1.6"/>
+                    <rect x="0" y="14" width="320" height="336" fill="#c9dff2" stroke="#3f6896" stroke-width="1.6"/>
+                    <line x1="0" y1="62" x2="320" y2="62" stroke="#3f6896" stroke-width="1.2"/>
+
+                    <text x="160" y="33" text-anchor="middle" font-size="11.5" fill="#1b2a47">&laquo;execution environment&raquo;</text>
+                    <text x="160" y="51" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#1b2a47">AI Computer Vision Server (Port 5000)</text>
+
+                    <!-- Flask REST API & Persistent Worker -->
+                    <rect x="18" y="76" width="284" height="52" rx="3" fill="#e8f2fc" stroke="#3f6896" stroke-width="1.4"/>
+                    <use href="#uml-comp-icon" x="276" y="82"/>
+                    <text x="150" y="96" text-anchor="middle" font-size="10.5" fill="#1b2a47">&laquo;component&raquo;</text>
+                    <text x="150" y="114" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b2a47">Flask REST API &amp; Persistent Worker</text>
+
+                    <!-- YOLOv8 (Deteksi & Lokalisasi Manusia) -->
+                    <rect x="18" y="140" width="284" height="54" rx="2" fill="#ffffff" stroke="#4b6584" stroke-width="1.3"/>
+                    <use href="#uml-art-icon" x="277" y="146"/>
+                    <text x="150" y="159" text-anchor="middle" font-size="10.5" fill="#1b2a47">&laquo;artifact : object detector&raquo;</text>
+                    <text x="150" y="177" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b2a47">YOLOv8 (Deteksi &amp; Lokalisasi Manusia)</text>
+
+                    <!-- Backbone CNN (Ekstraksi Fitur Visual) -->
+                    <rect x="18" y="206" width="284" height="54" rx="2" fill="#ffffff" stroke="#4b6584" stroke-width="1.3"/>
+                    <use href="#uml-art-icon" x="277" y="212"/>
+                    <text x="150" y="225" text-anchor="middle" font-size="10.5" fill="#1b2a47">&laquo;artifact : feature extractor&raquo;</text>
+                    <text x="150" y="243" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b2a47">Backbone CNN (Ekstraksi Fitur Visual)</text>
+
+                    <!-- Zone Recognition & 8-Hour Engine -->
+                    <rect x="18" y="272" width="284" height="52" rx="3" fill="#e8f2fc" stroke="#3f6896" stroke-width="1.4"/>
+                    <use href="#uml-comp-icon" x="276" y="278"/>
+                    <text x="150" y="292" text-anchor="middle" font-size="10.5" fill="#1b2a47">&laquo;component&raquo;</text>
+                    <text x="150" y="310" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b2a47">Zone Recognition &amp; 8-Hour Engine</text>
+                </g>
+
+                <!-- ================================================================ -->
+                <!-- NODE 5: MYSQL DATABASE SERVER (PORT 3306)                        -->
+                <!-- ================================================================ -->
+                <g transform="translate(805, 450)">
+                    <polygon points="0,14 14,0 334,0 320,14" fill="#dcebf8" stroke="#3f6896" stroke-width="1.6"/>
+                    <polygon points="320,14 334,0 334,156 320,170" fill="#a6c5e3" stroke="#3f6896" stroke-width="1.6"/>
+                    <rect x="0" y="14" width="320" height="156" fill="#c9dff2" stroke="#3f6896" stroke-width="1.6"/>
+                    <line x1="0" y1="62" x2="320" y2="62" stroke="#3f6896" stroke-width="1.2"/>
+
+                    <text x="160" y="33" text-anchor="middle" font-size="11.5" fill="#1b2a47">&laquo;database server&raquo;</text>
+                    <text x="160" y="51" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#1b2a47">MySQL Database Server (Port 3306)</text>
+
+                    <!-- Database e_kinerja -->
+                    <rect x="18" y="78" width="284" height="68" rx="2" fill="#ffffff" stroke="#4b6584" stroke-width="1.3"/>
+                    <use href="#uml-art-icon" x="277" y="85"/>
+                    <text x="150" y="102" text-anchor="middle" font-size="10.5" fill="#1b2a47">&laquo;database schema&raquo;</text>
+                    <text x="150" y="124" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b2a47">Database e_kinerja (PT Pou Yuen)</text>
+                </g>
+
+                <!-- ================================================================ -->
+                <!-- COMMUNICATION PATHS                                              -->
+                <!-- ================================================================ -->
+
+                <!-- Perangkat Atasan -> AI CV Server -->
+                <polyline points="342,105 805,105" fill="none" stroke="#1b2a47" stroke-width="2" marker-end="url(#arrow-open)"/>
+                <rect x="465" y="76" width="225" height="22" rx="3" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+                <text x="577" y="91" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#1b2a47">&laquo;HTTP/JSON&raquo; REST API :5000</text>
+
+                <!-- Perangkat Atasan -> Web Application Server -->
+                <polyline points="342,195 585,195 585,250" fill="none" stroke="#1b2a47" stroke-width="2" marker-end="url(#arrow-open)"/>
+                <rect x="385" y="168" width="180" height="22" rx="3" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+                <text x="475" y="183" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#1b2a47">&laquo;HTTP/HTTPS&raquo; Port 8000</text>
+
+                <!-- Perangkat Karyawan -> Web Application Server -->
+                <polyline points="342,410 430,410" fill="none" stroke="#1b2a47" stroke-width="2" marker-end="url(#arrow-open)"/>
+                <rect x="344" y="382" width="82" height="20" rx="3" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+                <text x="385" y="396" text-anchor="middle" font-size="10" font-weight="bold" fill="#1b2a47">&laquo;HTTP/HTTPS&raquo;</text>
+
+                <!-- AI CV Server -> MySQL Database Server -->
+                <polyline points="965,375 965,450" fill="none" stroke="#1b2a47" stroke-width="2" marker-end="url(#arrow-open)"/>
+                <rect x="865" y="398" width="200" height="22" rx="3" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+                <text x="965" y="413" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#1b2a47">&laquo;TCP/IP&raquo; PyMySQL :3306</text>
+
+                <!-- Web Application Server -> MySQL Database Server (Jalur Bawah) -->
+                <polyline points="585,600 585,665 965,665 965,620" fill="none" stroke="#1b2a47" stroke-width="2" marker-end="url(#arrow-open)"/>
+                <rect x="690" y="640" width="165" height="22" rx="3" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+                <text x="772" y="655" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#1b2a47">&laquo;TCP/IP&raquo; PDO :3306</text>
+
+            </svg>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- KETERANGAN LENGKAP SETIAP ELEMEN PADA DIAGRAM (TANPA KODE HURUF/ANGKA)    -->
+    <!-- ========================================================================= -->
+    <div class="legend">
+        <h3>Keterangan Lengkap Setiap Node, Komponen, dan Artefak pada Diagram:</h3>
+
+        <!-- Perangkat Atasan / Supervisor -->
+        <div class="node-group-block">
+            <div class="node-group-title">&laquo;device&raquo; Perangkat Atasan / Supervisor</div>
+            <p style="margin: 0 0 10px 0; font-size: 0.88rem; color: #475569;">
+                Perangkat komputer/workstation yang digunakan oleh Atasan/Supervisor di PT Pou Yuen untuk mengendalikan pengawasan kamera, mengelola data karyawan, memverifikasi perizinan, dan mengunduh laporan kehadiran.
+            </p>
+            <ul class="sub-list">
+                <li>
+                    <strong>Web Browser (Dashboard &amp; Canvas)</strong><br>
+                    Antarmuka web sisi klien berbasis HTML5 Canvas &amp; Alpine.js untuk menampilkan video *real-time* 60 FPS, menggambar kotak zona kerja karyawan, memantau durasi 8 jam, dan mengakses dashboard analitik.
+                </li>
+                <li>
+                    <strong>Kamera Pengawas CCTV / Webcam</strong><br>
+                    Perangkat sensor visual (resolusi HD `1280x720`) yang menangkap citra area meja/posisi kerja karyawan secara langsung untuk dikirimkan ke server AI.
+                </li>
+            </ul>
         </div>
 
-        <div class="legend">
-            <h3>Keterangan Node & Komponen:</h3>
-            <ul>
-                <li><span class="badge">Client Workstation</span> Perangkat fisik pengguna (PC/Smartphone) yang mengakses sistem melalui peramban (Web Browser).</li>
-                <li><span class="badge">Web Server</span> Lingkungan yang mengeksekusi aplikasi web utama berbasis Laravel 12. Mengatur autentikasi, UI, manajemen folder, dan routing.</li>
-                <li><span class="badge">AI Microservice Server</span> Lingkungan Python terpisah yang menjalankan layanan FastAPI. Bertugas melakukan ekstraksi fitur wajah (FaceNet), deteksi (MTCNN), dan clustering (DBSCAN).</li>
-                <li><span class="badge">Database Server</span> Basis data relasional MySQL yang menyimpan metadata file, data pengguna, serta vektor <i>face embedding</i>.</li>
-                <li><span class="badge">Storage Host</span> Sistem file lokal (Local Disk) tempat menyimpan aset gambar fisik. Laravel memiliki akses baca-tulis, sedangkan layanan Python hanya memerlukan akses baca (Read-only) untuk pemrosesan citra.</li>
+        <!-- Perangkat Karyawan (PC / Mobile) -->
+        <div class="node-group-block">
+            <div class="node-group-title">&laquo;device&raquo; Perangkat Karyawan (PC / Mobile)</div>
+            <p style="margin: 0 0 10px 0; font-size: 0.88rem; color: #475569;">
+                Perangkat komputer atau ponsel pintar milik karyawan PT Pou Yuen untuk mengakses layanan mandiri kehadiran.
+            </p>
+            <ul class="sub-list">
+                <li>
+                    <strong>Web Browser Karyawan</strong><br>
+                    Digunakan karyawan untuk mengecek riwayat kehadiran otomatis (filter harian &amp; bulanan), melihat progres pemenuhan jam kerja 8 jam, mengajukan izin/sakit/cuti, mengelola data diri, serta mencetak laporan PDF pribadi (*Data Karyawan T1*).
+                </li>
+            </ul>
+        </div>
+
+        <!-- Web Application Server (Laravel 12) -->
+        <div class="node-group-block">
+            <div class="node-group-title">&laquo;execution environment&raquo; Web Application Server (Laravel 12)</div>
+            <p style="margin: 0 0 10px 0; font-size: 0.88rem; color: #475569;">
+                Server aplikasi utama berbasis PHP 8.3 &amp; Framework Laravel 12 yang menangani seluruh proses bisnis, hak akses (*role*), dan pelaporan.
+            </p>
+            <ul class="sub-list">
+                <li>
+                    <strong>Monitoring &amp; Kehadiran Controller</strong><br>
+                    Komponen pengelola halaman Monitoring Kamera (`AtasanMonitoringController`), rekap kehadiran harian/bulanan (`AtasanKehadiranController` &amp; `KehadiranController`), serta pemblokiran absen manual.
+                </li>
+                <li>
+                    <strong>Manajemen Karyawan &amp; Izin/Cuti</strong><br>
+                    Komponen pengelola CRUD 7 atribut karyawan PT Pou Yuen (`PegawaiController`), pembaruan profil (`ProfilController`), serta pengajuan &amp; persetujuan izin, sakit, dan cuti (`IzinSakitController`).
+                </li>
+                <li>
+                    <strong>Generator Laporan PDF &amp; Excel</strong><br>
+                    Artefak pencetak laporan menggunakan pustaka *DomPDF* (format *Data Karyawan T1* untuk perorangan dan format *Kop Resmi PT Pou Yuen* untuk seluruh karyawan) serta ekspor *CSV/Excel*.
+                </li>
+                <li>
+                    <strong>Storage Disk</strong><br>
+                    Media penyimpanan berkas fisik pada server (`storage/app/public`) untuk menyimpan foto profil karyawan dan dokumen lampiran surat bukti izin/sakit/cuti.
+                </li>
+            </ul>
+        </div>
+
+        <!-- AI Computer Vision Server (Port 5000) -->
+        <div class="node-group-block">
+            <div class="node-group-title">&laquo;execution environment&raquo; AI Computer Vision Server (Port 5000)</div>
+            <p style="margin: 0 0 10px 0; font-size: 0.88rem; color: #475569;">
+                Server komputasi visi berbasis Python yang memproses frame kamera dan menjalankan kecerdasan buatan pendeteksi kehadiran otomatis.
+            </p>
+            <ul class="sub-list">
+                <li>
+                    <strong>Flask REST API &amp; Persistent Worker</strong><br>
+                    Layanan API (`app.py`) yang menerima kiriman frame kamera, mengelola titik koordinat zona (`/api/zones`), serta menjalankan *background thread* agar pengawasan tetap berjalan meskipun browser di-*reload* atau *logout*.
+                </li>
+                <li>
+                    <strong>YOLOv8 (Deteksi &amp; Lokalisasi Manusia)</strong><br>
+                    Model *single-stage object detector* (`yolov8n.pt`) yang bertugas **mendeteksi keberadaan objek manusia (`class = 0`)**, menentukan titik koordinat kotak batas (*bounding box* `x1, y1, x2, y2`), dan menghitung *confidence score* ($\ge 0.50$) secara *real-time*.
+                </li>
+                <li>
+                    <strong>Backbone CNN (Ekstraksi Fitur Visual)</strong><br>
+                    Jaringan saraf konvolusional (*CSPDarknet / C2f*) yang bertugas **mengekstraksi fitur visual spasial** (kontur kepala, bahu, dan proporsi postur tubuh manusia) dari gambar mentah sehingga sistem tidak salah mendeteksi kursi/meja kosong, monitor, atau bayangan sebagai manusia.
+                </li>
+                <li>
+                    <strong>Zone Recognition &amp; 8-Hour Engine</strong><br>
+                    Mesin logika (`ai/vision.py`) yang mencocokkan irisan posisi tubuh karyawan dengan zona kerja (*overlap* $\ge 20\%$), menerapkan konfirmasi beruntun (*streak* $\ge 2$ frame), mencatat *Check-In* (pertama terdeteksi) &amp; *Check-Out* (terakhir terdeteksi), serta menghitung progres jam kerja terhadap standar **8 Jam**.
+                </li>
+            </ul>
+        </div>
+
+        <!-- MySQL Database Server (Port 3306) -->
+        <div class="node-group-block">
+            <div class="node-group-title">&laquo;database server&raquo; MySQL Database Server (Port 3306)</div>
+            <p style="margin: 0 0 10px 0; font-size: 0.88rem; color: #475569;">
+                Server basis data relasional terpusat yang mengintegrasikan data antara aplikasi web Laravel dan server AI Python.
+            </p>
+            <ul class="sub-list">
+                <li>
+                    <strong>Database e_kinerja (PT Pou Yuen)</strong><br>
+                    Skema basis data utama yang memuat tabel `users`, `pegawai_details` (data 30+ karyawan PT Pou Yuen), `zona_kameras` (koordinat zona duduk), `kehadirans` (jam masuk/pulang otomatis), `cctv_monitoring_logs` (akumulasi durasi kerja), dan `izin_sakit`.
+                </li>
             </ul>
         </div>
     </div>
 
-    <script>
-        // Inisialisasi Mermaid.js
-        mermaid.initialize({
-            startOnLoad: true,
-            theme: 'default',
-            fontFamily: 'Segoe UI',
-            flowchart: {
-                htmlLabels: true,
-                curve: 'basis'
-            }
-        });
-    </script>
+    <!-- KETERANGAN JALUR KOMUNIKASI -->
+    <div class="legend legend-net">
+        <h3>Keterangan Jalur Komunikasi &amp; Protokol Jaringan:</h3>
+        <ul class="sub-list">
+            <li>
+                <strong>&laquo;HTTP/JSON&raquo; REST API :5000</strong><br>
+                Jalur komunikasi dari browser Atasan ke AI Computer Vision Server untuk mengirim frame video kamera, menyimpan/mengambil koordinat zona, dan mengambil status deteksi *real-time*.
+            </li>
+            <li>
+                <strong>&laquo;HTTP/HTTPS&raquo; Port 8000 (Atasan &rarr; Web Server)</strong><br>
+                Jalur komunikasi dari browser Atasan ke Web Application Server (Laravel 12) untuk mengakses dashboard, mengelola data karyawan, memverifikasi izin/cuti, dan mengunduh laporan PDF/Excel.
+            </li>
+            <li>
+                <strong>&laquo;HTTP/HTTPS&raquo; (Karyawan &rarr; Web Server)</strong><br>
+                Jalur komunikasi dari perangkat Karyawan ke Web Application Server (Laravel 12) untuk melihat rekap kehadiran pribadi, mengajukan izin/sakit/cuti, dan mencetak PDF *Data Karyawan (T1)*.
+            </li>
+            <li>
+                <strong>&laquo;TCP/IP&raquo; PyMySQL :3306</strong><br>
+                Koneksi database dari AI Computer Vision Server (menggunakan *SQLAlchemy &amp; PyMySQL*) ke MySQL Database Server untuk membaca zona kamera serta menulis otomatis jam *check-in*, *check-out*, dan durasi kerja.
+            </li>
+            <li>
+                <strong>&laquo;TCP/IP&raquo; PDO :3306</strong><br>
+                Koneksi database dari Web Application Server Laravel (menggunakan *PHP Data Objects / Eloquent ORM* melewati jalur bawah) ke MySQL Database Server untuk membaca dan menyimpan seluruh data aplikasi.
+            </li>
+        </ul>
+    </div>
+</div>
+
 </body>
 </html>

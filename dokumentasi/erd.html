@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entity Relationship Diagram (Visual Paradigm Classic Style) - Sistem Monitoring Kehadiran PT Pou Yuen</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Tahoma, 'Segoe UI', Arial, sans-serif;
+            background-color: #eef2f6;
+            color: #1e293b;
+            margin: 0;
+            padding: 28px 18px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1320px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 28px 32px;
+            border-radius: 10px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+            border-top: 5px solid #c97a2b;
+        }
+
+        .header {
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 14px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.55rem;
+            color: #7c3f06;
+        }
+
+        .header p {
+            margin: 4px 0 0 0;
+            color: #64748b;
+            font-size: 0.92rem;
+        }
+
+        .vp-canvas-wrap {
+            border: 1.5px solid #94a3b8;
+            background-color: #ffffff;
+            overflow-x: auto;
+            padding: 10px;
+            margin-bottom: 26px;
+        }
+
+        svg.vp-erd {
+            display: block;
+            margin: 0 auto;
+            min-width: 1200px;
+            height: auto;
+            font-family: Tahoma, Arial, sans-serif;
+        }
+
+        /* Keterangan Bawah */
+        .legend {
+            background: #fdfaf6;
+            border: 1px solid #e6ccb2;
+            border-left: 4px solid #c97a2b;
+            padding: 20px 24px;
+            border-radius: 8px;
+        }
+
+        .legend h3 {
+            margin: 0 0 14px 0;
+            color: #7c3f06;
+            font-size: 1.05rem;
+            border-bottom: 1px solid #eddcd2;
+            padding-bottom: 8px;
+        }
+
+        .entity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+            gap: 12px 18px;
+        }
+
+        .entity-card {
+            background: #ffffff;
+            border: 1px solid #e6ccb2;
+            border-radius: 6px;
+            padding: 12px 14px;
+        }
+
+        .entity-card h4 {
+            margin: 0 0 5px 0;
+            color: #7c3f06;
+            font-size: 0.94rem;
+        }
+
+        .entity-card p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #334155;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Entity Relationship Diagram (ERD) — Sistem Monitoring Kehadiran Karyawan PT Pou Yuen</h1>
+        <p>Desain Physical Data Model dengan Standar Visual Paradigm (Tabel Aktif pada Sistem Monitoring Kehadiran)</p>
+    </div>
+
+    <div class="vp-canvas-wrap">
+        <svg class="vp-erd" viewBox="0 0 1280 750" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Gradient Oranye/Coklat Muda Khas Visual Paradigm -->
+                <linearGradient id="vpOrangeBody" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#f5c99b"/>
+                    <stop offset="100%" stop-color="#eab37b"/>
+                </linearGradient>
+                <linearGradient id="vpOrangeHeader" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#f7d4ae"/>
+                    <stop offset="100%" stop-color="#ebba86"/>
+                </linearGradient>
+
+                <!-- 1. Ikon Kunci Emas Vertikal (Primary Key / PK) -->
+                <g id="icon-pk">
+                    <circle cx="6" cy="4.5" r="3.2" fill="#facc15" stroke="#a16207" stroke-width="1"/>
+                    <circle cx="6" cy="4.5" r="1" fill="#713f12"/>
+                    <line x1="6" y1="7.7" x2="6" y2="14.5" stroke="#a16207" stroke-width="1.6"/>
+                    <line x1="6" y1="11.5" x2="9" y2="11.5" stroke="#a16207" stroke-width="1.3"/>
+                    <line x1="6" y1="13.8" x2="9" y2="13.8" stroke="#a16207" stroke-width="1.3"/>
+                </g>
+
+                <!-- 2. Ikon Atribut Reguler (Kotak Dokumen Biru/Putih di Kiri) -->
+                <g id="icon-col">
+                    <rect x="1" y="1" width="10" height="13" fill="#ffffff" stroke="#1e3a8a" stroke-width="1"/>
+                    <rect x="1" y="1" width="3.5" height="13" fill="#3b82f6"/>
+                    <line x1="6" y1="4.5" x2="9.5" y2="4.5" stroke="#1e3a8a" stroke-width="1"/>
+                    <line x1="6" y1="7.5" x2="9.5" y2="7.5" stroke="#1e3a8a" stroke-width="1"/>
+                    <line x1="6" y1="10.5" x2="9.5" y2="10.5" stroke="#1e3a8a" stroke-width="1"/>
+                </g>
+
+                <!-- 3. Ikon Foreign Key (Kotak Dokumen + Panah Lengkung Hijau) -->
+                <g id="icon-fk">
+                    <rect x="2" y="2" width="9" height="12" fill="#ffffff" stroke="#1e3a8a" stroke-width="1"/>
+                    <path d="M 0,9 Q 0,3 6,3 L 6,1 L 9.5,4 L 6,7 L 6,5 Q 2,5 2,9 Z" fill="#16a34a" stroke="#14532d" stroke-width="0.5"/>
+                </g>
+
+                <!-- 4. Ikon Kotak [N] (Nullable) di Sisi Kanan Baris -->
+                <g id="icon-null">
+                    <rect x="0" y="0" width="12" height="13" fill="#ffffff" stroke="#475569" stroke-width="1"/>
+                    <text x="6" y="10.2" text-anchor="middle" font-size="9.5" font-weight="bold" fill="#1e293b">N</text>
+                </g>
+            </defs>
+
+            <!-- ======================================================================= -->
+            <!-- GARIS RELASI PUTUS-PUTUS (DASHED CROW'S FOOT + LABEL TEKS RELASI)       -->
+            <!-- ======================================================================= -->
+
+            <!-- Relasi 1: Users (1) - - - memiliki profil - - - (0..1) Pegawai_details -->
+            <polyline points="295,310 435,310" fill="none" stroke="#111827" stroke-width="1.5" stroke-dasharray="5,4"/>
+            <!-- Tanda || di sisi Users -->
+            <line x1="306" y1="303" x2="306" y2="317" stroke="#111827" stroke-width="1.5"/>
+            <line x1="312" y1="303" x2="312" y2="317" stroke="#111827" stroke-width="1.5"/>
+            <!-- Tanda o| di sisi Pegawai_details -->
+            <circle cx="418" cy="310" r="4.2" fill="#ffffff" stroke="#111827" stroke-width="1.4"/>
+            <line x1="426" y1="303" x2="426" y2="317" stroke="#111827" stroke-width="1.5"/>
+            <text x="365" y="298" text-anchor="middle" font-size="11" fill="#111827">memiliki profil</text>
+
+            <!-- Relasi 2: Users (0..N) - - - terdiri dari - - - (1) Roles -->
+            <polyline points="160,412 160,555" fill="none" stroke="#111827" stroke-width="1.5" stroke-dasharray="5,4"/>
+            <line x1="153" y1="543" x2="167" y2="543" stroke="#111827" stroke-width="1.5"/>
+            <circle cx="160" cy="429" r="4.2" fill="#ffffff" stroke="#111827" stroke-width="1.4"/>
+            <line x1="160" y1="424" x2="153" y2="412" stroke="#111827" stroke-width="1.5"/>
+            <line x1="160" y1="424" x2="167" y2="412" stroke="#111827" stroke-width="1.5"/>
+            <text x="200" y="490" text-anchor="middle" font-size="11" fill="#111827">terdiri dari</text>
+
+            <!-- Relasi 3: Users (1) - - - akun atasan - - - (0..1) Atasan -->
+            <polyline points="160,230 160,165" fill="none" stroke="#111827" stroke-width="1.5" stroke-dasharray="5,4"/>
+            <line x1="153" y1="219" x2="167" y2="219" stroke="#111827" stroke-width="1.5"/>
+            <circle cx="160" cy="181" r="4.2" fill="#ffffff" stroke="#111827" stroke-width="1.4"/>
+            <line x1="153" y1="173" x2="167" y2="173" stroke="#111827" stroke-width="1.5"/>
+            <text x="202" y="202" text-anchor="middle" font-size="11" fill="#111827">akun atasan</text>
+
+            <!-- Relasi 4: Atasan (1) - - - mengawasi dan mengelola - - - (0..N) Pegawai_details -->
+            <polyline points="295,95 590,95 590,200" fill="none" stroke="#111827" stroke-width="1.5" stroke-dasharray="5,4"/>
+            <line x1="306" y1="88" x2="306" y2="102" stroke="#111827" stroke-width="1.5"/>
+            <line x1="312" y1="88" x2="312" y2="102" stroke="#111827" stroke-width="1.5"/>
+            <!-- Crow's foot di atas Pegawai_details -->
+            <circle cx="590" cy="183" r="4.2" fill="#ffffff" stroke="#111827" stroke-width="1.4"/>
+            <line x1="590" y1="188" x2="583" y2="200" stroke="#111827" stroke-width="1.5"/>
+            <line x1="590" y1="188" x2="597" y2="200" stroke="#111827" stroke-width="1.5"/>
+            <text x="445" y="85" text-anchor="middle" font-size="11" fill="#111827">mengawasi dan mengelola</text>
+
+            <!-- Relasi 5: Pegawai_details (1) - - - menempati zona - - - (0..1) Zona_kameras -->
+            <polyline points="745,250 865,250 865,115 960,115" fill="none" stroke="#111827" stroke-width="1.8" stroke-dasharray="5,4"/>
+            <line x1="756" y1="243" x2="756" y2="257" stroke="#111827" stroke-width="1.6"/>
+            <circle cx="942" cy="115" r="4.2" fill="#ffffff" stroke="#111827" stroke-width="1.5"/>
+            <line x1="951" y1="108" x2="951" y2="122" stroke="#111827" stroke-width="1.6"/>
+            <text x="865" y="103" text-anchor="middle" font-size="11" fill="#111827">menempati zona</text>
+
+            <!-- Relasi 6: Pegawai_details (1) - - - terekam durasi - - - (0..N) Cctv_monitoring_logs -->
+            <polyline points="745,315 960,315" fill="none" stroke="#111827" stroke-width="1.8" stroke-dasharray="5,4"/>
+            <line x1="756" y1="308" x2="756" y2="322" stroke="#111827" stroke-width="1.6"/>
+            <circle cx="942" cy="315" r="4.2" fill="#ffffff" stroke="#111827" stroke-width="1.5"/>
+            <line x1="947" y1="315" x2="960" y2="308" stroke="#111827" stroke-width="1.6"/>
+            <line x1="947" y1="315" x2="960" y2="322" stroke="#111827" stroke-width="1.6"/>
+            <text x="852" y="304" text-anchor="middle" font-size="11" fill="#111827">terekam durasi</text>
+
+            <!-- Relasi 7: Pegawai_details (1) - - - terdeteksi AI - - - (0..N) Deteksi_aktivitas -->
+            <polyline points="745,380 895,380 895,625 960,625" fill="none" stroke="#111827" stroke-width="1.5" stroke-dasharray="5,4"/>
+            <line x1="756" y1="373" x2="756" y2="387" stroke="#111827" stroke-width="1.5"/>
+            <circle cx="942" cy="625" r="4.2" fill="#ffffff" stroke="#111827" stroke-width="1.4"/>
+            <line x1="947" y1="625" x2="960" y2="618" stroke="#111827" stroke-width="1.5"/>
+            <line x1="947" y1="625" x2="960" y2="632" stroke="#111827" stroke-width="1.5"/>
+            <text x="822" y="370" text-anchor="middle" font-size="11" fill="#111827">terdeteksi AI</text>
+
+            <!-- Relasi 8: Pegawai_details (1) - - - mencatat absen - - - (0..N) Kehadirans -->
+            <polyline points="665,428 665,555" fill="none" stroke="#111827" stroke-width="1.8" stroke-dasharray="5,4"/>
+            <line x1="658" y1="439" x2="672" y2="439" stroke="#111827" stroke-width="1.6"/>
+            <circle cx="665" cy="537" r="4.2" fill="#ffffff" stroke="#111827" stroke-width="1.5"/>
+            <line x1="665" y1="542" x2="658" y2="555" stroke="#111827" stroke-width="1.6"/>
+            <line x1="665" y1="542" x2="672" y2="555" stroke="#111827" stroke-width="1.6"/>
+            <text x="714" y="495" text-anchor="middle" font-size="11" fill="#111827">mencatat absen</text>
+
+            <!-- Relasi 9: Pegawai_details (1) - - - mengajukan - - - (0..N) Izin_sakit -->
+            <polyline points="485,428 485,555" fill="none" stroke="#111827" stroke-width="1.5" stroke-dasharray="5,4"/>
+            <line x1="478" y1="439" x2="492" y2="439" stroke="#111827" stroke-width="1.5"/>
+            <circle cx="485" cy="537" r="4.2" fill="#ffffff" stroke="#111827" stroke-width="1.4"/>
+            <line x1="485" y1="542" x2="478" y2="555" stroke="#111827" stroke-width="1.5"/>
+            <line x1="485" y1="542" x2="492" y2="555" stroke="#111827" stroke-width="1.5"/>
+            <text x="442" y="495" text-anchor="middle" font-size="11" fill="#111827">mengajukan</text>
+
+
+            <!-- ======================================================================= -->
+            <!-- ENTITAS 1: Atasan (Kiri Atas)                                           -->
+            <!-- ======================================================================= -->
+            <g transform="translate(25, 25)">
+                <rect x="0" y="0" width="270" height="140" rx="10" ry="10" fill="url(#vpOrangeBody)" stroke="#5c3a1e" stroke-width="1.5"/>
+                <line x1="0" y1="26" x2="270" y2="26" stroke="#5c3a1e" stroke-width="1.2"/>
+                <text x="135" y="18" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#111827">Atasan</text>
+
+                <!-- PK: id -->
+                <use href="#icon-pk" x="8" y="31"/>
+                <text x="26" y="43" font-size="11.5" font-weight="bold" fill="#111827">id</text>
+                <text x="165" y="43" font-size="11.5" font-weight="bold" fill="#111827">bigint(20)</text>
+                <line x1="4" y1="49" x2="266" y2="49" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- name -->
+                <use href="#icon-col" x="8" y="53"/>
+                <text x="26" y="64" font-size="11.5" fill="#111827">name</text>
+                <text x="165" y="64" font-size="11.5" fill="#111827">varchar(255)</text>
+                <line x1="4" y1="70" x2="266" y2="70" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- nip -->
+                <use href="#icon-col" x="8" y="74"/>
+                <text x="26" y="85" font-size="11.5" fill="#111827">nip</text>
+                <text x="165" y="85" font-size="11.5" fill="#111827">varchar(255)</text>
+                <use href="#icon-null" x="252" y="74"/>
+                <line x1="4" y1="91" x2="266" y2="91" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- jabatan -->
+                <use href="#icon-col" x="8" y="95"/>
+                <text x="26" y="106" font-size="11.5" fill="#111827">jabatan</text>
+                <text x="165" y="106" font-size="11.5" fill="#111827">varchar(255)</text>
+                <use href="#icon-null" x="252" y="95"/>
+                <line x1="4" y1="112" x2="266" y2="112" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- FK: user_id -->
+                <use href="#icon-fk" x="8" y="116"/>
+                <text x="26" y="128" font-size="11.5" font-style="italic" fill="#1e293b">user_id</text>
+                <text x="165" y="128" font-size="11.5" font-style="italic" fill="#1e293b">bigint(20)</text>
+            </g>
+
+
+            <!-- ======================================================================= -->
+            <!-- ENTITAS 2: Users (Kiri Tengah)                                          -->
+            <!-- ======================================================================= -->
+            <g transform="translate(25, 230)">
+                <rect x="0" y="0" width="270" height="182" rx="10" ry="10" fill="url(#vpOrangeBody)" stroke="#5c3a1e" stroke-width="1.5"/>
+                <line x1="0" y1="26" x2="270" y2="26" stroke="#5c3a1e" stroke-width="1.2"/>
+                <text x="135" y="18" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#111827">Users</text>
+
+                <!-- PK: id -->
+                <use href="#icon-pk" x="8" y="31"/>
+                <text x="26" y="43" font-size="11.5" font-weight="bold" fill="#111827">id</text>
+                <text x="165" y="43" font-size="11.5" font-weight="bold" fill="#111827">bigint(20)</text>
+                <line x1="4" y1="49" x2="266" y2="49" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- name -->
+                <use href="#icon-col" x="8" y="53"/>
+                <text x="26" y="64" font-size="11.5" fill="#111827">name</text>
+                <text x="165" y="64" font-size="11.5" fill="#111827">varchar(255)</text>
+                <line x1="4" y1="70" x2="266" y2="70" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- email -->
+                <use href="#icon-col" x="8" y="74"/>
+                <text x="26" y="85" font-size="11.5" fill="#111827">email</text>
+                <text x="165" y="85" font-size="11.5" fill="#111827">varchar(255)</text>
+                <line x1="4" y1="91" x2="266" y2="91" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- nik -->
+                <use href="#icon-col" x="8" y="95"/>
+                <text x="26" y="106" font-size="11.5" fill="#111827">nik</text>
+                <text x="165" y="106" font-size="11.5" fill="#111827">varchar(255)</text>
+                <use href="#icon-null" x="252" y="95"/>
+                <line x1="4" y1="112" x2="266" y2="112" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- jenis_kelamin -->
+                <use href="#icon-col" x="8" y="116"/>
+                <text x="26" y="127" font-size="11.5" fill="#111827">jenis_kelamin</text>
+                <text x="165" y="127" font-size="11.5" fill="#111827">varchar(20)</text>
+                <use href="#icon-null" x="252" y="116"/>
+                <line x1="4" y1="133" x2="266" y2="133" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- password -->
+                <use href="#icon-col" x="8" y="137"/>
+                <text x="26" y="148" font-size="11.5" fill="#111827">password</text>
+                <text x="165" y="148" font-size="11.5" fill="#111827">varchar(255)</text>
+                <line x1="4" y1="154" x2="266" y2="154" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- profile_photo -->
+                <use href="#icon-col" x="8" y="158"/>
+                <text x="26" y="169" font-size="11.5" fill="#111827">profile_photo</text>
+                <text x="165" y="169" font-size="11.5" fill="#111827">varchar(255)</text>
+                <use href="#icon-null" x="252" y="158"/>
+            </g>
+
+
+            <!-- ======================================================================= -->
+            <!-- ENTITAS 3: Roles (Kiri Bawah)                                           -->
+            <!-- ======================================================================= -->
+            <g transform="translate(45, 555)">
+                <rect x="0" y="0" width="230" height="98" rx="10" ry="10" fill="url(#vpOrangeBody)" stroke="#5c3a1e" stroke-width="1.5"/>
+                <line x1="0" y1="26" x2="230" y2="26" stroke="#5c3a1e" stroke-width="1.2"/>
+                <text x="115" y="18" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#111827">Roles</text>
+
+                <!-- PK: id -->
+                <use href="#icon-pk" x="8" y="31"/>
+                <text x="26" y="43" font-size="11.5" font-weight="bold" fill="#111827">id</text>
+                <text x="130" y="43" font-size="11.5" font-weight="bold" fill="#111827">bigint(20)</text>
+                <line x1="4" y1="49" x2="226" y2="49" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- name -->
+                <use href="#icon-col" x="8" y="53"/>
+                <text x="26" y="64" font-size="11.5" fill="#111827">name</text>
+                <text x="130" y="64" font-size="11.5" fill="#111827">varchar(255)</text>
+                <line x1="4" y1="70" x2="226" y2="70" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- guard_name -->
+                <use href="#icon-col" x="8" y="74"/>
+                <text x="26" y="85" font-size="11.5" fill="#111827">guard_name</text>
+                <text x="130" y="85" font-size="11.5" fill="#111827">varchar(255)</text>
+            </g>
+
+
+            <!-- ======================================================================= -->
+            <!-- ENTITAS 4: Pegawai_details (Tengah Utama)                               -->
+            <!-- ======================================================================= -->
+            <g transform="translate(435, 200)">
+                <rect x="0" y="0" width="310" height="228" rx="10" ry="10" fill="url(#vpOrangeBody)" stroke="#5c3a1e" stroke-width="1.5"/>
+                <line x1="0" y1="26" x2="310" y2="26" stroke="#5c3a1e" stroke-width="1.2"/>
+                <text x="155" y="18" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#111827">Pegawai_details</text>
+
+                <!-- PK: id -->
+                <use href="#icon-pk" x="8" y="31"/>
+                <text x="26" y="43" font-size="11.5" font-weight="bold" fill="#111827">id</text>
+                <text x="185" y="43" font-size="11.5" font-weight="bold" fill="#111827">bigint(20)</text>
+                <line x1="4" y1="49" x2="306" y2="49" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- departemen -->
+                <use href="#icon-col" x="8" y="53"/>
+                <text x="26" y="64" font-size="11.5" fill="#111827">departemen</text>
+                <text x="185" y="64" font-size="11.5" fill="#111827">varchar(255)</text>
+                <use href="#icon-null" x="292" y="53"/>
+                <line x1="4" y1="70" x2="306" y2="70" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- divisi -->
+                <use href="#icon-col" x="8" y="74"/>
+                <text x="26" y="85" font-size="11.5" fill="#111827">divisi</text>
+                <text x="185" y="85" font-size="11.5" fill="#111827">varchar(255)</text>
+                <use href="#icon-null" x="292" y="74"/>
+                <line x1="4" y1="91" x2="306" y2="91" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- jabatan -->
+                <use href="#icon-col" x="8" y="95"/>
+                <text x="26" y="106" font-size="11.5" fill="#111827">jabatan</text>
+                <text x="185" y="106" font-size="11.5" fill="#111827">varchar(255)</text>
+                <use href="#icon-null" x="292" y="95"/>
+                <line x1="4" y1="112" x2="306" y2="112" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- nik_karyawan -->
+                <use href="#icon-col" x="8" y="116"/>
+                <text x="26" y="127" font-size="11.5" fill="#111827">nik_karyawan</text>
+                <text x="185" y="127" font-size="11.5" fill="#111827">varchar(255)</text>
+                <use href="#icon-null" x="292" y="116"/>
+                <line x1="4" y1="133" x2="306" y2="133" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- status -->
+                <use href="#icon-col" x="8" y="137"/>
+                <text x="26" y="148" font-size="11.5" fill="#111827">status</text>
+                <text x="185" y="148" font-size="11.5" fill="#111827">varchar(255)</text>
+                <use href="#icon-null" x="292" y="137"/>
+                <line x1="4" y1="154" x2="306" y2="154" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- tanggal_masuk -->
+                <use href="#icon-col" x="8" y="158"/>
+                <text x="26" y="169" font-size="11.5" fill="#111827">tanggal_masuk</text>
+                <text x="185" y="169" font-size="11.5" fill="#111827">date</text>
+                <use href="#icon-null" x="292" y="158"/>
+                <line x1="4" y1="175" x2="306" y2="175" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- FK: user_id -->
+                <use href="#icon-fk" x="8" y="179"/>
+                <text x="26" y="191" font-size="11.5" font-style="italic" fill="#1e293b">user_id</text>
+                <text x="185" y="191" font-size="11.5" font-style="italic" fill="#1e293b">bigint(20)</text>
+                <line x1="4" y1="197" x2="306" y2="197" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- FK: atasan_id -->
+                <use href="#icon-fk" x="8" y="201"/>
+                <text x="26" y="213" font-size="11.5" font-style="italic" fill="#1e293b">atasan_id</text>
+                <text x="185" y="213" font-size="11.5" font-style="italic" fill="#1e293b">bigint(20)</text>
+                <use href="#icon-null" x="292" y="201"/>
+            </g>
+
+
+            <!-- ======================================================================= -->
+            <!-- ENTITAS 5: Izin_sakit (Tengah Kiri Bawah)                               -->
+            <!-- ======================================================================= -->
+            <g transform="translate(305, 555)">
+                <rect x="0" y="0" width="260" height="162" rx="10" ry="10" fill="url(#vpOrangeBody)" stroke="#5c3a1e" stroke-width="1.5"/>
+                <line x1="0" y1="26" x2="260" y2="26" stroke="#5c3a1e" stroke-width="1.2"/>
+                <text x="130" y="18" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#111827">Izin_sakit</text>
+
+                <!-- PK: id -->
+                <use href="#icon-pk" x="8" y="31"/>
+                <text x="26" y="43" font-size="11.5" font-weight="bold" fill="#111827">id</text>
+                <text x="150" y="43" font-size="11.5" font-weight="bold" fill="#111827">bigint(20)</text>
+                <line x1="4" y1="49" x2="256" y2="49" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- jenis -->
+                <use href="#icon-col" x="8" y="53"/>
+                <text x="26" y="64" font-size="11.5" fill="#111827">jenis</text>
+                <text x="150" y="64" font-size="11.5" fill="#111827">varchar(50)</text>
+                <line x1="4" y1="70" x2="256" y2="70" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- tanggal_mulai -->
+                <use href="#icon-col" x="8" y="74"/>
+                <text x="26" y="85" font-size="11.5" fill="#111827">tanggal_mulai</text>
+                <text x="150" y="85" font-size="11.5" fill="#111827">date</text>
+                <line x1="4" y1="91" x2="256" y2="91" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- tanggal_selesai -->
+                <use href="#icon-col" x="8" y="95"/>
+                <text x="26" y="106" font-size="11.5" fill="#111827">tanggal_selesai</text>
+                <text x="150" y="106" font-size="11.5" fill="#111827">date</text>
+                <line x1="4" y1="112" x2="256" y2="112" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- file_surat -->
+                <use href="#icon-col" x="8" y="116"/>
+                <text x="26" y="127" font-size="11.5" fill="#111827">file_surat</text>
+                <text x="150" y="127" font-size="11.5" fill="#111827">varchar(255)</text>
+                <use href="#icon-null" x="242" y="116"/>
+                <line x1="4" y1="133" x2="256" y2="133" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- FK: pegawai_id -->
+                <use href="#icon-fk" x="8" y="137"/>
+                <text x="26" y="149" font-size="11.5" font-style="italic" fill="#1e293b">pegawai_id</text>
+                <text x="150" y="149" font-size="11.5" font-style="italic" fill="#1e293b">bigint(20)</text>
+            </g>
+
+
+            <!-- ======================================================================= -->
+            <!-- ENTITAS 6: Kehadirans (Tengah Kanan Bawah)                              -->
+            <!-- ======================================================================= -->
+            <g transform="translate(585, 555)">
+                <rect x="0" y="0" width="260" height="162" rx="10" ry="10" fill="url(#vpOrangeBody)" stroke="#5c3a1e" stroke-width="1.5"/>
+                <line x1="0" y1="26" x2="260" y2="26" stroke="#5c3a1e" stroke-width="1.2"/>
+                <text x="130" y="18" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#111827">Kehadirans</text>
+
+                <!-- PK: id -->
+                <use href="#icon-pk" x="8" y="31"/>
+                <text x="26" y="43" font-size="11.5" font-weight="bold" fill="#111827">id</text>
+                <text x="150" y="43" font-size="11.5" font-weight="bold" fill="#111827">bigint(20)</text>
+                <line x1="4" y1="49" x2="256" y2="49" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- tanggal -->
+                <use href="#icon-col" x="8" y="53"/>
+                <text x="26" y="64" font-size="11.5" fill="#111827">tanggal</text>
+                <text x="150" y="64" font-size="11.5" fill="#111827">date</text>
+                <line x1="4" y1="70" x2="256" y2="70" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- jenis -->
+                <use href="#icon-col" x="8" y="74"/>
+                <text x="26" y="85" font-size="11.5" fill="#111827">jenis</text>
+                <text x="150" y="85" font-size="11.5" fill="#111827">varchar(50)</text>
+                <use href="#icon-null" x="242" y="74"/>
+                <line x1="4" y1="91" x2="256" y2="91" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- check_in -->
+                <use href="#icon-col" x="8" y="95"/>
+                <text x="26" y="106" font-size="11.5" fill="#111827">check_in</text>
+                <text x="150" y="106" font-size="11.5" fill="#111827">time</text>
+                <use href="#icon-null" x="242" y="95"/>
+                <line x1="4" y1="112" x2="256" y2="112" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- check_out -->
+                <use href="#icon-col" x="8" y="116"/>
+                <text x="26" y="127" font-size="11.5" fill="#111827">check_out</text>
+                <text x="150" y="127" font-size="11.5" fill="#111827">time</text>
+                <use href="#icon-null" x="242" y="116"/>
+                <line x1="4" y1="133" x2="256" y2="133" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- FK: pegawai_id -->
+                <use href="#icon-fk" x="8" y="137"/>
+                <text x="26" y="149" font-size="11.5" font-style="italic" fill="#1e293b">pegawai_id</text>
+                <text x="150" y="149" font-size="11.5" font-style="italic" fill="#1e293b">bigint(20)</text>
+            </g>
+
+
+            <!-- ======================================================================= -->
+            <!-- ENTITAS 7: Zona_kameras (Kanan Atas)                                    -->
+            <!-- ======================================================================= -->
+            <g transform="translate(960, 25)">
+                <rect x="0" y="0" width="295" height="182" rx="10" ry="10" fill="url(#vpOrangeBody)" stroke="#5c3a1e" stroke-width="1.5"/>
+                <line x1="0" y1="26" x2="295" y2="26" stroke="#5c3a1e" stroke-width="1.2"/>
+                <text x="147" y="18" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#111827">Zona_kameras</text>
+
+                <!-- PK: id -->
+                <use href="#icon-pk" x="8" y="31"/>
+                <text x="26" y="43" font-size="11.5" font-weight="bold" fill="#111827">id</text>
+                <text x="175" y="43" font-size="11.5" font-weight="bold" fill="#111827">bigint(20)</text>
+                <line x1="4" y1="49" x2="291" y2="49" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- x1_pct -->
+                <use href="#icon-col" x="8" y="53"/>
+                <text x="26" y="64" font-size="11.5" fill="#111827">x1_pct</text>
+                <text x="175" y="64" font-size="11.5" fill="#111827">float(10)</text>
+                <line x1="4" y1="70" x2="291" y2="70" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- y1_pct -->
+                <use href="#icon-col" x="8" y="74"/>
+                <text x="26" y="85" font-size="11.5" fill="#111827">y1_pct</text>
+                <text x="175" y="85" font-size="11.5" fill="#111827">float(10)</text>
+                <line x1="4" y1="91" x2="291" y2="91" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- x2_pct, y2_pct -->
+                <use href="#icon-col" x="8" y="95"/>
+                <text x="26" y="106" font-size="11.5" fill="#111827">x2_pct, y2_pct</text>
+                <text x="175" y="106" font-size="11.5" fill="#111827">float(10)</text>
+                <line x1="4" y1="112" x2="291" y2="112" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- label -->
+                <use href="#icon-col" x="8" y="116"/>
+                <text x="26" y="127" font-size="11.5" fill="#111827">label</text>
+                <text x="175" y="127" font-size="11.5" fill="#111827">varchar(100)</text>
+                <use href="#icon-null" x="277" y="116"/>
+                <line x1="4" y1="133" x2="291" y2="133" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- warna -->
+                <use href="#icon-col" x="8" y="137"/>
+                <text x="26" y="148" font-size="11.5" fill="#111827">warna</text>
+                <text x="175" y="148" font-size="11.5" fill="#111827">varchar(20)</text>
+                <use href="#icon-null" x="277" y="137"/>
+                <line x1="4" y1="154" x2="291" y2="154" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- FK: pegawai_id -->
+                <use href="#icon-fk" x="8" y="158"/>
+                <text x="26" y="170" font-size="11.5" font-style="italic" fill="#1e293b">pegawai_id</text>
+                <text x="175" y="170" font-size="11.5" font-style="italic" fill="#1e293b">bigint(20)</text>
+            </g>
+
+
+            <!-- ======================================================================= -->
+            <!-- ENTITAS 8: Cctv_monitoring_logs (Kanan Tengah)                          -->
+            <!-- ======================================================================= -->
+            <g transform="translate(960, 245)">
+                <rect x="0" y="0" width="295" height="203" rx="10" ry="10" fill="url(#vpOrangeBody)" stroke="#5c3a1e" stroke-width="1.5"/>
+                <line x1="0" y1="26" x2="295" y2="26" stroke="#5c3a1e" stroke-width="1.2"/>
+                <text x="147" y="18" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#111827">Cctv_monitoring_logs</text>
+
+                <!-- PK: id -->
+                <use href="#icon-pk" x="8" y="31"/>
+                <text x="26" y="43" font-size="11.5" font-weight="bold" fill="#111827">id</text>
+                <text x="175" y="43" font-size="11.5" font-weight="bold" fill="#111827">bigint(20)</text>
+                <line x1="4" y1="49" x2="291" y2="49" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- tanggal -->
+                <use href="#icon-col" x="8" y="53"/>
+                <text x="26" y="64" font-size="11.5" fill="#111827">tanggal</text>
+                <text x="175" y="64" font-size="11.5" fill="#111827">date</text>
+                <line x1="4" y1="70" x2="291" y2="70" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- waktu_mulai -->
+                <use href="#icon-col" x="8" y="74"/>
+                <text x="26" y="85" font-size="11.5" fill="#111827">waktu_mulai</text>
+                <text x="175" y="85" font-size="11.5" fill="#111827">datetime</text>
+                <line x1="4" y1="91" x2="291" y2="91" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- waktu_selesai -->
+                <use href="#icon-col" x="8" y="95"/>
+                <text x="26" y="106" font-size="11.5" fill="#111827">waktu_selesai</text>
+                <text x="175" y="106" font-size="11.5" fill="#111827">datetime</text>
+                <use href="#icon-null" x="277" y="95"/>
+                <line x1="4" y1="112" x2="291" y2="112" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- durasi_stay -->
+                <use href="#icon-col" x="8" y="116"/>
+                <text x="26" y="127" font-size="11.5" fill="#111827">durasi_stay</text>
+                <text x="175" y="127" font-size="11.5" fill="#111827">integer(10)</text>
+                <line x1="4" y1="133" x2="291" y2="133" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- status_terakhir -->
+                <use href="#icon-col" x="8" y="137"/>
+                <text x="26" y="148" font-size="11.5" fill="#111827">status_terakhir</text>
+                <text x="175" y="148" font-size="11.5" fill="#111827">varchar(50)</text>
+                <line x1="4" y1="154" x2="291" y2="154" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- last_seen -->
+                <use href="#icon-col" x="8" y="158"/>
+                <text x="26" y="169" font-size="11.5" fill="#111827">last_seen</text>
+                <text x="175" y="169" font-size="11.5" fill="#111827">datetime</text>
+                <use href="#icon-null" x="277" y="158"/>
+                <line x1="4" y1="175" x2="291" y2="175" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- FK: pegawai_id -->
+                <use href="#icon-fk" x="8" y="179"/>
+                <text x="26" y="191" font-size="11.5" font-style="italic" fill="#1e293b">pegawai_id</text>
+                <text x="175" y="191" font-size="11.5" font-style="italic" fill="#1e293b">bigint(20)</text>
+            </g>
+
+
+            <!-- ======================================================================= -->
+            <!-- ENTITAS 9: Deteksi_aktivitas (Kanan Bawah)                              -->
+            <!-- ======================================================================= -->
+            <g transform="translate(960, 555)">
+                <rect x="0" y="0" width="295" height="140" rx="10" ry="10" fill="url(#vpOrangeBody)" stroke="#5c3a1e" stroke-width="1.5"/>
+                <line x1="0" y1="26" x2="295" y2="26" stroke="#5c3a1e" stroke-width="1.2"/>
+                <text x="147" y="18" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#111827">Deteksi_aktivitas</text>
+
+                <!-- PK: id -->
+                <use href="#icon-pk" x="8" y="31"/>
+                <text x="26" y="43" font-size="11.5" font-weight="bold" fill="#111827">id</text>
+                <text x="175" y="43" font-size="11.5" font-weight="bold" fill="#111827">bigint(20)</text>
+                <line x1="4" y1="49" x2="291" y2="49" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- waktu_deteksi -->
+                <use href="#icon-col" x="8" y="53"/>
+                <text x="26" y="64" font-size="11.5" fill="#111827">waktu_deteksi</text>
+                <text x="175" y="64" font-size="11.5" fill="#111827">datetime</text>
+                <line x1="4" y1="70" x2="291" y2="70" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- hasil_deteksi -->
+                <use href="#icon-col" x="8" y="74"/>
+                <text x="26" y="85" font-size="11.5" fill="#111827">hasil_deteksi</text>
+                <text x="175" y="85" font-size="11.5" fill="#111827">varchar(255)</text>
+                <line x1="4" y1="91" x2="291" y2="91" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- confidence -->
+                <use href="#icon-col" x="8" y="95"/>
+                <text x="26" y="106" font-size="11.5" fill="#111827">confidence</text>
+                <text x="175" y="106" font-size="11.5" fill="#111827">float(10)</text>
+                <line x1="4" y1="112" x2="291" y2="112" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- FK: pegawai_id -->
+                <use href="#icon-fk" x="8" y="116"/>
+                <text x="26" y="128" font-size="11.5" font-style="italic" fill="#1e293b">pegawai_id</text>
+                <text x="175" y="128" font-size="11.5" font-style="italic" fill="#1e293b">bigint(20)</text>
+            </g>
+
+        </svg>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- KETERANGAN LENGKAP SETIAP ENTITAS PADA ERD                       -->
+    <!-- ================================================================ -->
+    <div class="legend">
+        <h3>Keterangan Entitas &amp; Relasi Database (Sistem Monitoring Kehadiran PT Pou Yuen):</h3>
+        <div class="entity-grid">
+            <div class="entity-card">
+                <h4>1. Users &amp; Roles</h4>
+                <p>Menyimpan data akun pengguna (`name`, `email`, `nik`, `jenis_kelamin`, `password`, `profile_photo`) serta hak akses peran (`atasan`, `pegawai`, `admin`).</p>
+            </div>
+            <div class="entity-card">
+                <h4>2. Pegawai_details (Entitas Inti Karyawan)</h4>
+                <p>Menyimpan atribut karyawan PT Pou Yuen (`departemen`, `divisi`, `jabatan`, `nik_karyawan`, `status`, `tanggal_masuk`) yang berelasi ke seluruh tabel kehadiran dan kamera.</p>
+            </div>
+            <div class="entity-card">
+                <h4>3. Atasan</h4>
+                <p>Menyimpan data Supervisor/Atasan yang mengawasi jalannya monitoring kamera, mengelola data karyawan, dan memverifikasi pengajuan izin/cuti.</p>
+            </div>
+            <div class="entity-card">
+                <h4>4. Zona_kameras</h4>
+                <p>Menyimpan batas koordinat persentase zona posisi duduk/kerja tiap karyawan (`x1_pct`, `y1_pct`, `x2_pct`, `y2_pct`, `label`, `warna`).</p>
+            </div>
+            <div class="entity-card">
+                <h4>5. Cctv_monitoring_logs</h4>
+                <p>Menyimpan durasi kehadiran harian di zona (`durasi_stay` dalam detik untuk target standar <strong>8 Jam</strong>) dan status CCTV (`di_meja` / `keluar_ruangan`).</p>
+            </div>
+            <div class="entity-card">
+                <h4>6. Deteksi_aktivitas</h4>
+                <p>Menyimpan riwayat log deteksi kamera oleh <strong>CNN &amp; YOLOv8</strong> beserta nilai keyakinan (`confidence`).</p>
+            </div>
+            <div class="entity-card">
+                <h4>7. Kehadirans</h4>
+                <p>Menyimpan absensi harian (`tanggal`, `jenis`, `check_in` waktu pertama terdeteksi kamera, dan `check_out` waktu terakhir terdeteksi sebelum ditutup atasan).</p>
+            </div>
+            <div class="entity-card">
+                <h4>8. Izin_sakit</h4>
+                <p>Menyimpan permohonan `izin`, `sakit`, dan `cuti` beserta tanggal mulai/selesai dan lampiran surat bukti (`file_surat`).</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,212 @@
+================================================================================
+PANDUAN INSTALASI LENGKAP SISTEM MONITORING KEHADIRAN KARYAWAN PT POU YUEN
+(Laravel 11/12 + Python Flask AI Kamera YOLOv8 & Backbone CNN)
+================================================================================
+
+Prasyarat Software yang Harus Terpasang di Komputer/Laptop:
+1. Git
+2. PHP >= 8.2 / 8.3 (beserta ekstensi pdo_mysql, mbstring, xml, gd, zip)
+3. Composer (Dependency Manager PHP)
+4. Node.js & NPM (untuk build aset tampilan Tailwind/Vite)
+5. MySQL / MariaDB (XAMPP / Laragon / MySQL Server)
+6. Python >= 3.10 (beserta pip & venv untuk server AI Kamera YOLOv8 + CNN)
+7. Browser Modern (Google Chrome / Microsoft Edge dengan izin Kamera/Webcam)
+
+
+================================================================================
+TAHAP 1: CLONE REPOSITORY DARI GITHUB
+================================================================================
+Buka Terminal / Command Prompt / Git Bash, lalu jalankan perintah berikut:
+
+    git clone https://github.com/HasnanAlii/E-Kinerja.git
+    cd E-Kinerja
+
+
+================================================================================
+TAHAP 2: INSTALASI DEPENDENSI LARAVEL & KONFIGURASI .ENV
+================================================================================
+1. Install seluruh paket PHP melalui Composer:
+
+    composer install
+
+2. Salin file konfigurasi .env.example menjadi .env:
+   - Untuk Windows (CMD/PowerShell):
+     copy .env.example .env
+
+   - Untuk Linux / macOS / Git Bash:
+     cp .env.example .env
+
+3. Generate Application Key Laravel:
+
+    php artisan key:generate
+
+4. Buka file .env menggunakan teks editor (VS Code / Notepad), lalu sesuaikan
+   konfigurasi database MySQL seperti berikut:
+
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=e_kinerja
+    DB_USERNAME=root
+    DB_PASSWORD=
+
+   *(Catatan: Server Python cv-backend akan otomatis membaca konfigurasi
+   database dari file .env utama ini, sehingga tidak perlu membuat .env kedua).*
+
+
+================================================================================
+TAHAP 3: PERSIAPAN DATABASE, MIGRASI & SEEDER (30 KARYAWAN PT POU YUEN)
+================================================================================
+1. Nyalakan MySQL (melalui XAMPP / Laragon / layanan MySQL).
+2. Buat database kosong baru bernama:
+   
+    e_kinerja
+
+   (Melalui phpMyAdmin di http://localhost/phpmyadmin atau terminal MySQL:
+    CREATE DATABASE e_kinerja;)
+
+3. Jalankan migrasi tabel beserta seeder data awal (Role, Akun Atasan, dan
+   30 Data Karyawan PT Pou Yuen):
+
+    php artisan migrate:fresh --seed
+
+4. Buat symbolic link untuk folder penyimpanan foto profil & surat izin:
+
+    php artisan storage:link
+
+
+================================================================================
+TAHAP 4: INSTALASI & BUILD ASET FRONTEND (TAILWIND CSS & VITE)
+================================================================================
+Jalankan perintah berikut di folder utama proyek untuk menginstal paket Node.js
+dan mem-build aset tampilan:
+
+    npm install
+    npm run build
+
+
+================================================================================
+TAHAP 5: INSTALASI SERVER AI KAMERA (PYTHON FLASK + YOLOv8 & CNN)
+================================================================================
+Buka terminal dan masuk ke direktori `cv-backend`:
+
+    cd cv-backend
+
+1. Buat Virtual Environment Python (venv):
+
+    python -m venv venv
+    (atau di Linux: python3 -m venv venv)
+
+2. Aktifkan Virtual Environment:
+   - Untuk Windows (CMD):
+     venv\Scripts\activate
+
+   - Untuk Windows (PowerShell):
+     .\venv\Scripts\Activate.ps1
+
+   - Untuk Linux / macOS:
+     source venv/bin/activate
+
+3. Install seluruh library Python (Flask, OpenCV, Ultralytics YOLOv8, PyMySQL,
+   SQLAlchemy, dll):
+
+    pip install --upgrade pip
+    pip install -r requirements.txt
+
+4. Pastikan file model `yolov8n.pt` sudah berada di dalam folder `cv-backend/`
+   (sudah tersedia di repository; jika belum ada, Ultralytics akan mengunduhnya
+   secara otomatis saat pertama kali dijalankan).
+
+
+================================================================================
+TAHAP 6: MENJALANKAN SISTEM (2 TERMINAL BERJALAN BERSAMAAN)
+================================================================================
+Agar aplikasi Web dan pendeteksi Kamera AI berjalan terhubung secara real-time,
+buka 2 Terminal secara bersamaan:
+
+--- [ TERMINAL 1: Menjalankan Server Web Laravel (Port 8000) ] ---
+Pastikan berada di folder utama `E-Kinerja`, lalu jalankan:
+
+    php artisan serve
+
+Server Web akan aktif di: http://127.0.0.1:8000
+
+
+--- [ TERMINAL 2: Menjalankan Server AI Kamera Python (Port 5000) ] ---
+Pastikan berada di folder `E-Kinerja/cv-backend` dan `venv` sudah aktif:
+
+    cd cv-backend
+    source venv/bin/activate        # (atau venv\Scripts\activate di Windows)
+    python app.py
+
+Server AI Kamera akan aktif di: http://127.0.0.1:5000
+(Biarkan kedua terminal ini tetap menyala selama sistem digunakan).
+
+
+================================================================================
+TAHAP 7: LOGIN & MENJALANKAN MONITORING KAMERA SAMPAI AMAN
+================================================================================
+1. Buka browser (Chrome / Edge) dan akses alamat:
+   http://127.0.0.1:8000/login
+
+2. Gunakan akun bawaan hasil Seeder berikut:
+
+   -------------------------------------------------------------------------
+   PERAN            EMAIL                   PASSWORD        KETERANGAN
+   -------------------------------------------------------------------------
+   Atasan           atasan@gmail.com        password        Mengelola Monitoring,
+                                                            Zona Kamera, Karyawan,
+                                                            Izin & Cetak Laporan
+   Karyawan 1       pegawai@gmail.com       password        Andi Saputra Pratama
+   Karyawan 2..30   karyawan02@pouyuen.co.id password       Siti Nurhaliza Putri, dst
+                    s/d karyawan30@pouyuen.co.id
+   -------------------------------------------------------------------------
+
+3. Langkah Menjalankan Monitoring Kamera (Sebagai Atasan):
+   a) Login menggunakan akun Atasan (`atasan@gmail.com` / `password`).
+   b) Klik menu **"Monitoring Kamera"** pada sidebar kiri.
+   c) Izinkan akses Kamera/Webcam pada browser saat muncul pop-up izin kamera.
+   d) **Atur Zona Kamera Terlebih Dahulu**:
+      - Klik tombol **"Atur Zona"** di bagian atas halaman Monitoring.
+      - Di dalam modal akan tampil preview kamera live; pilih nama karyawan,
+        tentukan koordinat area meja/kursi (`X1, Y1, X2, Y2`), lalu klik Simpan.
+      - *(Catatan: Jika zona belum dibuat dan Anda langsung menekan Mulai
+        Monitoring, sistem akan menampilkan peringatan agar mengatur zona dulu).*
+   e) **Mulai Monitoring Real-Time**:
+      - Klik tombol **"Mulai Monitoring"**.
+      - Kamera akan mendeteksi keberadaan karyawan menggunakan **Backbone CNN**
+        (memastikan siluet tubuh manusia, bukan kursi/meja kosong) dan **YOLOv8**
+        (mengunci koordinat bounding box di dalam zona karyawan).
+      - Saat karyawan terdeteksi di zonanya:
+        * Status berubah menjadi **DI MEJA**.
+        * Waktu pertama terdeteksi langsung tercatat otomatis sebagai **Check-In**
+          di menu Kehadiran (tanpa absen manual).
+        * Durasi kerja dihitung otomatis menuju target standar **8 Jam Kerja**
+          (klik tombol **"Info"** pada tabel untuk melihat progres 8 jam).
+      - Monitoring bersifat **persisten**: meskipun halaman di-refresh, pindah
+        menu, atau akun logout, monitoring tetap berjalan di latar belakang.
+   f) **Menghentikan Monitoring & Mencatat Check-Out**:
+      - Saat jam kerja selesai, klik tombol **"Hentikan Monitoring"**.
+      - Sistem otomatis menyimpan waktu terakhir terlihat sebagai **Check-Out**
+        dan merekap total durasi kehadiran karyawan hari tersebut.
+   g) **Melihat Hasil & Cetak Laporan**:
+      - Buka menu **"Kehadiran"** untuk melihat rekap absensi otomatis &
+        persentase efektivitas kerja 8 jam, atau cetak PDF individu (Format T1).
+      - Buka menu **"Laporan"** untuk mencetak rekap seluruh karyawan dalam
+        format **PDF Kop Resmi PT Pou Yuen** maupun **Excel/CSV**.
+
+
+================================================================================
+TROUBLESHOOTING SINGKAT (JIKA ADA KENDALA)
+================================================================================
+1. Status Server AI tertulis "Offline / Port 5000 Tidak Terhubung":
+   -> Pastikan Terminal 2 (`python app.py` di dalam folder `cv-backend`) sudah
+      dijalankan dan tidak tertutup.
+2. Kamera Tidak Muncul di Browser:
+   -> Pastikan membuka lewat `http://127.0.0.1:8000` atau `http://localhost:8000`
+      (browser hanya mengizinkan akses webcam pada localhost atau HTTPS) dan
+      klik "Allow / Izinkan" pada ikon kamera di sebelah address bar browser.
+3. Error Database / Tabel Tidak Ditemukan:
+   -> Pastikan MySQL aktif, database `e_kinerja` sudah dibuat, dan jalankan
+      kembali `php artisan migrate:fresh --seed`.
+================================================================================

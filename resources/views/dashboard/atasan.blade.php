@@ -1,287 +1,384 @@
 <x-app-layout>
-    <div class="py-12 bg-gradient-to-b  min-h-screen">
-        <div class="mx-auto sm:px-6 lg:px-8">
+    <div class="py-8 bg-slate-50/70 min-h-screen">
+        <div class="mx-auto sm:px-6 lg:px-8 space-y-8">
 
-            {{-- ALERT SELAMAT DATANG --}}
-            @if(session('welcome') || true)
-                <div id="welcomeAlert" class="mb-6">
-                    <div class="flex items-start gap-3 bg-blue-50 border border-blue-200 text-blue-800 px-5 py-4 rounded-xl shadow-sm relative">
-
-                        {{-- Ikon --}}
-                        <div class="flex-shrink-0">
-                            <i data-feather="info" class="w-5 h-5 text-blue-600"></i>
-                        </div>
-
-                        {{-- Pesan --}}
-                        <div class="flex-1">
-                            <p class="font-semibold text-blue-900">Selamat datang, {{ Auth::user()->name }}! 🎉</p>
-                            <p class="text-sm text-blue-700 mt-0.5">
-                                Semoga hari Anda menyenangkan. Berikut ringkasan kinerja tim hari ini.
-                            </p>
-                        </div>
-
-                        {{-- Tombol close --}}
-                        <button onclick="document.getElementById('welcomeAlert').remove()" 
-                            class="absolute top-3 right-3 text-blue-500 hover:text-blue-700 transition">
-                            <i data-feather="x" class="w-4 h-4"></i>
-                        </button>
-
+            {{-- HERO HEADER BANNER --}}
+            <div class="bg-gradient-to-r from-indigo-700 via-indigo-600 to-blue-600 rounded-2xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+                <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/15 backdrop-blur-sm border border-white/20 mb-3">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Sistem Monitoring Kehadiran Otomatis — PT Pou Yuen Indonesia
+                        </span>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                            Dashboard {{ ucfirst($data['role'] === 'admin' ? 'Administrator' : 'Atasan / Supervisor') }}
+                        </h1>
+                        <p class="mt-1.5 text-indigo-100 text-sm sm:text-base max-w-2xl">
+                            Selamat datang, <strong>{{ Auth::user()->name }}</strong>. Pantau statistik kehadiran real-time, grafik tren harian, distribusi departemen, serta pengajuan izin/sakit/cuti karyawan.
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3">
+                        @if($data['role'] === 'atasan')
+                            <a href="{{ route('atasan.monitoring.index') }}"
+                               class="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-indigo-700 font-bold text-sm rounded-xl shadow-md hover:bg-indigo-50 transition">
+                                <i data-feather="video" class="w-4 h-4"></i>
+                                Buka Kamera Monitoring
+                            </a>
+                            <a href="{{ route('atasan.laporan.index') }}"
+                               class="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-900/50 hover:bg-indigo-900/70 text-white font-semibold text-sm rounded-xl border border-white/20 transition">
+                                <i data-feather="file-text" class="w-4 h-4"></i>
+                                Laporan PDF / Excel
+                            </a>
+                        @endif
                     </div>
                 </div>
-            @endif
-
-
-            {{-- HEADER CARD --}}
-            <div class="bg-indigo-600 rounded-2xl p-6 sm:p-10 text-white shadow-xl shadow-indigo-300 mb-10 relative">
-                <div class="relative z-10">
-                    <h1 class="text-3xl font-bold tracking-tight">Dashboard Atasan</h1>
-                    <p class="mt-2 text-indigo-100 max-w-xl text-base">
-                        Pantau kinerja, aktivitas, dan laporan bawahan Anda dengan lebih mudah.
-                    </p>
-                </div>
-
-                <div class="absolute top-0 right-0 -mt-12 -mr-12 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+                <div class="absolute -top-12 -right-12 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
             </div>
 
-            {{-- STAT CARDS  --}}
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-
-                {{-- Pegawai Belum Dinilai --}}
-                <div class="bg-white p-6 rounded-2xl border shadow-sm hover:shadow-indigo-300 
-                            hover:border-indigo-300 transition-all duration-300 group">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-sm text-gray-500">Pegawai Belum Dinilai</p>
-                            <p class="text-3xl font-extrabold text-indigo-700 mt-1">
-                                {{ $data['menunggu_validasi'] }}
-                            </p>
-                        </div>
-
-                        <div class="p-3 rounded-xl bg-indigo-50 text-indigo-600
-                                    group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
-                            <i data-feather="alert-triangle" class="w-7 h-7"></i>
-                        </div>
+            {{-- BARIS 1: 4 KARTU KPI UTAMA --}}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {{-- Total Karyawan --}}
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-gray-400">Total Karyawan</p>
+                        <p class="text-3xl font-extrabold text-gray-900 mt-1">{{ $data['total_karyawan'] }}</p>
+                        <p class="text-xs text-indigo-600 font-medium mt-1.5">{{ $data['total_zona'] }} Zona Kamera Terdaftar</p>
+                    </div>
+                    <div class="p-3.5 rounded-2xl bg-indigo-50 text-indigo-600">
+                        <i data-feather="users" class="w-7 h-7"></i>
                     </div>
                 </div>
 
-                {{-- Aktivitas Hari Ini --}}
-                <div class="bg-white p-6 rounded-2xl border shadow-sm hover:shadow-purple-300 
-                            hover:border-purple-300 transition-all duration-300 group">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-sm text-gray-500">Aktivitas Hari Ini</p>
-                            <p class="text-3xl font-extrabold text-gray-800 mt-1">
-                                {{ $data['aktivitas_hari_ini'] }}
-                            </p>
-                        </div>
-
-                        <div class="p-3 rounded-xl bg-purple-50 text-purple-600
-                                    group-hover:bg-purple-600 group-hover:text-white transition-all duration-300">
-                            <i data-feather="check-square" class="w-7 h-7"></i>
-                        </div>
+                {{-- Hadir Hari Ini --}}
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-gray-400">Hadir Hari Ini</p>
+                        <p class="text-3xl font-extrabold text-emerald-600 mt-1">{{ $data['hadir_hari_ini'] }}</p>
+                        @php
+                            $pctHadir = $data['total_karyawan'] > 0 ? round(($data['hadir_hari_ini'] / $data['total_karyawan']) * 100, 1) : 0;
+                        @endphp
+                        <p class="text-xs text-emerald-600 font-medium mt-1.5">{{ $pctHadir }}% dari total karyawan</p>
+                    </div>
+                    <div class="p-3.5 rounded-2xl bg-emerald-50 text-emerald-600">
+                        <i data-feather="check-circle" class="w-7 h-7"></i>
                     </div>
                 </div>
 
-                {{-- Total Bawahan --}}
-                <div class="bg-white p-6 rounded-2xl border shadow-sm hover:shadow-blue-300 
-                            hover:border-blue-300 transition-all duration-300 group">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-sm text-gray-500">Total Bawahan</p>
-                            <p class="text-3xl font-extrabold text-blue-700 mt-1">
-                                {{ $data['total_bawahan'] }}
-                            </p>
-                        </div>
-
-                        <div class="p-3 rounded-xl bg-blue-50 text-blue-600
-                                    group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
-                            <i data-feather="users" class="w-7 h-7"></i>
-                        </div>
+                {{-- Izin / Sakit / Cuti Hari Ini --}}
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-gray-400">Izin / Sakit / Cuti</p>
+                        <p class="text-3xl font-extrabold text-blue-600 mt-1">{{ $data['izin_sakit_cuti'] }}</p>
+                        <p class="text-xs text-gray-500 mt-1.5">Tercatat hari ini ({{ now()->translatedFormat('d M Y') }})</p>
+                    </div>
+                    <div class="p-3.5 rounded-2xl bg-blue-50 text-blue-600">
+                        <i data-feather="calendar" class="w-7 h-7"></i>
                     </div>
                 </div>
 
-                {{-- Rata-rata Kinerja --}}
-                <div class="bg-white p-6 rounded-2xl border shadow-sm hover:shadow-sky-300 
-                            hover:border-sky-300 transition-all duration-300 group">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-sm text-gray-500">Rata-rata Kinerja</p>
-                            <p class="text-3xl font-extrabold text-sky-700 mt-1">
-                                {{ $data['kinerja_tim'] }}
-                            </p>
-                        </div>
-
-                        <div class="p-3 rounded-xl bg-sky-50 text-sky-600
-                                    group-hover:bg-sky-600 group-hover:text-white transition-all duration-300">
-                            <i data-feather="award" class="w-7 h-7"></i>
-                        </div>
+                {{-- Pengajuan Menunggu Verifikasi --}}
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-wider text-gray-400">Menunggu Verifikasi</p>
+                        <p class="text-3xl font-extrabold text-amber-500 mt-1">{{ $data['pengajuan_menunggu'] }}</p>
+                        <p class="text-xs text-amber-600 font-medium mt-1.5">Permohonan Izin / Sakit / Cuti</p>
+                    </div>
+                    <div class="p-3.5 rounded-2xl bg-amber-50 text-amber-500">
+                        <i data-feather="inbox" class="w-7 h-7"></i>
                     </div>
                 </div>
-
             </div>
 
-            <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-10">
-
-                {{-- KOLOM KIRI - Aktivitas --}}
-                <div class="xl:col-span-2">
-                    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-
-                        {{-- Header --}}
-                        <div class="px-6 py-5 border-b border-gray-100 bg-white flex items-center justify-between">
-                            <h3 class="font-bold text-lg text-gray-800 flex items-center gap-2">
-                                <span class="p-2 bg-indigo-100 text-indigo-600 rounded-lg">
-                                    <i data-feather="activity" class="w-5 h-5"></i>
-                                </span>
-                                Aktivitas Terbaru Bawahan
-                            </h3>
+            {{-- BARIS 2: GRAFIK TREN 7 HARI & KOMPOSISI KEHADIRAN BULAN INI --}}
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {{-- Grafik Tren Kehadiran 7 Hari Terakhir --}}
+                <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="text-base font-bold text-gray-900">Grafik Tren Kehadiran (7 Hari Terakhir)</h3>
+                            <p class="text-xs text-gray-500">Perbandingan jumlah karyawan hadir vs izin/sakit/cuti per hari</p>
                         </div>
+                        <span class="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-semibold">Real-time DB</span>
+                    </div>
+                    <div class="h-72">
+                        <canvas id="chartTrendKehadiran"></canvas>
+                    </div>
+                </div>
 
-                        <div class="p-6">
-                            <div class="space-y-4">
-
-                                @forelse ($data['aktivitas'] as $act)
-                          <div class="flex items-center gap-4 p-3 rounded-xl border border-transparent  hover:border-gray-100 hover:bg-gray-50 transition-all">
-                                <div class="flex-shrink-0 w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center 
-                                            text-blue-600 font-semibold overflow-hidden shadow-sm">
-                                    @if ($act->pegawai->user->profile_photo)
-                                        <img src="{{ asset('storage/' . $act->pegawai->user->profile_photo) }}"
-                                            class="w-full h-full object-cover rounded-full">
-                                    @else
-                                        <i data-feather="user" class="w-5 h-5"></i>
-                                    @endif
-                                </div>
-
-                                {{-- Middle Info --}}
-                                <div class="flex-1 min-w-0">
-
-                                    {{-- Nama --}}
-                                    <p class="text-sm font-semibold text-gray-900 truncate">
-                                        {{ $act->pegawai->user->name ?? 'Pegawai' }}
-                                    </p>
-
-                                    {{-- Uraian --}}
-                                    <p class="text-sm text-gray-600 line-clamp-1">
-                                        {{ $act->uraian_tugas }}
-                                    </p>
-
-                                    {{-- Waktu + Status --}}
-                                    <div class="flex items-center gap-3 mt-1">
-
-                                        {{-- Waktu --}}
-                                        <span class="text-xs text-gray-400 flex items-center">
-                                            <i data-feather="clock" class="w-3 h-3 mr-1"></i>
-                                            {{ $act->created_at->diffForHumans() }}
-                                        </span>
-
-                                        {{-- Status --}}
-                                        @php
-                                            $statusColor = [
-                                                'disetujui' => 'bg-green-100 text-green-700',
-                                                'ditolak'   => 'bg-red-100 text-red-700',
-                                                'revisi'    => 'bg-orange-100 text-orange-700',
-                                                'menunggu'  => 'bg-gray-100 text-gray-600',
-                                            ][$act->status] ?? 'bg-gray-100 text-gray-600';
-                                        @endphp
-
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide {{ $statusColor }}">
-                                            {{ $act->status }}
-                                        </span>
-
-                                    </div>
-                                </div>
-
-                                {{-- Button Detail --}}
-                                <a href="{{ route('atasan.verifikasi.show', $act->id) }}"
-                                    class="flex items-center gap-2 px-3 py-2 rounded-lg text-blue-600 hover:bg-blue-50 
-                                        transition-all shrink-0 border border-transparent hover:border-blue-200">
-                                    <i data-feather="eye" class="w-4 h-4"></i>
-                                    <span class="text-sm font-medium">Detail</span>
-                                </a>
-
+                {{-- Grafik Doughnut Komposisi Bulan Ini + Distribusi Departemen --}}
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <h3 class="text-base font-bold text-gray-900">Komposisi Bulan Ini</h3>
+                                <p class="text-xs text-gray-500">Bulan {{ now()->translatedFormat('F Y') }}</p>
                             </div>
+                        </div>
+                        <div class="h-52 flex items-center justify-center">
+                            <canvas id="chartKomposisiBulan"></canvas>
+                        </div>
+                    </div>
 
+                    <div class="grid grid-cols-5 gap-1.5 pt-4 border-t border-gray-100 text-center">
+                        <div class="p-2 rounded-lg bg-emerald-50">
+                            <p class="text-[10px] font-bold text-emerald-600 uppercase">Hadir</p>
+                            <p class="text-sm font-extrabold text-emerald-800">{{ $data['rekap_bulan']['hadir'] }}</p>
+                        </div>
+                        <div class="p-2 rounded-lg bg-blue-50">
+                            <p class="text-[10px] font-bold text-blue-600 uppercase">Izin</p>
+                            <p class="text-sm font-extrabold text-blue-800">{{ $data['rekap_bulan']['izin'] }}</p>
+                        </div>
+                        <div class="p-2 rounded-lg bg-amber-50">
+                            <p class="text-[10px] font-bold text-amber-600 uppercase">Sakit</p>
+                            <p class="text-sm font-extrabold text-amber-800">{{ $data['rekap_bulan']['sakit'] }}</p>
+                        </div>
+                        <div class="p-2 rounded-lg bg-purple-50">
+                            <p class="text-[10px] font-bold text-purple-600 uppercase">Cuti</p>
+                            <p class="text-sm font-extrabold text-purple-800">{{ $data['rekap_bulan']['cuti'] }}</p>
+                        </div>
+                        <div class="p-2 rounded-lg bg-red-50">
+                            <p class="text-[10px] font-bold text-red-600 uppercase">Alpha</p>
+                            <p class="text-sm font-extrabold text-red-800">{{ $data['rekap_bulan']['alpha'] }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- BARIS 3: TABEL KEHADIRAN TERBARU & SIDEBAR (DEPARTEMEN + MENU PINTASAN) --}}
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {{-- Tabel Log Kehadiran Terbaru --}}
+                <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                        <div>
+                            <h3 class="text-base font-bold text-gray-900">Riwayat Deteksi &amp; Kehadiran Terbaru</h3>
+                            <p class="text-xs text-gray-500">Daftar pencatatan kehadiran otomatis kamera &amp; perizinan terakhir</p>
+                        </div>
+                        <a href="{{ $data['role'] === 'atasan' ? route('atasan.kehadiran.index') : route('admin.kehadiran.index') }}"
+                           class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">Lihat Semua &rarr;</a>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-100 text-sm">
+                            <thead class="bg-gray-50 text-xs uppercase text-gray-500">
+                                <tr>
+                                    <th class="px-5 py-3 text-left">Karyawan</th>
+                                    <th class="px-5 py-3 text-left">Departemen</th>
+                                    <th class="px-5 py-3 text-center">Tanggal</th>
+                                    <th class="px-5 py-3 text-center">Masuk</th>
+                                    <th class="px-5 py-3 text-center">Pulang</th>
+                                    <th class="px-5 py-3 text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                @forelse ($data['kehadiran_terbaru'] as $row)
+                                    <tr class="hover:bg-gray-50/70 transition">
+                                        <td class="px-5 py-3.5 font-semibold text-gray-900">
+                                            {{ $row->pegawai->user->name ?? '-' }}
+                                            <div class="text-xs font-mono text-gray-400">{{ $row->pegawai->nik_karyawan ?? $row->pegawai->nip ?? '' }}</div>
+                                        </td>
+                                        <td class="px-5 py-3.5 text-xs text-gray-600">
+                                            {{ $row->pegawai->departemen ?? '-' }}
+                                        </td>
+                                        <td class="px-5 py-3.5 text-center text-gray-600">
+                                            {{ \Carbon\Carbon::parse($row->tanggal)->format('d/m/Y') }}
+                                        </td>
+                                        <td class="px-5 py-3.5 text-center font-mono text-xs text-gray-800">
+                                            {{ $row->check_in ? \Carbon\Carbon::parse($row->check_in)->format('H:i') : '-' }}
+                                        </td>
+                                        <td class="px-5 py-3.5 text-center font-mono text-xs text-gray-800">
+                                            {{ $row->check_out ? \Carbon\Carbon::parse($row->check_out)->format('H:i') : '-' }}
+                                        </td>
+                                        <td class="px-5 py-3.5 text-center">
+                                            @php
+                                                $badgeCls = match($row->jenis) {
+                                                    'hadir' => 'bg-emerald-100 text-emerald-800',
+                                                    'izin'  => 'bg-blue-100 text-blue-800',
+                                                    'sakit' => 'bg-amber-100 text-amber-800',
+                                                    'cuti'  => 'bg-purple-100 text-purple-800',
+                                                    default => 'bg-red-100 text-red-800',
+                                                };
+                                            @endphp
+                                            <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase {{ $badgeCls }}">
+                                                {{ $row->jenis ?? 'Hadir' }}
+                                            </span>
+                                        </td>
+                                    </tr>
                                 @empty
-                                    <div class="flex flex-col items-center justify-center py-10 text-center">
-                                        <div class="bg-gray-50 p-4 rounded-full mb-3">
-                                            <i data-feather="inbox" class="w-8 h-8 text-gray-300"></i>
-                                        </div>
-                                        <p class="text-gray-500 text-sm font-medium">Belum ada aktivitas terbaru.</p>
-                                    </div>
-
+                                    <tr>
+                                        <td colspan="6" class="px-5 py-10 text-center text-gray-400 text-sm">
+                                            Belum ada data kehadiran tercatat.
+                                        </td>
+                                    </tr>
                                 @endforelse
-
-                            </div>
-                        </div>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
-                {{-- KOLOM KANAN - QUICK ACTIONS --}}
-                <div class="xl:col-span-1">
-                    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden sticky top-6">
+                {{-- Kolom Kanan: Distribusi Departemen & Menu Pintasan --}}
+                <div class="space-y-6">
+                    {{-- Distribusi Karyawan per Departemen --}}
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                        <h3 class="text-base font-bold text-gray-900 mb-1">Distribusi Departemen</h3>
+                        <p class="text-xs text-gray-500 mb-4">Jumlah karyawan aktif per departemen PT Pou Yuen</p>
+                        <div class="h-48">
+                            <canvas id="chartDepartemen"></canvas>
+                        </div>
+                    </div>
 
-                        {{-- Header --}}
-                        <div class="px-6 py-5 border-b border-gray-100 bg-gradient-to-br from-indigo-600 to-indigo-700">
-                            <h3 class="font-bold text-lg text-white flex items-center gap-2">
-                                <i data-feather="zap" class="w-5 h-5 text-yellow-300"></i>
-                                Menu Pintasan
+                    {{-- Menu Pintasan Cepat --}}
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="px-5 py-4 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white">
+                            <h3 class="font-bold text-sm flex items-center gap-2">
+                                <i data-feather="zap" class="w-4 h-4 text-yellow-300"></i>
+                                Menu Pintasan Pengelolaan
                             </h3>
-                            <p class="text-indigo-100 text-xs mt-1">Aksi cepat untuk pengelolaan kehadiran.</p>
                         </div>
-
-                        <div class="p-5 space-y-4">
-
-                            @if(false) {{-- DISABLED --}}
-<a href="{{ route('atasan.verifikasi.index') }}"
-                               class="group flex items-center p-4 bg-white border border-gray-200 rounded-xl 
-                                      shadow-sm hover:shadow-md hover:border-indigo-500 hover:ring-1 hover:ring-indigo-500 
-                                      transition-all duration-200">
-                                <div class="flex-shrink-0 p-3 bg-indigo-50 text-indigo-600 rounded-lg 
-                                            group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                                    <i data-feather="check-square" class="w-6 h-6"></i>
-                                </div>
-                                <div class="ml-4">
-                                    <h4 class="font-bold text-gray-800 group-hover:text-indigo-700">Verifikasi Aktivitas</h4>
-                                    <p class="text-xs text-gray-500 mt-0.5">Verifikasi Aktivitas Harian Bawahan Anda.</p>
-                                </div>
-                            </a>
-@endif
-
-
-                            {{-- Unduh Penilaian --}}
-                            @if(false) {{-- DISABLED --}}
-<a href="{{ route('atasan.penilaian.download_all') }}"
-                               class="group flex items-center p-4 bg-white border border-gray-200 rounded-xl 
-                                      shadow-sm hover:shadow-md hover:border-green-500 hover:ring-1 hover:ring-green-500 
-                                      transition-all duration-200">
-                                <div class="flex-shrink-0 p-3 bg-green-50 text-green-600 rounded-lg 
-                                            group-hover:bg-green-600 group-hover:text-white transition-colors">
-                                    <i data-feather="download" class="w-6 h-6"></i>
-                                </div>
-                                <div class="ml-4">
-                                    <h4 class="font-bold text-gray-800 group-hover:text-green-700">Unduh Penilaian</h4>
-                                    <p class="text-xs text-gray-500 mt-0.5">Unduh rekap nilai pegawai.</p>
-                                </div>
-                            </a>
-@endif
-
-
+                        <div class="p-4 space-y-2.5">
+                            @if($data['role'] === 'atasan')
+                                <a href="{{ route('atasan.monitoring.index') }}" class="flex items-center p-3 rounded-xl border border-gray-100 hover:border-indigo-500 hover:bg-indigo-50/40 transition">
+                                    <div class="p-2.5 bg-red-50 text-red-600 rounded-lg"><i data-feather="video" class="w-5 h-5"></i></div>
+                                    <div class="ml-3">
+                                        <p class="text-sm font-bold text-gray-800">Monitoring Kamera (YOLOv8)</p>
+                                        <p class="text-xs text-gray-500">Pengawasan zona &amp; durasi 8 jam</p>
+                                    </div>
+                                </a>
+                                <a href="{{ route('admin.pegawai.index') }}" class="flex items-center p-3 rounded-xl border border-gray-100 hover:border-indigo-500 hover:bg-indigo-50/40 transition">
+                                    <div class="p-2.5 bg-indigo-50 text-indigo-600 rounded-lg"><i data-feather="users" class="w-5 h-5"></i></div>
+                                    <div class="ml-3">
+                                        <p class="text-sm font-bold text-gray-800">Kelola Data Karyawan</p>
+                                        <p class="text-xs text-gray-500">Tambah, edit &amp; cetak PDF per orang</p>
+                                    </div>
+                                </a>
+                                <a href="{{ route('atasan.izin.index') }}" class="flex items-center p-3 rounded-xl border border-gray-100 hover:border-indigo-500 hover:bg-indigo-50/40 transition">
+                                    <div class="p-2.5 bg-amber-50 text-amber-600 rounded-lg"><i data-feather="inbox" class="w-5 h-5"></i></div>
+                                    <div class="ml-3">
+                                        <p class="text-sm font-bold text-gray-800">Verifikasi Izin / Sakit / Cuti</p>
+                                        <p class="text-xs text-gray-500">{{ $data['pengajuan_menunggu'] }} pengajuan menunggu persetujuan</p>
+                                    </div>
+                                </a>
+                                <a href="{{ route('atasan.laporan.index') }}" class="flex items-center p-3 rounded-xl border border-gray-100 hover:border-indigo-500 hover:bg-indigo-50/40 transition">
+                                    <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-lg"><i data-feather="file-text" class="w-5 h-5"></i></div>
+                                    <div class="ml-3">
+                                        <p class="text-sm font-bold text-gray-800">Laporan Kehadiran (PDF / Excel)</p>
+                                        <p class="text-xs text-gray-500">Rekap formal PT Pou Yuen &amp; per orang</p>
+                                    </div>
+                                </a>
+                            @else
+                                <a href="{{ route('admin.pegawai.index') }}" class="flex items-center p-3 rounded-xl border border-gray-100 hover:border-indigo-500 hover:bg-indigo-50/40 transition">
+                                    <div class="p-2.5 bg-indigo-50 text-indigo-600 rounded-lg"><i data-feather="users" class="w-5 h-5"></i></div>
+                                    <div class="ml-3">
+                                        <p class="text-sm font-bold text-gray-800">Data Karyawan</p>
+                                        <p class="text-xs text-gray-500">Kelola seluruh karyawan PT Pou Yuen</p>
+                                    </div>
+                                </a>
+                                <a href="{{ route('admin.kehadiran.index') }}" class="flex items-center p-3 rounded-xl border border-gray-100 hover:border-indigo-500 hover:bg-indigo-50/40 transition">
+                                    <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-lg"><i data-feather="calendar" class="w-5 h-5"></i></div>
+                                    <div class="ml-3">
+                                        <p class="text-sm font-bold text-gray-800">Rekap Kehadiran Karyawan</p>
+                                        <p class="text-xs text-gray-500">Lihat riwayat kehadiran harian</p>
+                                    </div>
+                                </a>
+                            @endif
                         </div>
-
-                        <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
-                            <p class="text-xs text-center text-gray-400">Monitoring Kehadiran v1.0</p>
-                        </div>
-
                     </div>
                 </div>
-
             </div>
 
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof feather !== 'undefined') feather.replace();
+
+            // 1. Grafik Tren 7 Hari Terakhir
+            const ctxTrend = document.getElementById('chartTrendKehadiran');
+            if (ctxTrend && typeof Chart !== 'undefined') {
+                new Chart(ctxTrend, {
+                    type: 'bar',
+                    data: {
+                        labels: @json($data['trend_labels']),
+                        datasets: [
+                            {
+                                label: 'Hadir',
+                                data: @json($data['trend_hadir']),
+                                backgroundColor: '#10b981',
+                                borderRadius: 6,
+                                barPercentage: 0.6
+                            },
+                            {
+                                label: 'Izin / Sakit / Cuti',
+                                data: @json($data['trend_izin']),
+                                backgroundColor: '#3b82f6',
+                                borderRadius: 6,
+                                barPercentage: 0.6
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'top' }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { precision: 0 } }
+                        }
+                    }
+                });
+            }
+
+            // 2. Grafik Komposisi Bulan Ini
+            const ctxKomp = document.getElementById('chartKomposisiBulan');
+            if (ctxKomp && typeof Chart !== 'undefined') {
+                const rb = @json(array_values($data['rekap_bulan']));
+                const totalRb = rb.reduce((a, b) => a + b, 0);
+                new Chart(ctxKomp, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Hadir', 'Izin', 'Sakit', 'Cuti', 'Alpha'],
+                        datasets: [{
+                            data: totalRb > 0 ? rb : [1, 0, 0, 0, 0],
+                            backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444'],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '65%',
+                        plugins: {
+                            legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } }
+                        }
+                    }
+                });
+            }
+
+            // 3. Grafik Distribusi Departemen
+            const ctxDept = document.getElementById('chartDepartemen');
+            if (ctxDept && typeof Chart !== 'undefined') {
+                new Chart(ctxDept, {
+                    type: 'bar',
+                    data: {
+                        labels: @json($data['dept_labels']),
+                        datasets: [{
+                            label: 'Jumlah Karyawan',
+                            data: @json($data['dept_values']),
+                            backgroundColor: '#4f46e5',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { x: { beginAtZero: true, ticks: { precision: 0 } } }
+                    }
+                });
+            }
         });
     </script>
 </x-app-layout>
