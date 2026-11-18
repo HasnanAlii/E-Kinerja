@@ -23,7 +23,7 @@
                            target="_blank"
                            class="inline-flex items-center gap-2 px-4 py-2.5 bg-white text-indigo-700 font-bold text-sm rounded-xl shadow-md hover:bg-indigo-50 transition">
                             <i data-feather="file-text" class="w-4 h-4"></i>
-                            Cetak Laporan PDF (T1)
+                            Cetak Laporan PDF 
                         </a>
                         <a href="{{ route('pegawai.izin.create') }}"
                            class="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-900/50 hover:bg-indigo-900/70 text-white font-semibold text-sm rounded-xl border border-white/20 transition">
@@ -265,7 +265,7 @@
                             <div class="p-2.5 bg-red-50 text-red-600 rounded-lg"><i data-feather="printer" class="w-5 h-5"></i></div>
                             <div class="ml-3">
                                 <p class="text-sm font-bold text-gray-800">Lihat Laporan PDF Pribadi</p>
-                                <p class="text-xs text-gray-500">Unduh laporan format Data Karyawan (T1)</p>
+                                <p class="text-xs text-gray-500">Unduh laporan format Data Karyawan </p>
                             </div>
                         </a>
                     </div>
