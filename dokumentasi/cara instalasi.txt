@@ -91,6 +91,8 @@ TAHAP 5: INSTALASI SERVER AI KAMERA (PYTHON FLASK + YOLOv8 & CNN)
 Buka terminal dan masuk ke direktori `cv-backend`:
 
     cd cv-backend
+    
+    install python 3.11
 
 1. Buat Virtual Environment Python (venv):
 
