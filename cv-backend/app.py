@@ -533,7 +533,7 @@ def get_efektivitas(pegawai_id, tanggal):
             "nama": pegawai.user.name if pegawai.user else "-",
             "jabatan": pegawai.jabatan or "-",
             "tanggal": tanggal,
-            "tanggal_label": target_date.strftime("%-d %B %Y"),
+            "tanggal_label": f"{target_date.day} {target_date.strftime('%B %Y')}",
             "check_in": check_in_str,
             "check_out": check_out_str,
             "durasi_hadir": durasi_hadir_str,

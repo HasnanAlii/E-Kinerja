@@ -19,7 +19,7 @@
         @include('layouts.sidebar')
 
         {{-- MAIN CONTENT --}}
-        <div class="flex-1 flex flex-col">
+        <div class="flex-1 min-w-0 flex flex-col">
 
             {{-- HEADER --}}
             @include('layouts.header')
