@@ -305,8 +305,9 @@ function monitoringApp() {
                 const y1 = (z.y1_pct / 100) * H;
                 const zw = ((z.x2_pct - z.x1_pct) / 100) * W;
                 const zh = ((z.y2_pct - z.y1_pct) / 100) * H;
-                const color = z.warna || '#2ECC71';
-                const isActive = activeIds.has(z.pegawai_id);
+                const isZoneEnabled = z.is_zone_active !== false;
+                const color = isZoneEnabled ? (z.warna || '#2ECC71') : '#64748b';
+                const isActive = isZoneEnabled && activeIds.has(z.pegawai_id);
 
                 ctx.fillStyle = color + (isActive ? '28' : '14');
                 ctx.fillRect(x1, y1, zw, zh);
@@ -317,9 +318,11 @@ function monitoringApp() {
 
                 const firstName = (z.pegawai_name || 'Pegawai').split(' ')[0];
                 const rawLabel = (z.label || '').trim();
-                const label = rawLabel
+                const baseLabel = rawLabel
                     ? (rawLabel.toLowerCase().includes(firstName.toLowerCase()) ? rawLabel : `${rawLabel}: ${firstName}`)
                     : `Meja ${firstName}`;
+                const suffix = !isZoneEnabled ? ' [DISABLE]' : (z.has_visual_lock ? ' [TERKUNCI]' : '');
+                const label = baseLabel + suffix;
                 ctx.fillStyle = color;
                 ctx.fillRect(x1, y1, zw, 24);
                 ctx.fillStyle = '#ffffff';
@@ -336,7 +339,12 @@ function monitoringApp() {
                 const bh = ((det.box_pct.y2 - det.box_pct.y1) / 100) * H;
 
                 const matchedZone = (this.zonesList || []).find(z => z.pegawai_id === det.pegawai_id);
-                const color = matchedZone ? (matchedZone.warna || '#2ECC71') : '#94a3b8';
+                let color = matchedZone ? (matchedZone.warna || '#2ECC71') : '#94a3b8';
+                if (det.zone_disabled) {
+                    color = '#64748b';
+                } else if (det.identity_verified === false && det.zone_matched) {
+                    color = '#ef4444';
+                }
 
                 ctx.strokeStyle = color;
                 ctx.lineWidth = 2.5;
@@ -349,7 +357,7 @@ function monitoringApp() {
                 const barY = Math.max(0, by1 + bh - 22);
                 ctx.fillStyle = color;
                 ctx.fillRect(bx1, barY, tw + 12, 22);
-                ctx.fillStyle = '#000000';
+                ctx.fillStyle = (color === '#ef4444' || color === '#64748b') ? '#ffffff' : '#000000';
                 ctx.fillText(text, bx1 + 6, barY + 15);
             });
         },

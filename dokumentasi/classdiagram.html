@@ -128,7 +128,7 @@
     <div class="vp-canvas-wrap">
         <div class="vp-pkg-tab">&lt;default package&gt;</div>
 
-        <svg class="vp-cd" viewBox="0 0 1250 860" xmlns="http://www.w3.org/2000/svg">
+        <svg class="vp-cd" viewBox="0 0 1250 930" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <!-- Biru Cyan Khas Visual Paradigm Class Box -->
                 <linearGradient id="vpCyanBox" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -288,6 +288,20 @@
             <text x="928" y="762" font-size="11.5" fill="#000000">1</text>
             <text x="1145" y="575" font-size="11.5" fill="#000000">1</text>
 
+            <!-- 18. Zona Aktivasi Harian ——— mengaktifkan & kunci ciri ———◆ Karyawan -->
+            <polyline points="440,835 965,835 965,315" fill="none" stroke="#000000" stroke-width="2.0"/>
+            <use href="#comp-top" x="965" y="315"/>
+            <text x="680" y="850" text-anchor="middle" font-size="11.5" fill="#000000">mengaktifkan zona &amp; kunci ciri</text>
+            <text x="452" y="828" font-size="11.5" fill="#000000">*</text>
+            <text x="975" y="335" font-size="11.5" fill="#000000">1</text>
+
+            <!-- 19. Monitoring Kamera ◇——— memvalidasi ciri harian ——— Zona Aktivasi Harian -->
+            <polyline points="20,150 6,150 6,835 215,835" fill="none" stroke="#000000" stroke-width="1.4"/>
+            <use href="#aggr-left" x="20" y="150"/>
+            <text x="115" y="825" text-anchor="middle" font-size="11.5" fill="#000000">validasi ciri harian</text>
+            <text x="8" y="170" font-size="11.5" fill="#000000">1</text>
+            <text x="198" y="828" font-size="11.5" fill="#000000">*</text>
+
 
             <!-- ======================================================================= -->
             <!-- KOTAK KELAS BIRU CYAN (PERSIS FORMAT GAMBAR VISUAL PARADIGM)            -->
@@ -302,11 +316,11 @@
                 <text x="6" y="43" font-size="11.5" fill="#000000">-idDeteksi : int</text>
                 <text x="6" y="60" font-size="11.5" fill="#000000">-modelYolo : string</text>
                 <text x="6" y="77" font-size="11.5" fill="#000000">-backboneCnn : string</text>
-                <text x="6" y="94" font-size="11.5" fill="#000000">-confidence : float</text>
+                <text x="6" y="94" font-size="11.5" fill="#000000">-similarityThreshold : float</text>
 
                 <line x1="0" y1="104" x2="215" y2="104" stroke="#000000" stroke-width="1.2"/>
                 <text x="6" y="121" font-size="11.5" fill="#000000">+deteksiObjekManusia()</text>
-                <text x="6" y="137" font-size="11.5" fill="#000000">+verifikasiKehadiran()</text>
+                <text x="6" y="137" font-size="11.5" fill="#000000">+ekstrakDanValidasiCiri()</text>
             </g>
 
             <!-- 2. Kehadiran (Kiri Tengah Atas) -->
@@ -496,6 +510,24 @@
                 <text x="6" y="129" font-size="11.5" fill="#000000">+verifikasiPengguna()</text>
             </g>
 
+            <!-- 13. Zona Aktivasi Harian (Kode Referal & Ciri Visual Harian) -->
+            <g transform="translate(215, 760)">
+                <rect x="0" y="0" width="225" height="162" fill="url(#vpCyanBox)" stroke="#000000" stroke-width="1.3"/>
+                <line x1="0" y1="24" x2="225" y2="24" stroke="#000000" stroke-width="1.2"/>
+                <text x="112" y="17" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Zona Aktivasi Harian</text>
+
+                <text x="6" y="40" font-size="11" fill="#000000">-idAktivasi : int</text>
+                <text x="6" y="55" font-size="11" fill="#000000">-tanggal : date</text>
+                <text x="6" y="70" font-size="11" fill="#000000">-kode_referal : string</text>
+                <text x="6" y="85" font-size="11" fill="#000000">-is_active : boolean</text>
+                <text x="6" y="100" font-size="11" fill="#000000">-ciri_visual : json</text>
+                <text x="6" y="115" font-size="11" fill="#000000">-snapshot_wajah : text</text>
+
+                <line x1="0" y1="124" x2="225" y2="124" stroke="#000000" stroke-width="1.2"/>
+                <text x="6" y="140" font-size="11" fill="#000000">+generateDailyCode()</text>
+                <text x="6" y="155" font-size="11" fill="#000000">+aktivasiDanKunciCiri()</text>
+            </g>
+
         </svg>
     </div>
 
@@ -534,8 +566,12 @@
                 <p>Kelas pengelola permohonan izin, sakit, dan cuti karyawan beserta rentang tanggal dan status verifikasi atasan.</p>
             </div>
             <div class="class-card">
-                <h4>8. Atasan, Pengguna, Login, Dashboard &amp; Kelola Data Diri</h4>
-                <p>Kelas pengelola autentikasi pengguna (`Login` &amp; `Pengguna`), pembaruan profil mandiri (`Kelola Data Diri`), visualisasi grafik kehadiran (`Dashboard`), serta kendali pengawasan oleh `Atasan`.</p>
+                <h4>8. Zona Aktivasi Harian (Kode Referal &amp; Ciri Visual)</h4>
+                <p>Kelas pengelola <strong>Kode Referal Harian</strong> (`kode_referal`) yang direset tiap hari untuk mengaktifkan zona (`is_active`), serta menyimpan ciri-ciri visual karyawan saat pertama masuk zona (`ciri_visual`, `snapshot_wajah`) agar zona tidak mendeteksi orang lain.</p>
+            </div>
+            <div class="class-card">
+                <h4>9. Atasan, Pengguna, Login, Dashboard &amp; Kelola Data Diri</h4>
+                <p>Kelas pengelola autentikasi pengguna (`Login` &amp; `Pengguna`), pembaruan profil mandiri (`Kelola Data Diri`), visualisasi grafik kehadiran &amp; input referal (`Dashboard`), serta kendali pengawasan oleh `Atasan`.</p>
             </div>
         </div>
     </div>

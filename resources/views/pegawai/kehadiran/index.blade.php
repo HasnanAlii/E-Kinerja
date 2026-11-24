@@ -42,6 +42,85 @@
                 </div>
             @endif
 
+            {{-- KARTU AKTIVASI KODE REFERAL HARIAN & KUNCI CIRI VISUAL ZONA --}}
+            @if(isset($aktivasiHariIni) && $aktivasiHariIni)
+                <div class="mb-6 rounded-2xl border {{ $aktivasiHariIni->is_active ? 'bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-emerald-200' : 'bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-amber-200' }} p-6 shadow-sm">
+                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                        <div class="space-y-2 flex-1">
+                            <div class="flex flex-wrap items-center gap-2.5">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider {{ $aktivasiHariIni->is_active ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white animate-pulse' }}">
+                                    <span class="w-2 h-2 rounded-full bg-white"></span>
+                                    {{ $aktivasiHariIni->is_active ? 'ZONA AKTIF (SIAP DETEKSI)' : 'ZONA DISABLE (BELUM AKTIF)' }}
+                                </span>
+                                <span class="text-xs font-semibold text-gray-500">
+                                    Reset Otomatis Setiap Hari &bull; {{ now()->translatedFormat('l, d F Y') }}
+                                </span>
+                                @if($aktivasiHariIni->ciri_visual)
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700 border border-indigo-200">
+                                        🔒 Ciri Visual Hari Ini Terkunci ({{ $aktivasiHariIni->first_entered_at ? $aktivasiHariIni->first_entered_at->format('H:i') : 'Aktif' }})
+                                    </span>
+                                @elseif($aktivasiHariIni->is_active)
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">
+                                        ⏳ Menunggu Masuk Zona Pertama Kali untuk Simpan Ciri Visual
+                                    </span>
+                                @endif
+                            </div>
+
+                            <h3 class="text-lg font-extrabold text-gray-900">
+                                {{ $aktivasiHariIni->is_active ? 'Konfirmasi Kehadiran & Zona Kamera Telah Aktif' : 'Wajib Input Kode Referal Harian Sebelum Absen Kamera' }}
+                            </h3>
+                            <p class="text-sm text-gray-600 leading-relaxed">
+                                @if($aktivasiHariIni->is_active)
+                                    Zona kerja Anda sudah aktif hari ini (dikonfirmasi pukul <strong>{{ $aktivasiHariIni->activated_at ? $aktivasiHariIni->activated_at->format('H:i:s') : '-' }}</strong>). Saat Anda pertama kali masuk ke zona, sistem otomatis menyimpan ciri-ciri visual Anda hari ini agar zona tidak mendeteksi orang lain.
+                                @else
+                                    Masukkan <strong>Kode Referal Harian</strong> di samping untuk mengonfirmasi kehadiran dan mengaktifkan zona kamera Anda. <strong>Jika tidak diinput, zona Anda akan tetap nonaktif (disable) dan kamera tidak akan mencatat kehadiran Anda hari ini.</strong>
+                                @endif
+                            </p>
+                        </div>
+
+                        {{-- Panel Kode Referal & Form Input --}}
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 shrink-0">
+                            <div class="bg-white px-5 py-3.5 rounded-xl border border-gray-200 shadow-2xs text-center">
+                                <p class="text-[11px] font-bold uppercase tracking-wider text-gray-400">Kode Referal Hari Ini</p>
+                                <p class="text-2xl font-mono font-black tracking-widest text-indigo-700 mt-0.5 select-all">{{ $aktivasiHariIni->kode_referal }}</p>
+                                <p class="text-[10px] text-gray-400 mt-0.5">Ketik kode ini untuk aktivasi</p>
+                            </div>
+
+                            @if(!$aktivasiHariIni->is_active)
+                                <form method="POST" action="{{ route('pegawai.kehadiran.aktivasi_referal') }}" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                                    @csrf
+                                    <div>
+                                        <input type="text"
+                                               name="kode_referal"
+                                               placeholder="Masukkan Kode.."
+                                               required
+                                               autocomplete="off"
+                                               class="w-full sm:w-56 px-4 py-3 rounded-xl border-gray-300 font-mono font-bold text-sm uppercase tracking-wider focus:border-indigo-500 focus:ring-indigo-500 shadow-2xs">
+                                    </div>
+                                    <button type="submit"
+                                            class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-md transition cursor-pointer">
+                                        <i data-feather="unlock" class="w-4 h-4"></i>
+                                        Aktifkan Zona
+                                    </button>
+                                </form>
+                            @else
+                                <div class="flex items-center gap-3 bg-emerald-600/10 border border-emerald-300 text-emerald-800 px-4 py-3 rounded-xl">
+                                    @if($aktivasiHariIni->snapshot_wajah)
+                                        <img src="{{ $aktivasiHariIni->snapshot_wajah }}" alt="Snapshot Ciri" class="w-12 h-12 rounded-lg object-cover border border-emerald-400 shadow-2xs" title="Ciri visual pertama masuk zona hari ini">
+                                    @endif
+                                    <div>
+                                        <p class="text-xs font-extrabold uppercase tracking-wider text-emerald-700">✓ Zona Terkonfirmasi</p>
+                                        <p class="text-xs text-emerald-600">
+                                            {{ $aktivasiHariIni->ciri_visual ? 'Identitas visual terkunci hari ini' : 'Silakan masuk ke zona kamera' }}
+                                        </p>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @endif
+
 
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                 <div class="px-6 py-5 border-b bg-gray-50 flex flex-wrap items-center justify-between gap-4 rounded-lg">

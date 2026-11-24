@@ -35,6 +35,88 @@
                 <div class="absolute -top-12 -right-12 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
             </div>
 
+            @if (session('success'))
+                <div class="p-4 flex items-center bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-2xl text-sm font-semibold shadow-2xs">
+                    <i data-feather="check-circle" class="w-5 h-5 mr-3 text-emerald-600 shrink-0"></i>
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="p-4 flex items-center bg-rose-100 text-rose-800 border border-rose-300 rounded-2xl text-sm font-semibold shadow-2xs">
+                    <i data-feather="alert-circle" class="w-5 h-5 mr-3 text-rose-600 shrink-0"></i>
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            {{-- BANNER AKTIVASI KODE REFERAL HARIAN & KUNCI CIRI VISUAL --}}
+            @if(isset($data['aktivasi_hari_ini']) && $data['aktivasi_hari_ini'])
+                @php $akt = $data['aktivasi_hari_ini']; @endphp
+                <div class="rounded-2xl border {{ $akt->is_active ? 'bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-emerald-200' : 'bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-amber-200' }} p-6 shadow-sm">
+                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                        <div class="space-y-2 flex-1">
+                            <div class="flex flex-wrap items-center gap-2.5">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider {{ $akt->is_active ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white animate-pulse' }}">
+                                    <span class="w-2 h-2 rounded-full bg-white"></span>
+                                    {{ $akt->is_active ? 'ZONA AKTIF' : 'ZONA DISABLE' }}
+                                </span>
+                                <span class="text-xs font-semibold text-gray-500">
+                                    Kode Referal Harian (Reset Tiap Hari)
+                                </span>
+                                @if($akt->ciri_visual)
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700 border border-indigo-200">
+                                        🔒 Ciri Visual Tersimpan ({{ $akt->first_entered_at ? $akt->first_entered_at->format('H:i') : 'Hari Ini' }})
+                                    </span>
+                                @endif
+                            </div>
+                            <h3 class="text-lg font-extrabold text-gray-900">
+                                {{ $akt->is_active ? 'Zona Kehadiran Kamera Anda Sudah Aktif Hari Ini' : 'Konfirmasi Kehadiran & Aktifkan Zona Kamera Anda' }}
+                            </h3>
+                            <p class="text-sm text-gray-600 leading-relaxed">
+                                @if($akt->is_active)
+                                    Kode referal harian telah dikonfirmasi. Saat pertama kali Anda masuk ke zona kerja, kamera otomatis mengunci ciri-ciri penampilan Anda hari ini agar tidak mendeteksi orang lain.
+                                @else
+                                    Silakan input <strong>Kode Referal Harian</strong> yang tertera di samping sebelum melakukan absensi kamera. <strong>Apabila belum diinput, zona Anda berstatus Disable dan sistem tidak akan mencatat kehadiran.</strong>
+                                @endif
+                            </p>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 shrink-0">
+                            <div class="bg-white px-5 py-3.5 rounded-xl border border-gray-200 shadow-2xs text-center">
+                                <p class="text-[11px] font-bold uppercase tracking-wider text-gray-400">Kode Referal Anda Hari Ini</p>
+                                <p class="text-2xl font-mono font-black tracking-widest text-indigo-700 mt-0.5 select-all">{{ $akt->kode_referal }}</p>
+                            </div>
+
+                            @if(!$akt->is_active)
+                                <form method="POST" action="{{ route('pegawai.kehadiran.aktivasi_referal') }}" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                                    @csrf
+                                    <input type="text"
+                                           name="kode_referal"
+                                           placeholder="Ketik {{ $akt->kode_referal }}"
+                                           required
+                                           autocomplete="off"
+                                           class="w-full sm:w-48 px-4 py-3 rounded-xl border-gray-300 font-mono font-bold text-sm uppercase tracking-wider focus:border-indigo-500 focus:ring-indigo-500 shadow-2xs">
+                                    <button type="submit"
+                                            class="inline-flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-md transition cursor-pointer">
+                                        <i data-feather="unlock" class="w-4 h-4"></i>
+                                        Aktifkan Zona
+                                    </button>
+                                </form>
+                            @else
+                                <div class="flex items-center gap-3 bg-emerald-600/10 border border-emerald-300 text-emerald-800 px-4 py-3 rounded-xl">
+                                    @if($akt->snapshot_wajah)
+                                        <img src="{{ $akt->snapshot_wajah }}" alt="Snapshot Ciri" class="w-11 h-11 rounded-lg object-cover border border-emerald-400">
+                                    @endif
+                                    <div>
+                                        <p class="text-xs font-extrabold uppercase text-emerald-700">✓ Zona Aktif</p>
+                                        <p class="text-xs text-emerald-600">{{ $akt->ciri_visual ? 'Ciri karyawan terkunci' : 'Menunggu masuk zona pertama kali' }}</p>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             {{-- BARIS 1: 4 KARTU STATUS HARI INI & BULAN INI --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {{-- Status Hari Ini --}}

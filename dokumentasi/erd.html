@@ -114,7 +114,7 @@
     </div>
 
     <div class="vp-canvas-wrap">
-        <svg class="vp-erd" viewBox="0 0 1280 750" xmlns="http://www.w3.org/2000/svg">
+        <svg class="vp-erd" viewBox="0 0 1280 960" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <!-- Gradient Oranye/Coklat Muda Khas Visual Paradigm -->
                 <linearGradient id="vpOrangeBody" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -234,6 +234,14 @@
             <line x1="485" y1="542" x2="478" y2="555" stroke="#111827" stroke-width="1.5"/>
             <line x1="485" y1="542" x2="492" y2="555" stroke="#111827" stroke-width="1.5"/>
             <text x="442" y="495" text-anchor="middle" font-size="11" fill="#111827">mengajukan</text>
+
+            <!-- Relasi 10: Pegawai_details (1) - - - aktivasi referal & ciri harian - - - (0..N) Zona_aktivasi_harians -->
+            <polyline points="575,428 575,775 960,775" fill="none" stroke="#111827" stroke-width="1.8" stroke-dasharray="5,4"/>
+            <line x1="568" y1="439" x2="582" y2="439" stroke="#111827" stroke-width="1.6"/>
+            <circle cx="942" cy="775" r="4.2" fill="#ffffff" stroke="#111827" stroke-width="1.5"/>
+            <line x1="947" y1="775" x2="960" y2="768" stroke="#111827" stroke-width="1.6"/>
+            <line x1="947" y1="775" x2="960" y2="782" stroke="#111827" stroke-width="1.6"/>
+            <text x="765" y="764" text-anchor="middle" font-size="11" fill="#111827">aktivasi referal &amp; ciri visual harian</text>
 
 
             <!-- ======================================================================= -->
@@ -672,6 +680,73 @@
                 <text x="175" y="128" font-size="11.5" font-style="italic" fill="#1e293b">bigint(20)</text>
             </g>
 
+
+            <!-- ======================================================================= -->
+            <!-- ENTITAS 10: Zona_aktivasi_harians (Kanan Paling Bawah)                  -->
+            <!-- ======================================================================= -->
+            <g transform="translate(960, 715)">
+                <rect x="0" y="0" width="295" height="224" rx="10" ry="10" fill="url(#vpOrangeBody)" stroke="#5c3a1e" stroke-width="1.5"/>
+                <line x1="0" y1="26" x2="295" y2="26" stroke="#5c3a1e" stroke-width="1.2"/>
+                <text x="147" y="18" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#111827">Zona_aktivasi_harians</text>
+
+                <!-- PK: id -->
+                <use href="#icon-pk" x="8" y="31"/>
+                <text x="26" y="43" font-size="11.5" font-weight="bold" fill="#111827">id</text>
+                <text x="175" y="43" font-size="11.5" font-weight="bold" fill="#111827">bigint(20)</text>
+                <line x1="4" y1="49" x2="291" y2="49" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- tanggal -->
+                <use href="#icon-col" x="8" y="53"/>
+                <text x="26" y="64" font-size="11.5" fill="#111827">tanggal</text>
+                <text x="175" y="64" font-size="11.5" fill="#111827">date</text>
+                <line x1="4" y1="70" x2="291" y2="70" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- kode_referal -->
+                <use href="#icon-col" x="8" y="74"/>
+                <text x="26" y="85" font-size="11.5" fill="#111827">kode_referal</text>
+                <text x="175" y="85" font-size="11.5" fill="#111827">varchar(30)</text>
+                <line x1="4" y1="91" x2="291" y2="91" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- is_active -->
+                <use href="#icon-col" x="8" y="95"/>
+                <text x="26" y="106" font-size="11.5" fill="#111827">is_active</text>
+                <text x="175" y="106" font-size="11.5" fill="#111827">tinyint(1)</text>
+                <line x1="4" y1="112" x2="291" y2="112" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- activated_at -->
+                <use href="#icon-col" x="8" y="116"/>
+                <text x="26" y="127" font-size="11.5" fill="#111827">activated_at</text>
+                <text x="175" y="127" font-size="11.5" fill="#111827">timestamp</text>
+                <use href="#icon-null" x="277" y="116"/>
+                <line x1="4" y1="133" x2="291" y2="133" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- ciri_visual -->
+                <use href="#icon-col" x="8" y="137"/>
+                <text x="26" y="148" font-size="11.5" fill="#111827">ciri_visual</text>
+                <text x="175" y="148" font-size="11.5" fill="#111827">longtext (JSON)</text>
+                <use href="#icon-null" x="277" y="137"/>
+                <line x1="4" y1="154" x2="291" y2="154" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- snapshot_wajah -->
+                <use href="#icon-col" x="8" y="158"/>
+                <text x="26" y="169" font-size="11.5" fill="#111827">snapshot_wajah</text>
+                <text x="175" y="169" font-size="11.5" fill="#111827">longtext</text>
+                <use href="#icon-null" x="277" y="158"/>
+                <line x1="4" y1="175" x2="291" y2="175" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- first_entered_at -->
+                <use href="#icon-col" x="8" y="179"/>
+                <text x="26" y="190" font-size="11.5" fill="#111827">first_entered_at</text>
+                <text x="175" y="190" font-size="11.5" fill="#111827">timestamp</text>
+                <use href="#icon-null" x="277" y="179"/>
+                <line x1="4" y1="196" x2="291" y2="196" stroke="#f7dfc4" stroke-width="1"/>
+
+                <!-- FK: pegawai_id -->
+                <use href="#icon-fk" x="8" y="200"/>
+                <text x="26" y="212" font-size="11.5" font-style="italic" fill="#1e293b">pegawai_id</text>
+                <text x="175" y="212" font-size="11.5" font-style="italic" fill="#1e293b">bigint(20)</text>
+            </g>
+
         </svg>
     </div>
 
@@ -712,6 +787,10 @@
             <div class="entity-card">
                 <h4>8. Izin_sakit</h4>
                 <p>Menyimpan permohonan `izin`, `sakit`, dan `cuti` beserta tanggal mulai/selesai dan lampiran surat bukti (`file_surat`).</p>
+            </div>
+            <div class="entity-card">
+                <h4>9. Zona_aktivasi_harians (Kode Referal &amp; Ciri Visual Harian)</h4>
+                <p>Menyimpan kode referal harian (`kode_referal`), status aktivasi zona (`is_active`, `activated_at`), serta ciri-ciri visual karyawan saat pertama masuk zona hari tersebut (`ciri_visual` JSON histogram warna/proporsi, `snapshot_wajah`, `first_entered_at`) yang otomatis direset setiap hari baru (`unique(pegawai_id, tanggal)`).</p>
             </div>
         </div>
     </div>

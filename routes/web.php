@@ -58,6 +58,7 @@ Route::middleware(['auth', 'role:pegawai'])->prefix('pegawai')->name('pegawai.')
 
     // Kehadiran
     Route::get('kehadiran', [KehadiranController::class, 'index'])->name('kehadiran.index');
+    Route::post('kehadiran/aktivasi-referal', [KehadiranController::class, 'aktivasiReferal'])->name('kehadiran.aktivasi_referal');
     Route::post('kehadiran/check-in', [KehadiranController::class, 'checkIn'])->name('kehadiran.checkin');
     Route::post('kehadiran/check-out', [KehadiranController::class, 'checkOut'])->name('kehadiran.checkout');
 

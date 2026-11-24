@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\IzinSakit;
 use App\Models\Kehadiran;
 use App\Models\PegawaiDetail;
+use App\Models\ZonaAktivasiHarian;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -103,8 +104,11 @@ class DashboardController extends Controller
                 ->take(5)
                 ->get();
 
+            $aktivasiHariIni = $pegawaiId ? ZonaAktivasiHarian::getOrCreateToday($pegawaiId) : null;
+
             $data = [
                 'pegawai'            => $pegawai,
+                'aktivasi_hari_ini'  => $aktivasiHariIni,
                 'hari_ini'           => $hariIni,
                 'status_hari_ini'    => $hariIni ? ucfirst($hariIni->jenis ?? 'Hadir') : 'Belum Terdeteksi',
                 'jam_masuk'          => $hariIni && $hariIni->check_in ? Carbon::parse($hariIni->check_in)->format('H:i') : '-',

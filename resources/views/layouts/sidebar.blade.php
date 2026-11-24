@@ -31,7 +31,7 @@ $roleName = ucfirst($user->roles->first()->name ?? 'User');
                             PT POU YUEN
                         </h2>
                         <div class="flex items-center gap-1.5 mt-0.5">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            {{-- <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> --}}
                             <span class="text-[11px] font-semibold text-indigo-600 tracking-wide">
                                 Smart Attendance AI
                             </span>

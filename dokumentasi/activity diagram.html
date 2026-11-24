@@ -19,7 +19,7 @@
         }
 
         .container {
-            max-width: 1220px;
+            max-width: 1380px;
             margin: 0 auto;
             background: #ffffff;
             padding: 28px 32px;
@@ -69,7 +69,7 @@
         svg.vp-ad {
             display: block;
             margin: 0 auto;
-            min-width: 1120px;
+            min-width: 1280px;
             height: auto;
             font-family: Tahoma, Arial, sans-serif;
         }
@@ -93,7 +93,7 @@
 
         .step-list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
             gap: 10px 18px;
             margin: 0;
             padding: 0;
@@ -121,13 +121,13 @@
 <div class="container">
     <div class="header">
         <h1>Activity Diagram — Proses Monitoring Kehadiran Karyawan PT Pou Yuen</h1>
-        <p>Alur Inti Mulai Monitoring Kamera Sampai Selesai (Format Standar Visual Paradigm Swimlane)</p>
+        <p>Alur Kode Referal Harian, Aktivasi Zona, Kunci Ciri Visual Pertama Masuk &amp; Monitoring Kamera (Format Standar Visual Paradigm Swimlane)</p>
     </div>
 
     <div class="vp-canvas-wrap">
-        <div class="vp-pkg-tab">act Monitoring Kehadiran Kamera</div>
+        <div class="vp-pkg-tab">act Monitoring Kehadiran Kamera &amp; Kode Referal Harian</div>
 
-        <svg class="vp-ad" viewBox="0 0 1160 870" xmlns="http://www.w3.org/2000/svg">
+        <svg class="vp-ad" viewBox="0 0 1320 1110" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <!-- Gradient Biru Cyan Khas Action Node Visual Paradigm -->
                 <linearGradient id="vpActionCyan" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -148,154 +148,230 @@
             </defs>
 
             <!-- ======================================================================= -->
-            <!-- SWIMLANE PARTITIONS (3 KOLOM: ATASAN | SISTEM WEB | AI KAMERA)          -->
+            <!-- SWIMLANE PARTITIONS (4 KOLOM: KARYAWAN | ATASAN | SISTEM WEB | AI)       -->
             <!-- ======================================================================= -->
             <!-- Bingkai Luar Swimlane -->
-            <rect x="30" y="15" width="1100" height="835" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
+            <rect x="20" y="15" width="1280" height="1075" fill="#ffffff" stroke="#1e293b" stroke-width="1.5"/>
 
             <!-- Header Swimlane -->
-            <rect x="30" y="15" width="1100" height="38" fill="url(#vpSwimHeader)" stroke="#1e293b" stroke-width="1.5"/>
+            <rect x="20" y="15" width="1280" height="38" fill="url(#vpSwimHeader)" stroke="#1e293b" stroke-width="1.5"/>
 
             <!-- Garis Pemisah Kolom Swimlane -->
-            <line x1="350" y1="15" x2="350" y2="850" stroke="#1e293b" stroke-width="1.4"/>
-            <line x1="730" y1="15" x2="730" y2="850" stroke="#1e293b" stroke-width="1.4"/>
+            <!-- Kolom 1: Karyawan (20..310, center=165) -->
+            <!-- Kolom 2: Atasan (310..600, center=455) -->
+            <!-- Kolom 3: Sistem Web Laravel (600..940, center=770) -->
+            <!-- Kolom 4: Engine AI CNN & YOLOv8 (940..1300, center=1120) -->
+            <line x1="310" y1="15" x2="310" y2="1090" stroke="#1e293b" stroke-width="1.4"/>
+            <line x1="600" y1="15" x2="600" y2="1090" stroke="#1e293b" stroke-width="1.4"/>
+            <line x1="940" y1="15" x2="940" y2="1090" stroke="#1e293b" stroke-width="1.4"/>
 
             <!-- Judul Kolom Swimlane -->
-            <text x="190" y="39" text-anchor="middle" font-size="13" font-weight="bold" fill="#0f172a">Atasan</text>
-            <text x="540" y="39" text-anchor="middle" font-size="13" font-weight="bold" fill="#0f172a">Sistem Web (Laravel)</text>
-            <text x="930" y="39" text-anchor="middle" font-size="13" font-weight="bold" fill="#0f172a">Engine AI (CNN &amp; YOLOv8)</text>
+            <text x="165" y="39" text-anchor="middle" font-size="13" font-weight="bold" fill="#0f172a">Karyawan (Pegawai)</text>
+            <text x="455" y="39" text-anchor="middle" font-size="13" font-weight="bold" fill="#0f172a">Atasan</text>
+            <text x="770" y="39" text-anchor="middle" font-size="13" font-weight="bold" fill="#0f172a">Sistem Web (Laravel)</text>
+            <text x="1120" y="39" text-anchor="middle" font-size="13" font-weight="bold" fill="#0f172a">Engine AI (CNN &amp; YOLOv8)</text>
 
 
             <!-- ======================================================================= -->
             <!-- GARIS ALUR AKTIVITAS (CONTROL FLOW)                                     -->
             <!-- ======================================================================= -->
 
-            <!-- 1. Start -> Buka Menu Monitoring Kamera -->
-            <line x1="190" y1="98" x2="190" y2="132" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+            <!-- 1. Initial Node (Karyawan) -> Buka Halaman Kehadiran / Dashboard -->
+            <line x1="165" y1="92" x2="165" y2="122" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
 
-            <!-- 2. Buka Menu Monitoring -> Tampilkan Halaman & Cek Zona -->
-            <line x1="295" y1="155" x2="425" y2="155" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+            <!-- 2. Buka Halaman -> Generate & Tampilkan Kode Referal Harian (Sistem Web) -->
+            <line x1="270" y1="145" x2="643" y2="145" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
 
-            <!-- 3. Tampilkan Halaman & Cek Zona -> Decision Zona -->
-            <line x1="540" y1="178" x2="540" y2="213" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+            <!-- 3. Generate Kode Referal -> Input Kode Referal Harian (Karyawan) -->
+            <polyline points="770,168 770,192 165,192 165,208" fill="none" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
 
-            <!-- 4a. Decision [Belum Ada Zona] -> Atur & Simpan Zona Kamera -->
-            <line x1="518" y1="235" x2="302" y2="235" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
-            <text x="412" y="226" text-anchor="middle" font-size="11" fill="#111827">[Belum Ada Zona]</text>
+            <!-- 4. Input Kode Referal -> Validasi Referal & Aktifkan Zona (Sistem Web) -->
+            <line x1="270" y1="231" x2="643" y2="231" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
 
-            <!-- 4b. Atur & Simpan Zona Kamera -> Klik Mulai Monitoring -->
-            <line x1="190" y1="258" x2="190" y2="308" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+            <!-- 5. Validasi & Aktifkan Zona -> Buka Menu Monitoring Kamera (Atasan) -->
+            <polyline points="770,254 770,280 455,280 455,296" fill="none" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
 
-            <!-- 4c. Decision [Zona Tersedia] -> Klik Mulai Monitoring -->
-            <polyline points="540,257 540,332 297,332" fill="none" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
-            <text x="435" y="323" text-anchor="middle" font-size="11" fill="#111827">[Zona Tersedia]</text>
+            <!-- 6. Buka Menu Monitoring -> Cek Konfigurasi Zona Kamera (Sistem Web) -->
+            <line x1="560" y1="319" x2="648" y2="319" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
 
-            <!-- 5. Klik Mulai Monitoring -> Aktifkan Kamera & Tangkap Video -->
-            <polyline points="190,355 190,405 793,405" fill="none" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+            <!-- 7. Cek Konfigurasi Zona -> Decision Zona -->
+            <line x1="770" y1="342" x2="770" y2="371" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
 
-            <!-- 6. Aktifkan Kamera -> Ekstraksi Fitur CNN & Deteksi YOLOv8 -->
-            <line x1="930" y1="428" x2="930" y2="462" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+            <!-- 7a. Decision [Belum Ada Zona] -> Atur & Simpan Zona Kamera (Atasan) -->
+            <line x1="748" y1="393" x2="567" y2="393" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+            <text x="658" y="385" text-anchor="middle" font-size="11" fill="#111827">[Belum Ada Zona]</text>
 
-            <!-- 7. Ekstraksi CNN & YOLOv8 -> Cocokkan Posisi dengan Zona Kamera -->
-            <line x1="930" y1="510" x2="930" y2="542" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+            <!-- 7b. Atur & Simpan Zona -> Klik Mulai Monitoring (Atasan) -->
+            <line x1="455" y1="416" x2="455" y2="458" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
 
-            <!-- 8. Cocokkan Posisi -> Catat Check-In Otomatis & Hitung Durasi 8 Jam -->
-            <line x1="790" y1="565" x2="662" y2="565" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+            <!-- 7c. Decision [Zona Tersedia] -> Klik Mulai Monitoring (Atasan) -->
+            <polyline points="770,415 770,481 562,481" fill="none" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+            <text x="670" y="473" text-anchor="middle" font-size="11" fill="#111827">[Zona Tersedia]</text>
 
-            <!-- 9. Catat Check-In -> Tampilkan Status Live & Progres 8 Jam -->
-            <line x1="540" y1="588" x2="540" y2="625" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+            <!-- 8. Klik Mulai Monitoring -> Aktifkan Kamera & Tangkap Video (AI) -->
+            <polyline points="455,504 455,528 983,528" fill="none" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
 
-            <!-- 10. Tampilkan Status Live -> Klik Hentikan Monitoring -->
-            <line x1="420" y1="648" x2="297" y2="648" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+            <!-- 9. Aktifkan Kamera -> Ekstraksi Fitur CNN & Deteksi YOLOv8 -->
+            <line x1="1120" y1="551" x2="1120" y2="579" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
 
-            <!-- 11. Klik Hentikan Monitoring -> Simpan Check-Out & Hasil Kehadiran -->
-            <polyline points="190,671 190,735 418,735" fill="none" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+            <!-- 10. Ekstraksi CNN & YOLOv8 -> Cocokkan Posisi dengan Zona & Cek Aktivasi Referal -->
+            <line x1="1120" y1="625" x2="1120" y2="653" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
 
-            <!-- 12. Simpan Check-Out & Hasil Kehadiran -> Activity Final Node -->
-            <line x1="540" y1="758" x2="540" y2="796" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+            <!-- 11. Cocokkan Posisi -> Decision Zona Aktif? -->
+            <line x1="1120" y1="699" x2="1120" y2="726" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+
+            <!-- 11a. Decision [Zona Disable] -> Tandai Zona Disable & Tolak Kehadiran -->
+            <line x1="1098" y1="748" x2="902" y2="748" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+            <text x="1002" y="740" text-anchor="middle" font-size="10.5" fill="#b91c1c">[Belum Input Referal / Disable]</text>
+
+            <!-- 11b. Decision [Zona Aktif] -> Simpan Ciri Visual Pertama Masuk & Validasi Ciri Harian -->
+            <line x1="1120" y1="770" x2="1120" y2="803" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+            <text x="1165" y="790" text-anchor="middle" font-size="10.5" fill="#047857">[Zona Aktif]</text>
+
+            <!-- 12. Simpan & Validasi Ciri Visual -> Catat Check-In Otomatis & Hitung Durasi 8 Jam -->
+            <line x1="973" y1="827" x2="902" y2="827" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+
+            <!-- 13. Catat Check-In & Tandai Disable -> Tampilkan Status Live & Progres 8 Jam -->
+            <line x1="770" y1="850" x2="770" y2="888" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+            <polyline points="640,748 615,748 615,911 643,911" fill="none" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+
+            <!-- 14. Tampilkan Status Live -> Klik Hentikan Monitoring (Atasan) -->
+            <line x1="645" y1="911" x2="562" y2="911" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+
+            <!-- 15. Klik Hentikan Monitoring -> Simpan Check-Out & Hasil Kehadiran (Sistem Web) -->
+            <polyline points="455,934 455,988 643,988" fill="none" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
+
+            <!-- 16. Simpan Check-Out -> Activity Final Node -->
+            <line x1="770" y1="1011" x2="770" y2="1044" stroke="#111827" stroke-width="1.4" marker-end="url(#vpArrow)"/>
 
 
             <!-- ======================================================================= -->
             <!-- SIMBOL NODE AKTIVITAS VISUAL PARADIGM                                   -->
             <!-- ======================================================================= -->
 
-            <!-- Initial Node (Start) -->
-            <circle cx="190" cy="86" r="11" fill="#000000"/>
+            <!-- Initial Node (Start) di Kolom Karyawan -->
+            <circle cx="165" cy="80" r="11" fill="#000000"/>
 
-            <!-- 1. Buka Menu Monitoring Kamera (Atasan) -->
-            <g transform="translate(85, 133)">
+            <!-- 1. Buka Dashboard / Menu Kehadiran (Karyawan) -->
+            <g transform="translate(60, 123)">
+                <rect x="0" y="0" width="210" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="105" y="20" text-anchor="middle" font-size="11" font-weight="bold" fill="#000000">Buka Dashboard /</text>
+                <text x="105" y="35" text-anchor="middle" font-size="11" font-weight="bold" fill="#000000">Menu Kehadiran</text>
+            </g>
+
+            <!-- 2. Generate & Tampilkan Kode Referal Harian (Sistem Web) -->
+            <g transform="translate(645, 123)">
+                <rect x="0" y="0" width="250" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="125" y="20" text-anchor="middle" font-size="11" font-weight="bold" fill="#000000">Generate &amp; Tampilkan Kode</text>
+                <text x="125" y="35" text-anchor="middle" font-size="11" font-weight="bold" fill="#000000">Referal Harian (Reset Tiap Hari)</text>
+            </g>
+
+            <!-- 3. Input Kode Referal Harian (Karyawan) -->
+            <g transform="translate(60, 209)">
+                <rect x="0" y="0" width="210" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="105" y="20" text-anchor="middle" font-size="11" font-weight="bold" fill="#000000">Input Kode Referal Harian</text>
+                <text x="105" y="35" text-anchor="middle" font-size="11" font-weight="bold" fill="#000000">Sebelum Absen</text>
+            </g>
+
+            <!-- 4. Konfirmasi Kehadiran & Aktifkan Zona (Sistem Web) -->
+            <g transform="translate(645, 209)">
+                <rect x="0" y="0" width="250" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="125" y="20" text-anchor="middle" font-size="11" font-weight="bold" fill="#000000">Validasi Kode Referal &amp;</text>
+                <text x="125" y="35" text-anchor="middle" font-size="11" font-weight="bold" fill="#000000">Aktifkan Zona Karyawan</text>
+            </g>
+
+            <!-- 5. Buka Menu Monitoring Kamera (Atasan) -->
+            <g transform="translate(350, 297)">
                 <rect x="0" y="0" width="210" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
                 <text x="105" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Buka Menu Monitoring Kamera</text>
             </g>
 
-            <!-- 2. Tampilkan Halaman & Cek Zona (Sistem Web) -->
-            <g transform="translate(427, 133)">
-                <rect x="0" y="0" width="226" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
-                <text x="113" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Tampilkan Halaman &amp; Cek Zona</text>
+            <!-- 6. Tampilkan Halaman & Cek Zona (Sistem Web) -->
+            <g transform="translate(650, 297)">
+                <rect x="0" y="0" width="240" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="120" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Tampilkan Halaman &amp; Cek Zona</text>
             </g>
 
-            <!-- Decision Node: Cek Zona -->
-            <polygon points="540,215 562,235 540,255 518,235" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+            <!-- Decision Node: Cek Konfigurasi Zona -->
+            <polygon points="770,373 792,393 770,413 748,393" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
 
-            <!-- 3. Atur & Simpan Zona Kamera (Atasan) -->
-            <g transform="translate(80, 213)">
+            <!-- 7. Atur & Simpan Zona Kamera (Atasan) -->
+            <g transform="translate(345, 371)">
                 <rect x="0" y="0" width="220" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
                 <text x="110" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Atur &amp; Simpan Zona Kamera</text>
             </g>
 
-            <!-- 4. Klik Mulai Monitoring (Atasan) -->
-            <g transform="translate(85, 310)">
+            <!-- 8. Klik Mulai Monitoring (Atasan) -->
+            <g transform="translate(350, 459)">
                 <rect x="0" y="0" width="210" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
                 <text x="105" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Klik Mulai Monitoring</text>
             </g>
 
-            <!-- 5. Aktifkan Kamera & Tangkap Video (AI Kamera) -->
-            <g transform="translate(795, 383)">
+            <!-- 9. Aktifkan Kamera & Tangkap Video (AI Kamera) -->
+            <g transform="translate(985, 506)">
                 <rect x="0" y="0" width="270" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
                 <text x="135" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Aktifkan Kamera &amp; Tangkap Video</text>
             </g>
 
-            <!-- 6. Ekstraksi Fitur (CNN) & Deteksi Objek (YOLOv8) -->
-            <g transform="translate(785, 464)">
-                <rect x="0" y="0" width="290" height="46" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+            <!-- 10. Ekstraksi Fitur (CNN) & Deteksi Objek (YOLOv8) -->
+            <g transform="translate(975, 580)">
+                <rect x="0" y="0" width="290" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
                 <text x="145" y="20" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Ekstraksi Fitur Tubuh (CNN) &amp;</text>
-                <text x="145" y="36" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Deteksi Koordinat Manusia (YOLOv8)</text>
+                <text x="145" y="35" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Deteksi Koordinat Manusia (YOLOv8)</text>
             </g>
 
-            <!-- 7. Cocokkan Posisi dengan Zona Kamera -->
-            <g transform="translate(790, 543)">
-                <rect x="0" y="0" width="280" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
-                <text x="140" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Cocokkan Posisi dengan Zona Kamera</text>
+            <!-- 11. Cocokkan Posisi dengan Zona & Cek Status Referal -->
+            <g transform="translate(975, 654)">
+                <rect x="0" y="0" width="290" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="145" y="20" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Cocokkan Posisi dengan Zona &amp;</text>
+                <text x="145" y="35" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Cek Aktivasi Referal Harian</text>
             </g>
 
-            <!-- 8. Catat Check-In Otomatis & Hitung Durasi 8 Jam -->
-            <g transform="translate(420, 543)">
-                <rect x="0" y="0" width="240" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
-                <text x="120" y="20" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Catat Check-In Otomatis &amp;</text>
-                <text x="120" y="36" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Hitung Durasi Kerja (Target 8 Jam)</text>
+            <!-- Decision Node: Zona Sudah Diaktifkan via Referal? -->
+            <polygon points="1120,728 1142,748 1120,768 1098,748" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+
+            <!-- 11a. Zona Disable & Tidak Catat Hadir (Sistem Web) -->
+            <g transform="translate(640, 725)">
+                <rect x="0" y="0" width="260" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="130" y="20" text-anchor="middle" font-size="11" font-weight="bold" fill="#000000">Zona Disable (Tidak Catat Hadir)</text>
+                <text x="130" y="35" text-anchor="middle" font-size="11" font-weight="bold" fill="#000000">Tampilkan Status Zona Nonaktif</text>
             </g>
 
-            <!-- 9. Tampilkan Status Live & Progres Kehadiran -->
-            <g transform="translate(420, 626)">
-                <rect x="0" y="0" width="240" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
-                <text x="120" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Tampilkan Status Live &amp; Progres</text>
+            <!-- 12. Simpan Ciri Visual Pertama Masuk & Validasi Agar Tidak Deteksi Orang Lain (AI) -->
+            <g transform="translate(975, 804)">
+                <rect x="0" y="0" width="290" height="46" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="145" y="19" text-anchor="middle" font-size="10.8" font-weight="bold" fill="#000000">Simpan Ciri Visual Pertama Masuk Zona &amp;</text>
+                <text x="145" y="35" text-anchor="middle" font-size="10.8" font-weight="bold" fill="#000000">Tolak Orang Lain (Reset Ciri Tiap Hari)</text>
             </g>
 
-            <!-- 10. Klik Hentikan Monitoring (Atasan) -->
-            <g transform="translate(85, 626)">
+            <!-- 13. Catat Check-In Otomatis & Hitung Durasi 8 Jam (Sistem Web) -->
+            <g transform="translate(640, 804)">
+                <rect x="0" y="0" width="260" height="46" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="130" y="20" text-anchor="middle" font-size="11" font-weight="bold" fill="#000000">Catat Check-In Otomatis &amp;</text>
+                <text x="130" y="35" text-anchor="middle" font-size="11" font-weight="bold" fill="#000000">Hitung Durasi Kerja (Target 8 Jam)</text>
+            </g>
+
+            <!-- 14. Tampilkan Status Live & Progres Kehadiran (Sistem Web) -->
+            <g transform="translate(645, 889)">
+                <rect x="0" y="0" width="250" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="125" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Tampilkan Status Live &amp; Progres</text>
+            </g>
+
+            <!-- 15. Klik Hentikan Monitoring (Atasan) -->
+            <g transform="translate(350, 889)">
                 <rect x="0" y="0" width="210" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
                 <text x="105" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Klik Hentikan Monitoring</text>
             </g>
 
-            <!-- 11. Simpan Check-Out & Hasil Kehadiran -->
-            <g transform="translate(420, 713)">
-                <rect x="0" y="0" width="240" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
-                <text x="120" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Simpan Check-Out &amp; Hasil Kehadiran</text>
+            <!-- 16. Simpan Check-Out & Hasil Kehadiran (Sistem Web) -->
+            <g transform="translate(645, 966)">
+                <rect x="0" y="0" width="250" height="45" rx="18" ry="18" fill="url(#vpActionCyan)" stroke="#000000" stroke-width="1.3"/>
+                <text x="125" y="27" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#000000">Simpan Check-Out &amp; Hasil Kehadiran</text>
             </g>
 
             <!-- Activity Final Node (End) -->
-            <circle cx="540" cy="812" r="13" fill="#ffffff" stroke="#000000" stroke-width="1.8"/>
-            <circle cx="540" cy="812" r="8" fill="#000000"/>
+            <circle cx="770" cy="1060" r="13" fill="#ffffff" stroke="#000000" stroke-width="1.8"/>
+            <circle cx="770" cy="1060" r="8" fill="#000000"/>
 
         </svg>
     </div>
@@ -304,23 +380,23 @@
     <!-- KETERANGAN POIN PENTING ACTIVITY DIAGRAM                         -->
     <!-- ================================================================ -->
     <div class="legend">
-        <h3>Ringkasan Poin Penting Alur Monitoring:</h3>
+        <h3>Ringkasan Poin Penting Alur Monitoring &amp; Kode Referal Harian:</h3>
         <ul class="step-list">
             <li class="step-item">
-                <strong>1. Persiapan &amp; Pengecekan Zona</strong>
-                Atasan membuka menu monitoring; apabila zona kursi/meja karyawan belum diatur, atasan membuat zona terlebih dahulu sebelum memulai monitoring.
+                <strong>1. Input Kode Referal Harian (Reset Tiap Hari)</strong>
+                Sistem menampilkan kode referal harian unik yang berganti setiap hari. Karyawan wajib menginput kode tersebut sebelum absen untuk mengonfirmasi kehadiran dan mengaktifkan zonanya. Jika tidak diinput, zona tetap <em>Disable</em> dan tidak tercatat hadir.
             </li>
             <li class="step-item">
-                <strong>2. Deteksi Kamera oleh CNN &amp; YOLOv8</strong>
-                Saat monitoring dimulai, <em>Backbone CNN</em> mengekstraksi fitur siluet tubuh manusia dan <em>YOLOv8</em> mendeteksi kotak koordinat posisi karyawan pada zona kamera.
+                <strong>2. Persiapan Zona &amp; Deteksi CNN + YOLOv8</strong>
+                Atasan memastikan zona kamera tersedia lalu memulai monitoring. <em>Backbone CNN</em> mengekstraksi fitur tubuh manusia dan <em>YOLOv8</em> mendeteksi koordinat posisi karyawan di dalam zona.
             </li>
             <li class="step-item">
-                <strong>3. Pencatatan Check-In &amp; Durasi 8 Jam</strong>
-                Sistem otomatis mencatat waktu pertama terlihat sebagai <code>check_in</code>, menghitung akumulasi durasi berada di zona (standar 8 jam), dan menampilkan status <em>live</em>.
+                <strong>3. Kunci Ciri Visual Pertama Masuk Zona (Reset Harian)</strong>
+                Saat karyawan pertama kali masuk ke zona aktifnya, Engine AI menyimpan ciri-ciri visual karyawan tersebut hari itu (histogram warna pakaian/tubuh &amp; proporsi) agar zona tidak mendeteksi orang lain. Ciri visual ini otomatis direset setiap hari mengikuti penampilan pertama masuk zona.
             </li>
             <li class="step-item">
-                <strong>4. Penghentian &amp; Hasil Akhir Kehadiran</strong>
-                Saat Atasan menekan tombol hentikan monitoring, sistem menyimpan waktu terakhir terlihat sebagai <code>check_out</code> dan merekap hasil kehadiran harian.
+                <strong>4. Check-In Otomatis, Durasi 8 Jam &amp; Check-Out</strong>
+                Karyawan yang tervalidasi di zona aktif otomatis tercatat <code>check_in</code>, diakumulasikan durasi kerjanya menuju target 8 jam, dan saat pengawasan dihentikan tercatat <code>check_out</code>.
             </li>
         </ul>
     </div>

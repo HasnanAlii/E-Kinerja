@@ -194,19 +194,25 @@
 
     <!-- TAB NAVIGATION BAR (Khusus Tahapan Proses Monitoring Kamera sampai Hasil Kehadiran) -->
     <nav class="tab-bar" id="tabBar">
-        <button class="tab-btn active" data-tab="sec-alur"     onclick="showTab('sec-alur', this)">Flowchart Alur Utama Monitoring</button>
+        <button class="tab-btn active" data-tab="sec-alur"     onclick="showTab('sec-alur', this)">Flowchart Alur Utama &amp; Referal</button>
         <button class="tab-btn"        data-tab="sec-zona"     onclick="showTab('sec-zona', this)">Flowchart Konfigurasi Zona Kamera</button>
         <button class="tab-btn"        data-tab="sec-yolo"     onclick="showTab('sec-yolo', this)">Flowchart CNN &amp; Deteksi YOLOv8</button>
-        <button class="tab-btn"        data-tab="sec-matching" onclick="showTab('sec-matching', this)">Flowchart Pencocokan Zona &amp; Streak</button>
+        <button class="tab-btn"        data-tab="sec-matching" onclick="showTab('sec-matching', this)">Flowchart Zona, Referal &amp; Ciri Visual</button>
         <button class="tab-btn"        data-tab="sec-hasil"    onclick="showTab('sec-hasil', this)">Flowchart Hasil Kehadiran &amp; Durasi 8 Jam</button>
     </nav>
 
-    <!-- 0. ALUR UTAMA PROSES MONITORING -->
+    <!-- 0. ALUR UTAMA PROSES MONITORING & AKTIVASI KODE REFERAL HARIAN -->
     <div class="section" id="sec-alur">
-        <h2><span class="badge">0</span> Alur Utama &mdash; Inisialisasi Proses Monitoring</h2>
+        <h2><span class="badge">0</span> Alur Utama &mdash; Inisialisasi Monitoring &amp; Kode Referal Harian</h2>
         <div class="mermaid">
             flowchart TD
-            S((Mulai)) --> A[/Membaca Tombol Aksi Monitoring/]
+            S((Mulai)) --> GEN_REF["Sistem Generate Kode Referal Unik Harian\nper Karyawan (PY-XXXXXX) — Reset Tiap Hari Baru\n&amp; Reset Ciri Visual (tabel: zona_aktivasi_harians)"]
+            GEN_REF --> SHOW_REF[/Sistem Menampilkan Kode Referal Harian\ndi Halaman Dashboard &amp; Kehadiran Karyawan/]
+            SHOW_REF --> INP_REF{Karyawan Menginput\nKode Referal Harian?}
+            INP_REF -->|Belum Input| Z_DIS["Status Zona Karyawan = DISABLE\n(is_active = False)"]
+            INP_REF -->|Sudah Input &amp; Valid| Z_ACT["Konfirmasi Kehadiran &amp; Aktifkan Zona Karyawan\n(is_active = True, activated_at = now)"]
+            Z_DIS --> A[/Atasan Membaca Tombol Aksi Monitoring/]
+            Z_ACT --> A
             A --> D{Jenis Aksi\n== Atur Zona ?}
             D -->|True| U[Konfigurasi Zona Posisi Karyawan]
             D -->|False| P[Mulai Pengawasan Kamera]
@@ -256,20 +262,31 @@
         </div>
     </div>
 
-    <!-- 3. PENCOCOKAN ZONA (OVERLAP & TORSO) + STREAK CONFIRMATION -->
+    <!-- 3. PENCOCOKAN ZONA, VALIDASI KODE REFERAL, KUNCI CIRI VISUAL HARIAN & STREAK -->
     <div class="section" id="sec-matching">
-        <h2><span class="badge">3&#8594;4</span> Pencocokan Zona Kerja &amp; Konfirmasi Multi-Frame (Streak)</h2>
+        <h2><span class="badge">3&#8594;4</span> Pencocokan Zona, Cek Aktivasi Referal &amp; Kunci Ciri Visual Harian</h2>
         <div class="mermaid">
             flowchart TD
             C3b{3} --> TORSO["Menghitung Titik Tengah &amp; Torso Manusia:\ncx_pct = ((x1 + x2) / 2 / W) x 100\ncy_torso = (y1 + 0.45 x (y2 - y1)) / H x 100"]
             TORSO --> OVL["Menghitung Rasio Irisan Area (Overlap)\nAntara Bounding Box Manusia &amp; Zona Karyawan:\nOverlap = Area_Irisan / min(Area_Box, Area_Zona)"]
             OVL --> QOVL{"Titik Torso di Dalam Zona\nATAU Overlap &ge; 0.20 ?"}
             QOVL -->|Tidak| OUT["Tandai Objek di Luar Zona Kerja"]
-            QOVL -->|Iya| INC_S["Tambah Counter Deteksi Beruntun:\nstreak[pegawai_id] = streak + 1"]
+            QOVL -->|Iya| QREF{"Cek Kode Referal Hari Ini:\nZona Sudah Aktif (is_active == True)?"}
+            QREF -->|Tidak| ZDIS["Zona Disable (Belum Input Kode Referal):\nTampilkan Label Status DISABLE &amp; Tolak Kehadiran\n(present = False)"]
+            QREF -->|Iya| EXT_F["Ekstraksi Ciri-Ciri Visual Karyawan di Zona:\nHistogram Warna HSV Tubuh Atas/Bawah,\nRata-Rata BGR Pakaian &amp; Rasio Proporsi Tubuh"]
+            EXT_F --> QLOCK{"Sudah Ada Ciri Visual\nTersimpan Hari Ini (ciri_visual)?"}
+            QLOCK -->|Sudah Ada| CMP_F["Hitung Skor Kemiripan Visual (Cosine Similarity)\nAntara Ciri Hari Ini &amp; Deteksi Saat Ini"]
+            CMP_F --> QSIM{"Skor Kemiripan\nSimilarity &ge; 0.58 ?"}
+            QSIM -->|Tidak| REJ_O["Tolak Deteksi Orang Lain di Zona:\nTampilkan Peringatan Bukan Karyawan\n(present = False)"]
+            QSIM -->|Iya| INC_S["Tambah Counter Deteksi Beruntun:\nstreak[pegawai_id] = streak + 1"]
+            QLOCK -->|"Belum (Pertama Masuk)"| INC_S
             INC_S --> QSTRK{"streak[pegawai_id]\n&ge; 2 Frame Berturut-turut?"}
             QSTRK -->|Tidak| C2c{2}
-            QSTRK -->|Iya| CONF_P["Konfirmasi Karyawan Hadir di Zona\n(present = True)"]
+            QSTRK -->|Iya| SAVE_LOCK["Jika Pertama Kali Masuk Zona Hari Ini:\nSimpan &amp; Kunci Ciri Visual (ciri_visual) + Snapshot\n(Berlaku Hari Ini &amp; Reset Besok)"]
+            SAVE_LOCK --> CONF_P["Konfirmasi Karyawan Sah Hadir di Zona\n(present = True)"]
             OUT --> C4b{4}
+            ZDIS --> C4b{4}
+            REJ_O --> C4b{4}
             CONF_P --> C4b{4}
         </div>
     </div>
@@ -326,8 +343,8 @@
             <div class="exp-grid">
                 <div class="exp-item">
                     <span class="exp-badge">Tahap 0 &amp; 1</span>
-                    <strong>Inisialisasi &amp; Konfigurasi Zona:</strong><br>
-                    Sistem memeriksa apakah zona posisi duduk/kerja sudah diatur. Jika belum, muncul peringatan modal dan *live preview* kamera dinyalakan agar atasan dapat menandai koordinat persentase zona (`x1_pct..y2_pct`) tiap karyawan.
+                    <strong>Kode Referal Harian &amp; Konfigurasi Zona:</strong><br>
+                    Setiap hari sistem mereset dan menampilkan **Kode Referal Harian (`PY-XXXXXX`)** yang berbeda untuk tiap karyawan. Karyawan wajib menginput kode tersebut untuk mengonfirmasi kehadiran dan mengaktifkan zonanya (`is_active = True`). Jika tidak diinput, zona berstatus **Disable** dan tidak akan mencatat kehadiran.
                 </div>
                 <div class="exp-item">
                     <span class="exp-badge">Tahap 2</span>
@@ -336,13 +353,13 @@
                 </div>
                 <div class="exp-item">
                     <span class="exp-badge">Tahap 3</span>
-                    <strong>Pencocokan Zona &amp; Streak Confirmation:</strong><br>
-                    Koordinat *torso* dan persentase irisan area (*overlap* $\ge 20\%$) dicocokkan dengan zona karyawan. Karyawan baru dinyatakan hadir di zona setelah terdeteksi konsisten minimal **2 frame berturut-turut** (*streak*).
+                    <strong>Kunci Ciri Visual Pertama Masuk &amp; Streak:</strong><br>
+                    Pada zona yang sudah aktif, saat karyawan **pertama kali masuk ke zona**, sistem mengekstrak dan menyimpan ciri-ciri visual karyawan hari itu (histogram warna HSV pakaian/tubuh, proporsi, dan *snapshot*). Selama hari tersebut, sistem memvalidasi kemiripan visual (*similarity* $\ge 0.58$) agar zona **tidak mendeteksi orang lain**, dan ciri ini otomatis direset setiap berganti hari.
                 </div>
                 <div class="exp-item">
                     <span class="exp-badge">Tahap 4</span>
                     <strong>Hasil Kehadiran &amp; Progres 8 Jam:</strong><br>
-                    Deteksi pertama otomatis dicatat sebagai **Jam Masuk (`check_in`)**, durasi di meja diakumulasikan terhadap standar **8 Jam (28.800 detik)**, dan deteksi terakhir sebelum atasan menghentikan pengawasan dikunci sebagai **Jam Pulang (`check_out`)**.
+                    Deteksi pertama karyawan yang tervalidasi di zona aktif otomatis dicatat sebagai **Jam Masuk (`check_in`)**, durasi di meja diakumulasikan terhadap standar **8 Jam (28.800 detik)**, dan deteksi terakhir sebelum atasan menghentikan pengawasan dikunci sebagai **Jam Pulang (`check_out`)**.
                 </div>
             </div>
         </div>

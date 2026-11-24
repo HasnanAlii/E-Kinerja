@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date, Time, DateTime, ForeignKey, Float
+from sqlalchemy import Column, Integer, String, Date, Time, DateTime, ForeignKey, Float, Boolean, Text
 from sqlalchemy.dialects.mysql import BIGINT
 from sqlalchemy.orm import relationship
 from config.database import Base
@@ -99,3 +99,26 @@ class ZonaKamera(Base):
     updated_at = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
 
     pegawai = relationship("PegawaiDetail", back_populates="zona_kamera")
+
+
+# --- DAILY REFERRAL ZONE ACTIVATION & VISUAL FEATURE LOCK ---
+class ZonaAktivasiHarian(Base):
+    """
+    Stores daily referral code confirmation & visual biometric/appearance signature
+    captured when the employee enters their zone for the first time each day.
+    Resets every day (keyed by pegawai_id + tanggal).
+    """
+    __tablename__ = 'zona_aktivasi_harians'
+
+    id = Column(BIGINT(unsigned=True), primary_key=True, index=True)
+    pegawai_id = Column(BIGINT(unsigned=True), ForeignKey('pegawai_details.id', ondelete='CASCADE'), nullable=False)
+    tanggal = Column(Date, default=datetime.date.today, nullable=False)
+    kode_referal = Column(String(30), nullable=False)
+    is_active = Column(Boolean, default=False, nullable=False)
+    activated_at = Column(DateTime, nullable=True)
+    ciri_visual = Column(Text, nullable=True)      # JSON string of visual signature (HSV/color histogram + proportions)
+    snapshot_wajah = Column(Text, nullable=True)   # Base64 JPEG thumbnail of first detection today
+    first_entered_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.now)
+    updated_at = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
+

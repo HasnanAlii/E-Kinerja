@@ -244,7 +244,16 @@
                                             <div>
                                                 <p class="text-sm font-bold text-slate-800" x-text="log.nama"></p>
                                                 <p x-show="!log.has_zone" class="text-[11px] font-semibold text-amber-600">Zona belum diatur</p>
-                                                <p x-show="log.has_zone" class="text-[11px] text-slate-400">Terdaftar di Zona Kamera</p>
+                                                <div x-show="log.has_zone" class="flex flex-wrap items-center gap-1.5 mt-0.5">
+                                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-md border"
+                                                          :class="log.is_zone_active ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-600 border-rose-200'"
+                                                          x-text="log.is_zone_active ? 'Referal Aktif' : 'Zona Disable'"></span>
+                                                    <span x-show="log.has_visual_lock"
+                                                          class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200"
+                                                          :title="'Ciri visual terkunci sejak ' + (log.first_entered_at || 'pertama masuk')">
+                                                        🔒 Ciri Terkunci
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
@@ -271,9 +280,11 @@
                                                 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
                                                 : (log.status_raw === 'keluar_ruangan' 
                                                     ? 'bg-rose-50 text-rose-700 border-rose-200' 
-                                                    : 'bg-slate-100 text-slate-500 border-slate-200')">
+                                                    : (log.status_raw === 'zona_disable'
+                                                        ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                                        : 'bg-slate-100 text-slate-500 border-slate-200'))">
                                             <span class="w-2 h-2 rounded-full"
-                                                :class="log.status_raw === 'di_meja' ? 'bg-emerald-500 animate-pulse' : (log.status_raw === 'keluar_ruangan' ? 'bg-rose-500' : 'bg-slate-400')"
+                                                :class="log.status_raw === 'di_meja' ? 'bg-emerald-500 animate-pulse' : (log.status_raw === 'keluar_ruangan' ? 'bg-rose-500' : (log.status_raw === 'zona_disable' ? 'bg-amber-500' : 'bg-slate-400'))"
                                             ></span>
                                             <span x-text="log.status_cctv"></span>
                                         </span>

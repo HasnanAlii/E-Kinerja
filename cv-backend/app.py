@@ -6,7 +6,7 @@ from flask_cors import CORS
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 from config.database import SessionLocal, engine
-from models.models import Base, User, PegawaiDetail, Kehadiran, CctvMonitoringLog, DeteksiAktivitas, ZonaKamera
+from models.models import Base, User, PegawaiDetail, Kehadiran, CctvMonitoringLog, DeteksiAktivitas, ZonaKamera, ZonaAktivasiHarian
 from ai.vision import process_frame_zone, process_frame_zone_simulated, SLOT_COLORS_HEX, reset_detection_state
 
 # Create tables on startup
@@ -161,16 +161,22 @@ def get_karyawan():
 # ─── ZONE CRUD ───────────────────────────────────────────────────────────────
 @app.route('/api/zones', methods=['GET'])
 def get_zones():
-    """Return all configured zones with employee info."""
+    """Return all configured zones with employee info and daily referral activation status."""
     db = get_db()
+    today = datetime.date.today()
     try:
         zones = db.query(ZonaKamera).all()
         all_pegawai = db.query(PegawaiDetail).join(User).all()
         pegawai_map = {p.id: p for p in all_pegawai}
+        aktivasi_rows = db.query(ZonaAktivasiHarian).filter(
+            ZonaAktivasiHarian.tanggal == today
+        ).all()
+        aktivasi_map = {a.pegawai_id: a for a in aktivasi_rows}
 
         data = []
         for i, z in enumerate(zones):
             p = pegawai_map.get(z.pegawai_id)
+            akt = aktivasi_map.get(z.pegawai_id)
             data.append({
                 "id": z.id,
                 "pegawai_id": z.pegawai_id,
@@ -179,7 +185,10 @@ def get_zones():
                 "x1_pct": z.x1_pct, "y1_pct": z.y1_pct,
                 "x2_pct": z.x2_pct, "y2_pct": z.y2_pct,
                 "label": z.label or f"Meja {chr(65+i)}",
-                "warna": z.warna or SLOT_COLORS_HEX[i % len(SLOT_COLORS_HEX)]
+                "warna": z.warna or SLOT_COLORS_HEX[i % len(SLOT_COLORS_HEX)],
+                "is_zone_active": bool(akt and akt.is_active),
+                "has_visual_lock": bool(akt and akt.ciri_visual),
+                "kode_referal": akt.kode_referal if akt else None
             })
 
         # Include employees WITHOUT a zone
@@ -410,6 +419,10 @@ def get_log_deteksi():
     today = datetime.date.today()
     try:
         all_pegawai = db.query(PegawaiDetail).join(User).all()
+        aktivasi_rows = db.query(ZonaAktivasiHarian).filter(
+            ZonaAktivasiHarian.tanggal == today
+        ).all()
+        aktivasi_map = {a.pegawai_id: a for a in aktivasi_rows}
         result = []
 
         for p in all_pegawai:
@@ -419,15 +432,23 @@ def get_log_deteksi():
             ).first()
 
             zone = db.query(ZonaKamera).filter(ZonaKamera.pegawai_id == p.id).first()
+            akt = aktivasi_map.get(p.id)
+            is_zone_active = bool(akt and akt.is_active)
+            has_visual_lock = bool(akt and akt.ciri_visual)
+
             dur = log.durasi_stay if log else 0
             status = log.status_terakhir if log else 'belum_terdeteksi'
+            if not is_zone_active:
+                status = 'zona_disable'
+
             h, m = dur // 3600, (dur % 3600) // 60
             dur_str = f"{h} Jam {m} Menit" if h > 0 else (f"{m} Menit" if m > 0 else "0 Menit")
 
             status_label = {
                 'di_meja': 'Di Meja Kerja',
                 'keluar_ruangan': 'Keluar Ruangan',
-                'belum_terdeteksi': 'Belum Terdeteksi'
+                'belum_terdeteksi': 'Belum Terdeteksi',
+                'zona_disable': 'Zona Disable (Belum Input Referal)'
             }.get(status, status)
 
             result.append({
@@ -437,6 +458,10 @@ def get_log_deteksi():
                 "zona_label": zone.label if zone else "-",
                 "zona_warna": zone.warna if zone else "#aaaaaa",
                 "has_zone": zone is not None,
+                "is_zone_active": is_zone_active,
+                "has_visual_lock": has_visual_lock,
+                "first_entered_at": akt.first_entered_at.strftime("%H:%M") if (akt and akt.first_entered_at) else None,
+                "snapshot_wajah": akt.snapshot_wajah if akt else None,
                 "status_cctv": status_label,
                 "status_raw": status,
                 "durasi_stay_seconds": dur,            # raw seconds for live ticking
